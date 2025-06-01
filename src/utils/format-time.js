@@ -25,3 +25,14 @@ export function fToNow(date) {
       })
     : '';
 }
+
+export function formatMinutesToTime(minutes) {
+  const hours = Math.floor(minutes / 60);
+  const remainingMinutes = minutes % 60;
+
+  const parts = [];
+  if (hours > 0) parts.push(`${hours}h`);
+  if (remainingMinutes > 0 || hours === 0) parts.push(`${remainingMinutes} min`);
+
+  return parts.join(' ');
+}

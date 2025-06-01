@@ -6,6 +6,21 @@ import { customShadows } from "./custom-shadows";
 const baselightTheme = createTheme({
   direction: 'ltr',
   palette: {
+    red: {
+      main: '#ff3131',
+      light: '#ff7a7a',
+      dark: '#ff0000',
+    },
+    green: {
+      main: '#2fd440',
+      light: '#59ff6a',
+      dark: '#04c317',
+    },
+    yellow: {
+      main: '#f2ff00',
+      light: '#f8ff70',
+      dark: '#c7d200',
+    },
     primary: {
       main: '#5D87FF',
       light: '#ECF2FF',

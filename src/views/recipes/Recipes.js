@@ -11,15 +11,20 @@ import TablePagination from '@mui/material/TablePagination';
 
 import { useTheme } from '@mui/material/styles';
 
-import Typography from '@mui/material/Typography';
+import { useLocation } from 'react-router-dom';
 
 import {
   getAllRecipes
 } from '../../redux/recipe/actions';
 
+import {
+  getAllTypesRecipes
+} from '../../redux/type/actions';
+
 // ----------------------------------------------------------------------
 
 const Recipes = () => {
+  const location = useLocation();
   const theme = useTheme();
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -27,10 +32,10 @@ const Recipes = () => {
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(20);
 
-  const [listRecipeos, setListRecipeos] = useState([]);
+  const [listRecipes, setListRecipes] = useState([]);
   const [paginatedRecipes, setPaginatedRecipes] = useState([]);
 
-  const listRecipesZalando = [];
+  //const listRecipesAPI = useSelector((state) => state.recipesComponent.listAllRecipes);
 
   const startIndex = page * pageSize;
   const endIndex = startIndex + pageSize;
@@ -46,41 +51,53 @@ const Recipes = () => {
   };
 
   useEffect(() => {
-  }, []);
+    setListRecipes([])
+    getListTypesRecipes();
+  }, [location.pathname]);
 
   useEffect(() => {
-    setArraysRecipeos(listRecipeos);
-  }, [page, pageSize]);
+    setArraysRecipeos(listRecipes);
+  }, [page, pageSize, listRecipes]);
 
-  const setArraysRecipeos = (listRecipeos) => {
-    let listSlice = listRecipeos.slice(startIndex, endIndex);
-    setListRecipeos(listRecipeos);
+  
+  const getListTypesRecipes = async () => {
+    const resultAction = await dispatch(getAllTypesRecipes());
+    if (getAllTypesRecipes.fulfilled.match(resultAction)) {
+      if (resultAction.payload != undefined && resultAction.payload.length != 0) {
+        const listTypeRecipesReceive = Object.values(resultAction.payload);
+        console.log("-listTypeRecipesReceive-")
+        console.log(listTypeRecipesReceive)
+        getListRecipes();
+      }
+      else {
+        setListRecipes([]);
+      }
+    }
+  }
+
+  const getListRecipes = async () => {
+    const resultAction = await dispatch(getAllRecipes());
+    if (getAllRecipes.fulfilled.match(resultAction)) {
+      if (resultAction.payload != undefined && resultAction.payload.length != 0) {
+        const listRecipesReceive = Object.values(resultAction.payload);
+        console.log("-listRecipesReceive-")
+        console.log(listRecipesReceive)
+        setListRecipes(listRecipesReceive);
+      }
+      else {
+        setListRecipes([]);
+      }
+    }
+  };
+
+  const setArraysRecipeos = (listRecipes) => {
+    let listSlice = listRecipes.slice(startIndex, endIndex);
+    setListRecipes(listRecipes);
     setPaginatedRecipes(listSlice);
   };
 
-  useEffect(() => {
-    if (listRecipesZalando.length !== 0) {
-      setArraysRecipeos(listRecipesZalando);
-
-      let precioMinimo = 0;
-      let precioMaximo = 0;
-      if (
-        listRecipesZalando[0].precio_actual_talla !== '' &&
-        listRecipesZalando[0].precio_actual_talla !== null &&
-        listRecipesZalando[0].precio_actual_talla !== undefined
-      ) {
-        let preciosNumericos = [
-          ...listRecipesZalando.map((recipeo) => recipeo.precio_actual_talla),
-        ];
-        precioMaximo = Math.max.apply(null, preciosNumericos);
-        precioMinimo = Math.min.apply(null, preciosNumericos);
-      }
-    }
-  }, [listRecipesZalando]);
-
   const handleClick = (recipe) => {
-    // Redirigir a la URL específica del recipeo
-    navigate(`/recipes/${recipe._id}`);
+    //navigate(`/recipes/${recipe._id}`);
   };
 
   return (
@@ -95,7 +112,7 @@ const Recipes = () => {
       <Stack direction="row" flexShrink={0} sx={{ my: 4, width: '100%' }} justifyContent="flex-end">
         <TablePagination
           component="div"
-          count={listRecipeos.length}
+          count={listRecipes.length}
           page={page}
           onPageChange={handleChangePage}
           rowsPerPage={pageSize}

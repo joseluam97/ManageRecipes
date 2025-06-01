@@ -1,4 +1,6 @@
 import PropTypes from 'prop-types';
+import { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
@@ -6,34 +8,79 @@ import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import { fCurrency } from 'src/utils/format-number';
+import { formatMinutesToTime } from 'src/utils/format-time';
 
 import Label from 'src/components/label';
+import Menu1 from 'src/assets/images/menu/menu1.jpg';
+
+import {
+  LOWER_LEVEL_DIFFICULTY_RECIPE,
+  MEDIUM_LEVEL_DIFFICULTY_RECIPE,
+  COLOR_DEFAULT_TYPE_RECIPES
+} from 'src/utils/constant';
 
 // ----------------------------------------------------------------------
 
-export default function ShopRecipeCard({ recipe }) {
+export default function RecipeCard({ recipe }) {
+
+  const listAllTypesRecipesAPI = useSelector((state) => state.typeRecipesComponent.listAllTypesRecipes);
+
+  const getTypeRecipe = () => {
+    const listAllTypesRecipes = Object.values(listAllTypesRecipesAPI);
+    let elementType = listAllTypesRecipes.filter(element => element.id == recipe.type)[0]
+    if (elementType != undefined) {
+      return elementType.name;
+    }
+    return ""
+  }
+
+  const getColorTypeRecipe = () => {
+    const listAllTypesRecipes = Object.values(listAllTypesRecipesAPI);
+    let elementType = listAllTypesRecipes.filter(element => element.id == recipe.type)[0]
+    if (elementType != undefined) {
+      return elementType.color;
+    }
+    return COLOR_DEFAULT_TYPE_RECIPES
+  }
+
   const renderStatus = (
-    <Label
-      variant="filled"
-      color= 'info'
-      sx={{
-        zIndex: 9,
-        top: 16,
-        right: 16,
-        position: 'absolute',
-        textTransform: 'uppercase',
-      }}
-    >
-      {recipe.brand + " - " + recipe.id_zalando}
-    </Label>
+    <>
+      <Label
+        variant="filled"
+        sx={{
+          zIndex: 9,
+          top: 16,
+          left: 16,
+          position: 'absolute',
+          textTransform: 'uppercase',
+          backgroundColor: {getColorTypeRecipe},
+        }}
+      >
+        {getTypeRecipe()}
+      </Label>
+
+
+      <Label
+        variant="filled"
+        color='info'
+        sx={{
+          zIndex: 9,
+          top: 16,
+          right: 16,
+          position: 'absolute',
+        }}
+      >
+        {formatMinutesToTime(recipe.preparation_time)}
+      </Label>
+
+    </>
   );
 
   const renderImg = (
     <Box
       component="img"
       alt={recipe.name}
-      src={recipe.imagen}
+      src={Menu1}
       sx={{
         top: 0,
         width: 1,
@@ -44,22 +91,41 @@ export default function ShopRecipeCard({ recipe }) {
     />
   );
 
-  const renderPrice = (
-    <Typography variant="subtitle1">
+  const renderTittle = (
+    <Stack direction="column" alignItems="left" justifyContent="space-between">
+      <Link color="inherit" underline="hover" variant="h6" noWrap>
+        {recipe.name}
+      </Link>
       <Typography
         component="span"
-        variant="body1"
+        variant="filled"
+        color='info'
         sx={{
           color: 'text.disabled',
-          textDecoration: 'line-through',
         }}
       >
-        {recipe.porcentaje_cambio !== 0 ? fCurrency(recipe.precio_medio) : ''}
+        {recipe.order}
       </Typography>
-      &nbsp;
-      {fCurrency(recipe.precio_actual_talla)}
-    </Typography>
+    </Stack>
   );
+
+  const renderPrice = (
+    <Label
+      variant="filled"
+      color={recipe.difficulty == LOWER_LEVEL_DIFFICULTY_RECIPE ? 'green' :
+            recipe.difficulty == MEDIUM_LEVEL_DIFFICULTY_RECIPE ? 'yellow' :
+            'red'
+      }
+      sx={{
+        top: 16,
+        right: 16,
+        color: '#ffffff',
+      }}
+    >
+      {recipe.difficulty}
+    </Label>
+  );
+
 
   return (
     <Card>
@@ -69,18 +135,19 @@ export default function ShopRecipeCard({ recipe }) {
       </Box>
 
       <Stack spacing={2} sx={{ p: 3 }}>
-        <Link color="inherit" underline="hover" variant="subtitle1" noWrap>
-          {recipe.name}
-        </Link>
+        <Stack direction="row" alignItems="center" justifyContent="space-between">
+          {renderTittle}
+        </Stack>
 
         <Stack direction="row" alignItems="center" justifyContent="space-between">
           {renderPrice}
         </Stack>
+
       </Stack>
     </Card>
   );
 }
 
-ShopRecipeCard.propTypes = {
+RecipeCard.propTypes = {
   recipe: PropTypes.object,
 };

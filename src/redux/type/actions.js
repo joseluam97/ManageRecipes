@@ -4,20 +4,20 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { supabase } from "../../utils/supabase";
 
 import {
-  GET_ALL_RECIPES,
+  GET_ALL_TYPE_RECIPES,
   INIT_VALUE,
 } from './types';
 
 export const initValue = createAction(INIT_VALUE);
 
-export const getAllRecipes = createAsyncThunk(
-  GET_ALL_RECIPES,
+export const getAllTypesRecipes = createAsyncThunk(
+  GET_ALL_TYPE_RECIPES,
   async (_, { rejectWithValue }) => {
     try {
       const { data, error } = await supabase
-        .from('Recipes')
+        .from('Types')
         .select('*')
-        .order('name', { ascending: false });
+        .order('id', { ascending: false });
 
       if (error) {
         return rejectWithValue(error.message);
