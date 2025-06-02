@@ -2,12 +2,14 @@ import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
-import Stack from '@mui/material/Stack';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Unstable_Grid2';
 
 import RecipeCard from './components/recipes-card';
 import TablePagination from '@mui/material/TablePagination';
+import { Stack, IconButton, Badge, Button } from '@mui/material';
+import { IconLayoutGridAdd, IconMenu } from '@tabler/icons';
+import RecipeFormPage from './components/RecipeForm';
 
 import { useTheme } from '@mui/material/styles';
 
@@ -29,6 +31,7 @@ const Recipes = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  const [open, setOpen] = useState(false);
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(20);
 
@@ -59,7 +62,7 @@ const Recipes = () => {
     setArraysRecipeos(listRecipes);
   }, [page, pageSize, listRecipes]);
 
-  
+
   const getListTypesRecipes = async () => {
     const resultAction = await dispatch(getAllTypesRecipes());
     if (getAllTypesRecipes.fulfilled.match(resultAction)) {
@@ -96,12 +99,35 @@ const Recipes = () => {
     setPaginatedRecipes(listSlice);
   };
 
+  const newRecipe = () => {
+    navigate(`/recipesForm`);
+  };
+
   const handleClick = (recipe) => {
     //navigate(`/recipes/${recipe._id}`);
   };
 
   return (
     <Container>
+      <Stack direction="row" flexShrink={0} sx={{ my: 4, width: '100%' }} justifyContent="flex-end">
+        <IconButton
+          size="large"
+          color="inherit"
+          aria-controls="msgs-menu"
+          aria-haspopup="true"
+          onClick={() => newRecipe()}
+          sx={{
+            ...(typeof anchorEl2 === 'object' && {
+              color: 'primary.main',
+            }),
+          }}
+        >
+          <Badge variant="dot" color="primary">
+            <IconLayoutGridAdd size="21" stroke="1.5" />
+          </Badge>
+
+        </IconButton>
+      </Stack>
       <Grid container spacing={3}>
         {paginatedRecipes.map((recipe) => (
           <Grid key={recipe.id} xs={12} sm={6} md={3} onClick={(e) => handleClick(recipe)}>
