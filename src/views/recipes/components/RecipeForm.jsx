@@ -32,6 +32,7 @@ import {
 
 import { getAllTypesRecipes } from '../../../redux/type/actions'
 import IngredientsPanel from './IngredientsPanel';
+import ElaborationSteps from './ElaborationStepsInput';
 
 const difficulties = [LOWER_LEVEL_DIFFICULTY_RECIPE, MEDIUM_LEVEL_DIFFICULTY_RECIPE, HIGH_LEVEL_DIFFICULTY_RECIPE];
 const types = ['Desayuno', 'Almuerzo', 'Cena'];
@@ -49,6 +50,7 @@ export default function RecipeFormPage() {
     const [countries, setCountries] = useState([]);
     const [listTypes, setListTypes] = useState([]);
     const [showIngredients, setShowIngredients] = useState(false);
+    const [showElaborationSteps, setShowElaborationSteps] = useState(false);
 
     const [form, setForm] = useState({
         name: '',
@@ -74,13 +76,18 @@ export default function RecipeFormPage() {
         fetch('https://restcountries.com/v3.1/all')
             .then(res => res.json())
             .then(data => {
-                const formatted = data.map((c) => ({
-                    label: c.name.common,
-                    flag: c.flags?.svg || c.flags?.png,
-                })).sort((a, b) => a.label.localeCompare(b.label));
-                setCountries(formatted);
-                const posSpain = formatted.find(element => element.label === "Spain");
-                setForm(prev => ({ ...prev, country_origin: posSpain?.label || '' }));
+                console.log("-data-")
+                console.log(data)
+                if (data.status != 400) {
+                    const formatted = data?.map((c) => ({
+                        label: c.name.common,
+                        flag: c.flags?.svg || c.flags?.png,
+                    })).sort((a, b) => a.label.localeCompare(b.label));
+                    setCountries(formatted);
+                    const posSpain = formatted.find(element => element.label === "Spain");
+                    setForm(prev => ({ ...prev, country_origin: posSpain?.label || '' }));
+
+                }
             });
     }
 
@@ -127,13 +134,13 @@ export default function RecipeFormPage() {
             </Typography>
             <Box display="flex" flexDirection="row" gap={2}>
                 <Box
-                    flex={showIngredients ? 1 : 'unset'}
-                    width={showIngredients ? '50%' : '100%'}
-                    pointerEvents={showIngredients ? 'none' : 'auto'}
-                    opacity={showIngredients ? 0.5 : 1}
+                    flex={showIngredients || showElaborationSteps ? 1 : 'unset'}
+                    width={showIngredients || showElaborationSteps ? '50%' : '100%'}
+                    pointerEvents={showIngredients || showElaborationSteps ? 'none' : 'auto'}
+                    opacity={showIngredients || showElaborationSteps ? 0.5 : 1}
                     sx={{
-                        pointerEvents: showIngredients ? 'none' : '',
-                        opacity: showIngredients ? 0.5 : 1, // opcional, solo para indicar visualmente que está desactivado
+                        pointerEvents: showIngredients || showElaborationSteps ? 'none' : '',
+                        opacity: showIngredients || showElaborationSteps ? 0.5 : 1, // opcional, solo para indicar visualmente que está desactivado
                     }}
                 >
                     <Box display="flex" flexDirection="column" gap={2}>
@@ -214,10 +221,14 @@ export default function RecipeFormPage() {
                             fullWidth
                         />
 
-                        <ElaborationStepsInput
+
+                        <Button onClick={() => setShowElaborationSteps(true)} variant="outlined" color="secondary">
+                            Añadir elaboracion
+                        </Button>
+                        {/*<ElaborationStepsInput
                             steps={form.elaboration}
                             setSteps={(steps) => setForm({ ...form, elaboration: steps })}
-                        />
+                        />*/}
 
                         <Divider sx={{ mt: 2, mb: 1 }}>
                             <Typography variant="subtitle2" fontWeight="bold">Additional information</Typography>
@@ -240,7 +251,19 @@ export default function RecipeFormPage() {
                 </Box>
                 {showIngredients && (
                     <Box width="50%">
-                        <IngredientsPanel onClose={() => setShowIngredients(false)} />
+                        <IngredientsPanel 
+                            onClose={() => setShowIngredients(false)}
+                            setIdIngredients={(idIngredients) => setForm({ ...form, ingredients: idIngredients })}
+                        />
+                    </Box>
+                )}
+                
+                {showElaborationSteps && (
+                    <Box width="50%">
+                        <ElaborationSteps 
+                            onClose={() => setShowElaborationSteps(false)}
+                            setIdSteps={(steps) => setForm({ ...form, elaboration: steps })}
+                        />
                     </Box>
                 )}
             </Box>
