@@ -1,0 +1,2 @@
+export const GET_ALL_INGREDIENTS = 'GET_ALL_INGREDIENTS'
+export const INIT_VALUE = 'INIT_VALUE'

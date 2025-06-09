@@ -31,7 +31,7 @@ import {
 } from 'src/utils/constant';
 
 import { getAllTypesRecipes } from '../../../redux/type/actions'
-import IngredientsPanel from './IngredientsPanel';
+import IngredientsPanel from '../../ingredients/IngredientsPanel';
 import ElaborationSteps from './ElaborationStepsInput';
 
 const difficulties = [LOWER_LEVEL_DIFFICULTY_RECIPE, MEDIUM_LEVEL_DIFFICULTY_RECIPE, HIGH_LEVEL_DIFFICULTY_RECIPE];
@@ -250,7 +250,7 @@ export default function RecipeFormPage() {
                     </Box>
                 </Box>
                 {showIngredients && (
-                    <Box width="50%">
+                    <Box width="65%">
                         <IngredientsPanel 
                             onClose={() => setShowIngredients(false)}
                             setIdIngredients={(idIngredients) => setForm({ ...form, ingredients: idIngredients })}
@@ -259,7 +259,7 @@ export default function RecipeFormPage() {
                 )}
                 
                 {showElaborationSteps && (
-                    <Box width="50%">
+                    <Box width="65%">
                         <ElaborationSteps 
                             onClose={() => setShowElaborationSteps(false)}
                             setIdSteps={(steps) => setForm({ ...form, elaboration: steps })}

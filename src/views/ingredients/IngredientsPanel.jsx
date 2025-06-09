@@ -2,15 +2,15 @@ import { Box, IconButton, Button, TextField, Typography, Paper, Stack } from '@m
 import { useState } from 'react';
 import { Add, DragIndicator } from '@mui/icons-material';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import DroppableComponentIngredients from 'src/components/droppable/droppable_component_ingredients'
+import ListIngredients from 'src/views/ingredients/ListIngredients'
 
 export default function IngredientsPanel({ onClose, setIdIngredients }) {
 
-  const [steps, setSteps] = useState(['', '', '']);
+  const [ingredients, setIngredients] = useState(['', '', '']);
 
   const saveIngredients = () => {
 
-    steps.map(element => {
+    ingredients.map(element => {
       setIdIngredients({
         name: "ig1",
         quantity: 1,
@@ -26,9 +26,9 @@ export default function IngredientsPanel({ onClose, setIdIngredients }) {
       <Typography variant="h5" gutterBottom>Ingredients</Typography>
 
       <Box sx={{ width: '100%', paddingBottom: '20px', paddingTop: '20px' }}>
-        <DroppableComponentIngredients
-          steps={steps}
-          setSteps={(steps) => setSteps(steps)}
+        <ListIngredients
+          ingredients={ingredients}
+          setIngredients={(ingredients) => setIngredients(ingredients)}
           title="List ingredients"
         />
       </Box>
