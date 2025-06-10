@@ -3,7 +3,7 @@ import { Add, DragIndicator } from '@mui/icons-material';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { useDispatch, useSelector } from 'react-redux';
 import { setListStepsNewRecipe } from '../../redux/recipe/actions'
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { IconTrash } from '@tabler/icons';
 
@@ -17,16 +17,12 @@ export default function ListSteps({ title }) {
     const listSteps = Object.values(listStepsNewRecipeAPI);
 
     useEffect(() => {
-        console.log("-listSteps-")
-        console.log(listSteps.length)
         if (listSteps.length == 0) {
             handleAdd();
         }
     }, [location.pathname]);
 
     const handleAdd = () => {
-        console.log("-listStepsNewRecipeAPI-")
-        console.log(listStepsNewRecipeAPI)
         let listStepsNewRecipe = [...Object.values(listStepsNewRecipeAPI)]
         listStepsNewRecipe.push('')
         dispatch(setListStepsNewRecipe(listStepsNewRecipe));

@@ -1,6 +1,4 @@
-import { Box, IconButton, Button, TextField, Typography, Paper, Stack } from '@mui/material';
-import { Add, DragIndicator } from '@mui/icons-material';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { Box, Button, Typography } from '@mui/material';
 import ListIngredients from 'src/views/ingredients/ListIngredients'
 import Label from 'src/components/label';
 import { useLocation } from 'react-router-dom';

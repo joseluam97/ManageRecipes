@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { createAction } from "@reduxjs/toolkit";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { supabase } from "../../utils/supabase";

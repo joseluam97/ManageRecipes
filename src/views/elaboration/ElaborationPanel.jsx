@@ -1,16 +1,10 @@
-import { Box, IconButton, Button, TextField, Typography, Paper, Stack } from '@mui/material';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { Box, Button, Typography } from '@mui/material';
 import ListSteps from 'src/views/elaboration/ListSteps'
 import Label from 'src/components/label';
-import { useDispatch, useSelector } from 'react-redux';
-import { setListStepsNewRecipe } from '../../redux/recipe/actions'
-import { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { useState } from 'react';
 
 export default function ElaborationPanel({ onClose, setIdSteps }) {
-
-  const location = useLocation();
-  const dispatch = useDispatch();
 
   const [showValidationError, setShowValidationError] = useState(false);
 

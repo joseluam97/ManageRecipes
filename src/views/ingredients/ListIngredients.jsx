@@ -1,7 +1,7 @@
 import { Autocomplete, Box, IconButton, TextField, Typography, Paper, Stack, Badge } from '@mui/material';
 import { Add, DragIndicator } from '@mui/icons-material';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { getAllUnits } from '../../redux/units/actions'
 import { useDispatch, useSelector } from 'react-redux';

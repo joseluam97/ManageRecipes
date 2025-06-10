@@ -9,8 +9,7 @@ import {
     Autocomplete,
     Avatar,
 } from '@mui/material';
-import { useDispatch, useSelector } from 'react-redux';
-import ElaborationStepsInput from '../../elaboration/ElaborationPanel';
+import { useDispatch } from 'react-redux';
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import {
@@ -33,10 +32,9 @@ import {
 import { getAllTypesRecipes } from '../../../redux/type/actions'
 import IngredientsPanel from '../../ingredients/IngredientsPanel';
 import ElaborationPanel from '../../elaboration/ElaborationPanel';
-import { setListIngredientsNewRecipe } from '../../../redux/recipe/actions'
 
 const difficulties = [LOWER_LEVEL_DIFFICULTY_RECIPE, MEDIUM_LEVEL_DIFFICULTY_RECIPE, HIGH_LEVEL_DIFFICULTY_RECIPE];
-const tags = ['Vegetariano', 'Vegano', 'Sin gluten'];
+const tags = ['TBD', 'TBD', 'TBD'];
 const order = [ORDER_MEAL, ORDER_BREAKFAST_SNACK, ORDER_BASIC, ORDER_DIP, ORDER_ACCOMPANIMENT, ORDER_DESSERT];
 const source = [SOURCE_TIKTOK, SOURCE_INSTAGRAM, SOURCE_MASTER_CHEF, SOURCE_BOOK, SOURCE_OTHER];
 
@@ -153,7 +151,7 @@ export default function RecipeFormPage() {
                             ))}
                         </TextField>
 
-                        <TextField select label="Dificultad" value={form.difficulty} onChange={handleChange('difficulty')} fullWidth>
+                        <TextField select label="Difficulty" value={form.difficulty} onChange={handleChange('difficulty')} fullWidth>
                             {difficulties.map((option) => (
                                 <MenuItem key={option} value={option}>{option}</MenuItem>
                             ))}
@@ -173,7 +171,7 @@ export default function RecipeFormPage() {
                             renderInput={(params) => (
                                 <TextField
                                     {...params}
-                                    label="País de origen"
+                                    label="Country of origin"
                                     fullWidth
                                     InputProps={{
                                         ...params.InputProps,
@@ -216,7 +214,7 @@ export default function RecipeFormPage() {
                         </Divider>
 
                         <TextField
-                            label="Tiempo de preparación (min)"
+                            label="Preparation time (min)"
                             value={form.preparation_time}
                             onChange={handleChange('preparation_time')}
                             fullWidth
@@ -231,7 +229,7 @@ export default function RecipeFormPage() {
                         </Divider>
 
                         <TextField label="Link" value={form.link} onChange={handleChange('link')} fullWidth />
-                        <TextField label="Imagen (URL)" value={form.image} onChange={handleChange('image')} fullWidth />
+                        <TextField label="Image (URL)" value={form.image} onChange={handleChange('image')} fullWidth />
 
                         <TextField select label="Tags" value={form.tags} onChange={handleChange('tags')} fullWidth>
                             {tags.map((option) => (
@@ -240,8 +238,8 @@ export default function RecipeFormPage() {
                         </TextField>
 
                         <Box display="flex" justifyContent="flex-end" gap={2} mt={2}>
-                            <Button color="secondary" variant="outlined">Cancelar</Button>
-                            <Button onClick={handleSave} variant="contained" color="primary">Guardar</Button>
+                            <Button color="secondary" variant="outlined">Cancel</Button>
+                            <Button onClick={handleSave} variant="contained" color="primary">Save</Button>
                         </Box>
                     </Box>
                 </Box>
