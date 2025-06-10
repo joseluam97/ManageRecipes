@@ -68,8 +68,6 @@ const Recipes = () => {
     if (getAllTypesRecipes.fulfilled.match(resultAction)) {
       if (resultAction.payload != undefined && resultAction.payload.length != 0) {
         const listTypeRecipesReceive = Object.values(resultAction.payload);
-        console.log("-listTypeRecipesReceive-")
-        console.log(listTypeRecipesReceive)
         getListRecipes();
       }
       else {

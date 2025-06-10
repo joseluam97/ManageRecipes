@@ -33,10 +33,9 @@ import {
 import { getAllTypesRecipes } from '../../../redux/type/actions'
 import IngredientsPanel from '../../ingredients/IngredientsPanel';
 import ElaborationSteps from './ElaborationStepsInput';
+import { setListIngredientsNewRecipe } from '../../../redux/recipe/actions'
 
 const difficulties = [LOWER_LEVEL_DIFFICULTY_RECIPE, MEDIUM_LEVEL_DIFFICULTY_RECIPE, HIGH_LEVEL_DIFFICULTY_RECIPE];
-const types = ['Desayuno', 'Almuerzo', 'Cena'];
-const countries = ['España', 'Italia', 'México'];
 const tags = ['Vegetariano', 'Vegano', 'Sin gluten'];
 const order = [ORDER_MEAL, ORDER_BREAKFAST_SNACK, ORDER_BASIC, ORDER_DIP, ORDER_ACCOMPANIMENT, ORDER_DESSERT];
 const source = [SOURCE_TIKTOK, SOURCE_INSTAGRAM, SOURCE_MASTER_CHEF, SOURCE_BOOK, SOURCE_OTHER];
@@ -76,8 +75,6 @@ export default function RecipeFormPage() {
         fetch('https://restcountries.com/v3.1/all')
             .then(res => res.json())
             .then(data => {
-                console.log("-data-")
-                console.log(data)
                 if (data.status != 400) {
                     const formatted = data?.map((c) => ({
                         label: c.name.common,
@@ -104,9 +101,6 @@ export default function RecipeFormPage() {
                         type: listTypeRecipesReceive[0].name // o .id si usas ID como value
                     }));
                 }
-
-                console.log("-listTypeRecipesReceive-");
-                console.log(listTypeRecipesReceive);
             }
         }
     };
@@ -118,6 +112,9 @@ export default function RecipeFormPage() {
 
     const handleSave = () => {
         console.log('Formulario completado:', form);
+
+        // Reset ingredients about current recipe
+        //dispatch(setListIngredientsNewRecipe([]));
     };
 
     return (
@@ -206,8 +203,12 @@ export default function RecipeFormPage() {
                             ))}
                         </TextField>
 
+                        <Divider sx={{ mt: 2, mb: 1 }}>
+                            <Typography variant="subtitle2" fontWeight="bold">Ingredients</Typography>
+                        </Divider>
+
                         <Button onClick={() => setShowIngredients(true)} variant="outlined" color="secondary">
-                            Añadir ingredientes
+                            Add ingredients
                         </Button>
 
                         <Divider sx={{ mt: 2, mb: 1 }}>
@@ -221,14 +222,9 @@ export default function RecipeFormPage() {
                             fullWidth
                         />
 
-
                         <Button onClick={() => setShowElaborationSteps(true)} variant="outlined" color="secondary">
-                            Añadir elaboracion
+                            Add elaboration
                         </Button>
-                        {/*<ElaborationStepsInput
-                            steps={form.elaboration}
-                            setSteps={(steps) => setForm({ ...form, elaboration: steps })}
-                        />*/}
 
                         <Divider sx={{ mt: 2, mb: 1 }}>
                             <Typography variant="subtitle2" fontWeight="bold">Additional information</Typography>

@@ -5,6 +5,7 @@ import { supabase } from "../../utils/supabase";
 
 import {
   GET_ALL_INGREDIENTS,
+  POST_INGREDIENT,
   INIT_VALUE,
 } from './types';
 
@@ -27,6 +28,39 @@ export const getAllIngredients = createAsyncThunk(
 
     } catch (error) {
       return rejectWithValue(error.message || "Error inesperado");
+    }
+  }
+);
+
+export const postIngredient = createAsyncThunk(
+  POST_INGREDIENT,
+  async (name_ingredient, { rejectWithValue }) => {
+
+    const newIngredient = {
+      name: name_ingredient,
+    };
+
+    try {
+      // Hacer el insert en Supabase
+      const { data, error } = await supabase
+        .from('Ingredients')
+        .insert([newIngredient])
+        .select()
+        .single();
+
+      if (error) {
+        console.log("ERROR:");
+        console.log(error.message);
+        return rejectWithValue(error.message);
+      }
+
+      // Opcional: Puedes hacer algo con la respuesta, como agregar el mensaje a la lista localmente
+      console.log("Mensaje enviado:", data);
+
+      return data;
+
+    } catch (error) {
+      return rejectWithValue(error.message || "Error when you created a new ingredients");
     }
   }
 );
