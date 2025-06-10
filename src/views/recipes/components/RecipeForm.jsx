@@ -10,7 +10,7 @@ import {
     Avatar,
 } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import ElaborationStepsInput from './ElaborationStepsInput';
+import ElaborationStepsInput from '../../elaboration/ElaborationPanel';
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import {
@@ -32,7 +32,7 @@ import {
 
 import { getAllTypesRecipes } from '../../../redux/type/actions'
 import IngredientsPanel from '../../ingredients/IngredientsPanel';
-import ElaborationSteps from './ElaborationStepsInput';
+import ElaborationPanel from '../../elaboration/ElaborationPanel';
 import { setListIngredientsNewRecipe } from '../../../redux/recipe/actions'
 
 const difficulties = [LOWER_LEVEL_DIFFICULTY_RECIPE, MEDIUM_LEVEL_DIFFICULTY_RECIPE, HIGH_LEVEL_DIFFICULTY_RECIPE];
@@ -256,7 +256,7 @@ export default function RecipeFormPage() {
                 
                 {showElaborationSteps && (
                     <Box width="65%">
-                        <ElaborationSteps 
+                        <ElaborationPanel 
                             onClose={() => setShowElaborationSteps(false)}
                             setIdSteps={(steps) => setForm({ ...form, elaboration: steps })}
                         />

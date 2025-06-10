@@ -6,6 +6,7 @@ import { supabase } from "../../utils/supabase";
 import {
   GET_ALL_RECIPES,
   SET_INGREDIENTS_NEW_RECIPES,
+  SET_STEPS_NEW_RECIPES,
   INIT_VALUE,
 } from './types';
 
@@ -15,6 +16,13 @@ export const setListIngredientsNewRecipe = createAsyncThunk(
   SET_INGREDIENTS_NEW_RECIPES,
   async (listIngredient, { rejectWithValue }) => {
     return listIngredient;
+  }
+);
+
+export const setListStepsNewRecipe = createAsyncThunk(
+  SET_STEPS_NEW_RECIPES,
+  async (listSteps, { rejectWithValue }) => {
+    return listSteps;
   }
 );
 

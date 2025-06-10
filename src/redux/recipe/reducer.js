@@ -3,13 +3,15 @@ import { createReducer } from "@reduxjs/toolkit";
 import {
     initValue,
     getAllRecipes,
-    setListIngredientsNewRecipe
+    setListIngredientsNewRecipe,
+    setListStepsNewRecipe
 } from "./actions";
 
 // Cada reducer tiene su propio state
 const initialState = {
     listAllRecipes: [],
     listIngredientsNewRecipes: [],
+    listStepsNewRecipes: [],
     error: null,
     loading: false,
 }
@@ -32,6 +34,13 @@ export default createReducer(initialState, (builder) => {
                 ...state,
                 error: false,
                 listIngredientsNewRecipes: { ...action.payload },
+            };
+        })
+        .addCase(setListStepsNewRecipe.fulfilled, (state, action) => {
+            return {
+                ...state,
+                error: false,
+                listStepsNewRecipes: { ...action.payload },
             };
         })
         .addDefaultCase((state) => {

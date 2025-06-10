@@ -19,7 +19,7 @@ export default function IngredientsPanel({ onClose, setIdIngredients }) {
   const [showValidationError, setShowValidationError] = useState(false);
 
   useEffect(() => {
-
+    setListIngredientsBackup(Object.values(listIngredientsNewRecipesAPI))
   }, [location.pathname]);
 
   const cancelSave = () => {
@@ -87,7 +87,7 @@ export default function IngredientsPanel({ onClose, setIdIngredients }) {
       <Button variant="contained" color="primary" onClick={saveIngredients}>
         Save ingredients
       </Button>
-      <Button variant="contained" color="red" sx={{marginLeft: 2, color: "#FFFFFF"}}onClick={cancelSave}>
+      <Button variant="contained" color="red" sx={{ marginLeft: 2, color: "#FFFFFF" }} onClick={cancelSave}>
         Cancel
       </Button>
     </Box>
