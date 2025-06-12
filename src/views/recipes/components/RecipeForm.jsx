@@ -13,31 +13,19 @@ import { useDispatch } from 'react-redux';
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import {
-    LOWER_LEVEL_DIFFICULTY_RECIPE,
-    MEDIUM_LEVEL_DIFFICULTY_RECIPE,
-    HIGH_LEVEL_DIFFICULTY_RECIPE,
-    ORDER_MEAL,
-    ORDER_BREAKFAST_SNACK,
-    ORDER_BASIC,
-    ORDER_DIP,
-    ORDER_ACCOMPANIMENT,
-    ORDER_DESSERT,
-    SOURCE_TIKTOK,
-    SOURCE_INSTAGRAM,
-    SOURCE_MASTER_CHEF,
-    SOURCE_BOOK,
-    SOURCE_OTHER,
+    COUNTRY_DEFAULT
 } from 'src/utils/constant';
 
 import { getAllTypesRecipes } from '../../../redux/type/actions'
 import IngredientsPanel from '../../ingredients/IngredientsPanel';
 import ElaborationPanel from '../../elaboration/ElaborationPanel';
+import MultiSelectAutocomplete from '../../../components/selectors/MultiSelectAutocomplete'
 
-const difficulties = [LOWER_LEVEL_DIFFICULTY_RECIPE, MEDIUM_LEVEL_DIFFICULTY_RECIPE, HIGH_LEVEL_DIFFICULTY_RECIPE];
-const tags = ['TBD', 'TBD', 'TBD'];
-const order = [ORDER_MEAL, ORDER_BREAKFAST_SNACK, ORDER_BASIC, ORDER_DIP, ORDER_ACCOMPANIMENT, ORDER_DESSERT];
-const source = [SOURCE_TIKTOK, SOURCE_INSTAGRAM, SOURCE_MASTER_CHEF, SOURCE_BOOK, SOURCE_OTHER];
-
+import { getAllTags } from '../../../redux/tags/actions'
+import { getAllOrders } from '../../../redux/orders/actions'
+import { getAllSources } from '../../../redux/sources/actions'
+import { getAllLevels } from '../../../redux/levels/actions'
+import { getListCountries } from '../../../utils/countries'
 
 export default function RecipeFormPage() {
 
@@ -46,45 +34,99 @@ export default function RecipeFormPage() {
 
     const [countries, setCountries] = useState([]);
     const [listTypes, setListTypes] = useState([]);
+
+    const [listTags, setListTags] = useState([]);
+    const [listOrders, setListOrders] = useState([]);
+    const [listSources, setListSources] = useState([]);
+    const [listLevels, setListLevels] = useState([]);
+
+    const [selectedTags, setSelectedTags] = useState([]);
+
     const [showIngredients, setShowIngredients] = useState(false);
     const [showElaborationSteps, setShowElaborationSteps] = useState(false);
 
     const [form, setForm] = useState({
         name: '',
-        elaboration: [''],
+        ingredients: [],
+        elaboration: [],
         preparation_time: '',
         link: '',
         type: '',
-        difficulty: difficulties[0],
-        country_origin: countries[0],
+        difficulty: '',
+        country_origin: '',
         order: '',
         source: '',
-        tags: tags[0],
+        tags: '',
         image: '',
-        type_name: '',
     });
 
     useEffect(() => {
+        if (selectedTags != undefined) {
+            setForm({ ...form, ['tags']: selectedTags.map(tag => tag.name).join(', ') });
+        }
+
+    }, [selectedTags]);
+
+    useEffect(() => {
         getListTypesRecipes();
-        getListCountries();
+
+        getOrders();
+        getSources();
+        getLevels();
+        getTags();
+
+        // Get list Countries
+        fetchCountries();
+
     }, [location.pathname]);
 
-    const getListCountries = () => {
-        fetch('https://restcountries.com/v3.1/all')
-            .then(res => res.json())
-            .then(data => {
-                if (data.status != 400) {
-                    const formatted = data?.map((c) => ({
-                        label: c.name.common,
-                        flag: c.flags?.svg || c.flags?.png,
-                    })).sort((a, b) => a.label.localeCompare(b.label));
-                    setCountries(formatted);
-                    const posSpain = formatted.find(element => element.label === "Spain");
-                    setForm(prev => ({ ...prev, country_origin: posSpain?.label || '' }));
+    const fetchCountries = async () => {
+        const listCountries = await getListCountries();
 
-                }
-            });
-    }
+        setCountries(listCountries);
+        const posSpain = listCountries.find(element => element.label === COUNTRY_DEFAULT);
+        setForm(prev => ({ ...prev, country_origin: posSpain?.label || '' }));
+    };
+
+    const getOrders = async () => {
+        const resultAction = await dispatch(getAllOrders());
+        if (getAllOrders.fulfilled.match(resultAction) && resultAction.payload != undefined) {
+            const listOrdersReceive = Object.values(resultAction.payload);
+            console.log("-listOrdersReceive-")
+            console.log(listOrdersReceive)
+            setListOrders(listOrdersReceive);
+        }
+    };
+
+    const getSources = async () => {
+        const resultAction = await dispatch(getAllSources());
+        if (getAllSources.fulfilled.match(resultAction) && resultAction.payload != undefined) {
+            const listSourcesReceive = Object.values(resultAction.payload);
+            console.log("-listSourcesReceive-")
+            console.log(listSourcesReceive)
+            setListSources(listSourcesReceive);
+        }
+    };
+
+    const getLevels = async () => {
+        const resultAction = await dispatch(getAllLevels());
+        if (getAllLevels.fulfilled.match(resultAction) && resultAction.payload != undefined) {
+            const listLevelsReceive = Object.values(resultAction.payload);
+            console.log("-listLevelsReceive-")
+            console.log(listLevelsReceive)
+            setListLevels(listLevelsReceive);
+        }
+    };
+
+    const getTags = async () => {
+        const resultAction = await dispatch(getAllTags());
+        if (getAllTags.fulfilled.match(resultAction) && resultAction.payload != undefined) {
+            const listTagsReceive = Object.values(resultAction.payload);
+            console.log("-listTagsReceive-")
+            console.log(listTagsReceive)
+            setListTags(listTagsReceive);
+        }
+    };
 
     const getListTypesRecipes = async () => {
         const resultAction = await dispatch(getAllTypesRecipes());
@@ -92,20 +134,13 @@ export default function RecipeFormPage() {
             if (resultAction.payload != undefined) {
                 const listTypeRecipesReceive = Object.values(resultAction.payload);
                 setListTypes(listTypeRecipesReceive);
-
-                if (listTypeRecipesReceive.length > 0) {
-                    setForm(prev => ({
-                        ...prev,
-                        type: listTypeRecipesReceive[0].name // o .id si usas ID como value
-                    }));
-                }
             }
         }
     };
 
-
     const handleChange = (field) => (e) => {
         setForm({ ...form, [field]: e.target.value });
+
     };
 
     const handleSave = () => {
@@ -147,13 +182,13 @@ export default function RecipeFormPage() {
 
                         <TextField select label="Type" value={form.type} onChange={handleChange('type')} fullWidth>
                             {listTypes.map((option) => (
-                                <MenuItem key={option.id} value={option.name}>{option.name}</MenuItem>
+                                <MenuItem key={option.id} value={option.id}>{option.name}</MenuItem>
                             ))}
                         </TextField>
 
                         <TextField select label="Difficulty" value={form.difficulty} onChange={handleChange('difficulty')} fullWidth>
-                            {difficulties.map((option) => (
-                                <MenuItem key={option} value={option}>{option}</MenuItem>
+                            {listLevels.map((option) => (
+                                <MenuItem key={option.id} value={option.id}>{option.name}</MenuItem>
                             ))}
                         </TextField>
 
@@ -190,14 +225,14 @@ export default function RecipeFormPage() {
                         />
 
                         <TextField select label="Order" value={form.order} onChange={handleChange('order')} fullWidth>
-                            {order.map((option) => (
-                                <MenuItem key={option} value={option}>{option}</MenuItem>
+                            {listOrders.map((option) => (
+                                <MenuItem key={option.id} value={option.id}>{option.name}</MenuItem>
                             ))}
                         </TextField>
 
                         <TextField select label="Source" value={form.source} onChange={handleChange('source')} fullWidth>
-                            {source.map((option) => (
-                                <MenuItem key={option} value={option}>{option}</MenuItem>
+                            {listSources.map((option) => (
+                                <MenuItem key={option.id} value={option.id}>{option.name}</MenuItem>
                             ))}
                         </TextField>
 
@@ -231,11 +266,12 @@ export default function RecipeFormPage() {
                         <TextField label="Link" value={form.link} onChange={handleChange('link')} fullWidth />
                         <TextField label="Image (URL)" value={form.image} onChange={handleChange('image')} fullWidth />
 
-                        <TextField select label="Tags" value={form.tags} onChange={handleChange('tags')} fullWidth>
-                            {tags.map((option) => (
-                                <MenuItem key={option} value={option}>{option}</MenuItem>
-                            ))}
-                        </TextField>
+                        <MultiSelectAutocomplete
+                            options={listTags}
+                            selected={selectedTags}
+                            setSelected={setSelectedTags}
+                            label="Tags"
+                        />
 
                         <Box display="flex" justifyContent="flex-end" gap={2} mt={2}>
                             <Button color="secondary" variant="outlined">Cancel</Button>
@@ -245,16 +281,16 @@ export default function RecipeFormPage() {
                 </Box>
                 {showIngredients && (
                     <Box width="65%">
-                        <IngredientsPanel 
+                        <IngredientsPanel
                             onClose={() => setShowIngredients(false)}
                             setIdIngredients={(idIngredients) => setForm({ ...form, ingredients: idIngredients })}
                         />
                     </Box>
                 )}
-                
+
                 {showElaborationSteps && (
                     <Box width="65%">
-                        <ElaborationPanel 
+                        <ElaborationPanel
                             onClose={() => setShowElaborationSteps(false)}
                             setIdSteps={(steps) => setForm({ ...form, elaboration: steps })}
                         />
