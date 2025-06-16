@@ -4,7 +4,8 @@ import {
     initValue,
     getAllRecipes,
     setListIngredientsNewRecipe,
-    setListStepsNewRecipe
+    setListStepsNewRecipe,
+    postNewRecipe
 } from "./actions";
 
 // Cada reducer tiene su propio state
@@ -12,6 +13,7 @@ const initialState = {
     listAllRecipes: [],
     listIngredientsNewRecipes: [],
     listStepsNewRecipes: [],
+    createdNewRecipe: {},
     error: null,
     loading: false,
 }
@@ -41,6 +43,13 @@ export default createReducer(initialState, (builder) => {
                 ...state,
                 error: false,
                 listStepsNewRecipes: { ...action.payload },
+            };
+        })
+        .addCase(postNewRecipe.fulfilled, (state, action) => {
+            return {
+                ...state,
+                error: false,
+                createdNewRecipe: { ...action.payload },
             };
         })
         .addDefaultCase((state) => {

@@ -8,6 +8,8 @@ import { setListIngredientsNewRecipe } from '../../redux/recipe/actions'
 
 export default function IngredientsPanel({ onClose, setIdIngredients }) {
 
+  const [delayRender, setDelayRender] = useState(false);
+
   const location = useLocation();
   const dispatch = useDispatch();
 
@@ -15,6 +17,11 @@ export default function IngredientsPanel({ onClose, setIdIngredients }) {
   const listIngredientsNewRecipesAPI = useSelector((state) => state.recipesComponent.listIngredientsNewRecipes);
 
   const [showValidationError, setShowValidationError] = useState(false);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => setDelayRender(true), 10);
+    return () => clearTimeout(timeout);
+  }, []);
 
   useEffect(() => {
     setListIngredientsBackup(Object.values(listIngredientsNewRecipesAPI))
@@ -61,9 +68,9 @@ export default function IngredientsPanel({ onClose, setIdIngredients }) {
       <Typography variant="h5" gutterBottom>Ingredients</Typography>
 
       <Box sx={{ width: '100%', paddingBottom: '20px', paddingTop: '20px' }}>
-        <ListIngredients
-          title="List ingredients"
-        />
+        {delayRender && (
+          <ListIngredients title="List ingredients" />
+        )}
       </Box>
 
       <Box sx={{ width: '100%', paddingBottom: '5px', paddingTop: '5px' }}>

@@ -9,9 +9,10 @@ import {
     Autocomplete,
     Avatar,
 } from '@mui/material';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
     COUNTRY_DEFAULT
 } from 'src/utils/constant';
@@ -26,11 +27,17 @@ import { getAllOrders } from '../../../redux/orders/actions'
 import { getAllSources } from '../../../redux/sources/actions'
 import { getAllLevels } from '../../../redux/levels/actions'
 import { getListCountries } from '../../../utils/countries'
+import { postNewRecipe } from '../../../redux/recipe/actions'
+import { postIngredientRecipe } from '../../../redux/ingredients/actions'
+import { setListIngredientsNewRecipe } from '../../../redux/recipe/actions'
 
 export default function RecipeFormPage() {
 
     const location = useLocation();
     const dispatch = useDispatch();
+    const navigate = useNavigate();
+
+    const [errors, setErrors] = useState({});
 
     const [countries, setCountries] = useState([]);
     const [listTypes, setListTypes] = useState([]);
@@ -44,6 +51,8 @@ export default function RecipeFormPage() {
 
     const [showIngredients, setShowIngredients] = useState(false);
     const [showElaborationSteps, setShowElaborationSteps] = useState(false);
+
+    const listIngredientsNewRecipesAPI = useSelector((state) => state.recipesComponent.listIngredientsNewRecipes);
 
     const [form, setForm] = useState({
         name: '',
@@ -59,13 +68,6 @@ export default function RecipeFormPage() {
         tags: '',
         image: '',
     });
-
-    useEffect(() => {
-        if (selectedTags != undefined) {
-            setForm({ ...form, ['tags']: selectedTags.map(tag => tag.name).join(', ') });
-        }
-
-    }, [selectedTags]);
 
     useEffect(() => {
         getListTypesRecipes();
@@ -138,16 +140,105 @@ export default function RecipeFormPage() {
         }
     };
 
+    const validateForm = () => {
+        const newErrors = {};
+
+        if (!form.name.trim()) newErrors.name = 'Name is required';
+        if (!form.type) newErrors.type = 'Type is required';
+        if (!form.difficulty) newErrors.difficulty = 'Difficulty is required';
+        if (!form.country_origin) newErrors.country_origin = 'Country of origin is required';
+        if (!form.order) newErrors.order = 'Order is required';
+        if (!form.source) newErrors.source = 'Source is required';
+        if (!form.preparation_time) newErrors.preparation_time = 'Preparation time is required';
+
+        if (!form.ingredients || form.ingredients.length === 0) {
+            newErrors.ingredients = 'You must complete the ingredients';
+        }
+
+        if (!form.elaboration || form.elaboration.length === 0) {
+            newErrors.elaboration = 'You must complete the elaboration steps';
+        }
+
+        if (!form.link) newErrors.link = 'Link is required';
+        if (!form.image) newErrors.image = 'Image is required';
+
+        setErrors(newErrors);
+
+        return Object.keys(newErrors).length === 0;
+    };
+
+
     const handleChange = (field) => (e) => {
         setForm({ ...form, [field]: e.target.value });
 
     };
 
     const handleSave = () => {
+
+        if (!validateForm()) return;
+
+        let tagsRecipe = selectedTags.map(tag => tag.name);
+        const newRecipe = {
+            name: form.name,
+            elaboration: form.elaboration,//.join(','),
+            preparation_time: parseInt(form.preparation_time),
+            link: form.link,
+            type: form.type,
+            difficulty: form.difficulty,
+            country_origin: form.country_origin,
+            order: form.order,
+            source: form.source,
+            tag: tagsRecipe,
+            image: form.image,
+        };
+
         console.log('Formulario completado:', form);
 
-        // Reset ingredients about current recipe
-        //dispatch(setListIngredientsNewRecipe([]));
+        createNewRecipe(newRecipe);
+
+    };
+
+    const createNewRecipe = async (newRecipe) => {
+        const resultAction = await dispatch(postNewRecipe(newRecipe));
+        if (postNewRecipe.fulfilled.match(resultAction)) {
+            if (resultAction.payload != undefined) {
+                const recipesReceive = resultAction.payload;
+                console.log("RECIPE CREATED");
+                console.log(recipesReceive);
+                console.log(recipesReceive.id);
+
+                createNewAssociationIngredientsAndRecipe(recipesReceive.id);
+
+
+                // Reset ingredients about current recipe
+                dispatch(setListIngredientsNewRecipe([]));
+
+                //Navigate to home
+
+                navigate(`/recipes`);
+            }
+        }
+    };
+
+    const createNewAssociationIngredientsAndRecipe = async (idRecipe) => {
+        const listIngredientsNewRecipes = Object.values(listIngredientsNewRecipesAPI);
+        for (let index in listIngredientsNewRecipes) {
+            const newRecipe = {
+                ingredient: listIngredientsNewRecipes[index].name,
+                cuantity: listIngredientsNewRecipes[index].quantity,
+                unit: listIngredientsNewRecipes[index].unit,
+                recipe: idRecipe,
+            };
+
+            const resultActionCreatedIngredient = await dispatch(postIngredientRecipe(newRecipe));
+            if (postIngredientRecipe.fulfilled.match(resultActionCreatedIngredient)) {
+                if (resultActionCreatedIngredient.payload != undefined) {
+                    const newIngredientReceive = resultActionCreatedIngredient.payload;
+                    console.log("RECIPE CREATED");
+                    console.log(newIngredientReceive);
+                }
+            }
+        }
     };
 
     return (
@@ -178,15 +269,39 @@ export default function RecipeFormPage() {
                             <Typography variant="subtitle2" fontWeight="bold">Initial information</Typography>
                         </Divider>
 
-                        <TextField label="Nombre" value={form.name} onChange={handleChange('name')} fullWidth />
+                        <TextField
+                            label="Name"
+                            value={form.name}
+                            onChange={handleChange('name')}
+                            error={!!errors.name}
+                            helperText={errors.name}
+                            fullWidth
+                        />
 
-                        <TextField select label="Type" value={form.type} onChange={handleChange('type')} fullWidth>
+                        <TextField
+                            select
+                            label="Type"
+                            value={form.type}
+                            onChange={handleChange('type')}
+                            error={!!errors.type}
+                            helperText={errors.type}
+                            fullWidth
+                        >
                             {listTypes.map((option) => (
                                 <MenuItem key={option.id} value={option.id}>{option.name}</MenuItem>
                             ))}
                         </TextField>
 
-                        <TextField select label="Difficulty" value={form.difficulty} onChange={handleChange('difficulty')} fullWidth>
+
+                        <TextField
+                            select
+                            label="Difficulty"
+                            value={form.difficulty}
+                            onChange={handleChange('difficulty')}
+                            error={!!errors.difficulty}
+                            helperText={errors.difficulty}
+                            fullWidth
+                        >
                             {listLevels.map((option) => (
                                 <MenuItem key={option.id} value={option.id}>{option.name}</MenuItem>
                             ))}
@@ -197,6 +312,8 @@ export default function RecipeFormPage() {
                             getOptionLabel={(option) => option.label}
                             value={countries.find(c => c.label === form.country_origin) || null}
                             onChange={(e, newValue) => setForm({ ...form, country_origin: newValue?.label || '' })}
+                            error={!!errors.countries}
+                            helperText={errors.countries}
                             renderOption={(props, option) => (
                                 <Box component="li" sx={{ display: 'flex', alignItems: 'center', gap: 1 }} {...props}>
                                     <Avatar src={option.flag} alt={option.label} sx={{ width: 20, height: 20 }} />
@@ -224,13 +341,29 @@ export default function RecipeFormPage() {
 
                         />
 
-                        <TextField select label="Order" value={form.order} onChange={handleChange('order')} fullWidth>
+                        <TextField
+                            select
+                            label="Order"
+                            value={form.order}
+                            onChange={handleChange('order')}
+                            error={!!errors.order}
+                            helperText={errors.order}
+                            fullWidth
+                        >
                             {listOrders.map((option) => (
                                 <MenuItem key={option.id} value={option.id}>{option.name}</MenuItem>
                             ))}
                         </TextField>
 
-                        <TextField select label="Source" value={form.source} onChange={handleChange('source')} fullWidth>
+                        <TextField
+                            select
+                            label="Source"
+                            value={form.source}
+                            onChange={handleChange('source')}
+                            error={!!errors.source}
+                            helperText={errors.source}
+                            fullWidth
+                        >
                             {listSources.map((option) => (
                                 <MenuItem key={option.id} value={option.id}>{option.name}</MenuItem>
                             ))}
@@ -240,9 +373,18 @@ export default function RecipeFormPage() {
                             <Typography variant="subtitle2" fontWeight="bold">Ingredients</Typography>
                         </Divider>
 
-                        <Button onClick={() => setShowIngredients(true)} variant="outlined" color="secondary">
+                        <Button
+                            //onClick={() => setShowIngredients(true)} 
+                            onClick={() => setTimeout(() => setShowIngredients(true), 0)}
+                            variant="outlined"
+                            color="secondary"
+                        >
                             Add ingredients
                         </Button>
+
+                        {errors.ingredients && (
+                            <Typography color="error" variant="body2">{errors.ingredients}</Typography>
+                        )}
 
                         <Divider sx={{ mt: 2, mb: 1 }}>
                             <Typography variant="subtitle2" fontWeight="bold">Elaboration</Typography>
@@ -252,24 +394,52 @@ export default function RecipeFormPage() {
                             label="Preparation time (min)"
                             value={form.preparation_time}
                             onChange={handleChange('preparation_time')}
+                            error={!!errors.preparation_time}
+                            helperText={errors.preparation_time}
                             fullWidth
                         />
 
-                        <Button onClick={() => setShowElaborationSteps(true)} variant="outlined" color="secondary">
+                        <Button
+                            //onClick={() => setShowElaborationSteps(true)}
+                            onClick={() => setTimeout(() => setShowElaborationSteps(true), 0)}
+                            variant="outlined"
+                            color="secondary"
+                        >
                             Add elaboration
                         </Button>
+
+                        {errors.elaboration && (
+                            <Typography color="error" variant="body2">{errors.elaboration}</Typography>
+                        )}
 
                         <Divider sx={{ mt: 2, mb: 1 }}>
                             <Typography variant="subtitle2" fontWeight="bold">Additional information</Typography>
                         </Divider>
 
-                        <TextField label="Link" value={form.link} onChange={handleChange('link')} fullWidth />
-                        <TextField label="Image (URL)" value={form.image} onChange={handleChange('image')} fullWidth />
+                        <TextField
+                            label="Link"
+                            value={form.link}
+                            onChange={handleChange('link')}
+                            error={!!errors.link}
+                            helperText={errors.link}
+                            fullWidth
+                        />
+
+                        <TextField
+                            label="Image (URL)"
+                            value={form.image}
+                            onChange={handleChange('image')}
+                            error={!!errors.image}
+                            helperText={errors.image}
+                            fullWidth
+                        />
 
                         <MultiSelectAutocomplete
                             options={listTags}
                             selected={selectedTags}
                             setSelected={setSelectedTags}
+                            error={!!errors.tags}
+                            helperText={errors.tags}
                             label="Tags"
                         />
 

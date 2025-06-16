@@ -22,6 +22,8 @@ import {
 import {
   getAllTypesRecipes
 } from '../../redux/type/actions';
+import { getAllOrders } from 'src/redux/orders/actions';
+import {getAllLevels} from 'src/redux/levels/actions';
 
 // ----------------------------------------------------------------------
 
@@ -55,6 +57,8 @@ const Recipes = () => {
 
   useEffect(() => {
     setListRecipes([])
+    getListOrder();
+    getListDifficulty();
     getListTypesRecipes();
   }, [location.pathname]);
 
@@ -62,6 +66,23 @@ const Recipes = () => {
     setArraysRecipeos(listRecipes);
   }, [page, pageSize, listRecipes]);
 
+  const getListOrder = async () => {
+    const resultAction = await dispatch(getAllOrders());
+    if (getAllOrders.fulfilled.match(resultAction)) {
+      if (resultAction.payload != undefined && resultAction.payload.length != 0) {
+        console.log("GET LIST ORDER COMPLETED")
+      }
+    }
+  }
+
+  const getListDifficulty = async () => {
+    const resultAction = await dispatch(getAllLevels());
+    if (getAllLevels.fulfilled.match(resultAction)) {
+      if (resultAction.payload != undefined && resultAction.payload.length != 0) {
+        console.log("GET LIST LEVELS COMPLETED")
+      }
+    }
+  }
 
   const getListTypesRecipes = async () => {
     const resultAction = await dispatch(getAllTypesRecipes());
@@ -69,9 +90,6 @@ const Recipes = () => {
       if (resultAction.payload != undefined && resultAction.payload.length != 0) {
         const listTypeRecipesReceive = Object.values(resultAction.payload);
         getListRecipes();
-      }
-      else {
-        setListRecipes([]);
       }
     }
   }
@@ -81,12 +99,7 @@ const Recipes = () => {
     if (getAllRecipes.fulfilled.match(resultAction)) {
       if (resultAction.payload != undefined && resultAction.payload.length != 0) {
         const listRecipesReceive = Object.values(resultAction.payload);
-        console.log("-listRecipesReceive-")
-        console.log(listRecipesReceive)
         setListRecipes(listRecipesReceive);
-      }
-      else {
-        setListRecipes([]);
       }
     }
   };

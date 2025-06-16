@@ -7,6 +7,7 @@ import {
   SET_INGREDIENTS_NEW_RECIPES,
   SET_STEPS_NEW_RECIPES,
   INIT_VALUE,
+  POST_RECIPE
 } from './types';
 
 export const initValue = createAction(INIT_VALUE);
@@ -42,6 +43,38 @@ export const getAllRecipes = createAsyncThunk(
 
     } catch (error) {
       return rejectWithValue(error.message || "Error inesperado");
+    }
+  }
+);
+
+export const postNewRecipe = createAsyncThunk(
+  POST_RECIPE,
+  async ( newRecipe, {rejectWithValue}) => {
+
+    console.log("-newMessage-")
+    console.log(newRecipe)
+
+    try {
+      // Hacer el insert en Supabase
+      const { data, error } = await supabase
+        .from('Recipes')
+        .insert([newRecipe])
+        .select()
+        .single();
+
+      if (error) {
+        console.log("ERROR:");
+        console.log(error.message);
+        throw new Error(error.message);
+      }
+
+      // Opcional: Puedes hacer algo con la respuesta, como agregar el mensaje a la lista localmente
+      console.log("Mensaje enviado:", data);
+
+      return data;
+
+    } catch (error) {
+      console.error("Error al enviar el mensaje:", error.message);
     }
   }
 );
