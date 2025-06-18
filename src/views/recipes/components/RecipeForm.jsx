@@ -17,21 +17,19 @@ import {
     COUNTRY_DEFAULT
 } from 'src/utils/constant';
 
-import { getAllTypesRecipes } from '../../../redux/type/actions'
 import IngredientsPanel from '../../ingredients/IngredientsPanel';
 import ElaborationPanel from '../../elaboration/ElaborationPanel';
 import MultiSelectAutocomplete from '../../../components/selectors/MultiSelectAutocomplete'
 
-import { getAllTags } from '../../../redux/tags/actions'
-import { getAllOrders } from '../../../redux/orders/actions'
-import { getAllSources } from '../../../redux/sources/actions'
-import { getAllLevels } from '../../../redux/levels/actions'
 import { getListCountries } from '../../../utils/countries'
 import { postNewRecipe } from '../../../redux/recipe/actions'
 import { postIngredientRecipe } from '../../../redux/ingredients/actions'
 import { setListIngredientsNewRecipe } from '../../../redux/recipe/actions'
+import { useRecipeData } from '../../../contexts/RecipeDataContext';
 
 export default function RecipeFormPage() {
+
+    const {listTypes, listOrders, listLevels, listSources, listTags } = useRecipeData();
 
     const location = useLocation();
     const dispatch = useDispatch();
@@ -40,12 +38,12 @@ export default function RecipeFormPage() {
     const [errors, setErrors] = useState({});
 
     const [countries, setCountries] = useState([]);
-    const [listTypes, setListTypes] = useState([]);
+    /*const [listTypes, setListTypes] = useState([]);
 
     const [listTags, setListTags] = useState([]);
     const [listOrders, setListOrders] = useState([]);
     const [listSources, setListSources] = useState([]);
-    const [listLevels, setListLevels] = useState([]);
+    const [listLevels, setListLevels] = useState([]);*/
 
     const [selectedTags, setSelectedTags] = useState([]);
 
@@ -53,6 +51,12 @@ export default function RecipeFormPage() {
     const [showElaborationSteps, setShowElaborationSteps] = useState(false);
 
     const listIngredientsNewRecipesAPI = useSelector((state) => state.recipesComponent.listIngredientsNewRecipes);
+
+    const listAllLevelsAPI = useSelector((state) => state.levelsComponent.listAllLevels);
+    const listAllOrdersAPI = useSelector((state) => state.ordersComponent.listAllOrders);
+    const listAllSourcesAPI = useSelector((state) => state.sourcesComponent.listAllSources);
+    const listAllTagsAPI = useSelector((state) => state.tagsComponent.listAllTags);
+    const listAllTypesRecipesAPI = useSelector((state) => state.typeRecipesComponent.listAllTypesRecipes);
 
     const [form, setForm] = useState({
         name: '',
@@ -70,12 +74,6 @@ export default function RecipeFormPage() {
     });
 
     useEffect(() => {
-        getListTypesRecipes();
-
-        getOrders();
-        getSources();
-        getLevels();
-        getTags();
 
         // Get list Countries
         fetchCountries();
@@ -88,56 +86,6 @@ export default function RecipeFormPage() {
         setCountries(listCountries);
         const posSpain = listCountries.find(element => element.label === COUNTRY_DEFAULT);
         setForm(prev => ({ ...prev, country_origin: posSpain?.label || '' }));
-    };
-
-    const getOrders = async () => {
-        const resultAction = await dispatch(getAllOrders());
-        if (getAllOrders.fulfilled.match(resultAction) && resultAction.payload != undefined) {
-            const listOrdersReceive = Object.values(resultAction.payload);
-            console.log("-listOrdersReceive-")
-            console.log(listOrdersReceive)
-            setListOrders(listOrdersReceive);
-        }
-    };
-
-    const getSources = async () => {
-        const resultAction = await dispatch(getAllSources());
-        if (getAllSources.fulfilled.match(resultAction) && resultAction.payload != undefined) {
-            const listSourcesReceive = Object.values(resultAction.payload);
-            console.log("-listSourcesReceive-")
-            console.log(listSourcesReceive)
-            setListSources(listSourcesReceive);
-        }
-    };
-
-    const getLevels = async () => {
-        const resultAction = await dispatch(getAllLevels());
-        if (getAllLevels.fulfilled.match(resultAction) && resultAction.payload != undefined) {
-            const listLevelsReceive = Object.values(resultAction.payload);
-            console.log("-listLevelsReceive-")
-            console.log(listLevelsReceive)
-            setListLevels(listLevelsReceive);
-        }
-    };
-
-    const getTags = async () => {
-        const resultAction = await dispatch(getAllTags());
-        if (getAllTags.fulfilled.match(resultAction) && resultAction.payload != undefined) {
-            const listTagsReceive = Object.values(resultAction.payload);
-            console.log("-listTagsReceive-")
-            console.log(listTagsReceive)
-            setListTags(listTagsReceive);
-        }
-    };
-
-    const getListTypesRecipes = async () => {
-        const resultAction = await dispatch(getAllTypesRecipes());
-        if (getAllTypesRecipes.fulfilled.match(resultAction)) {
-            if (resultAction.payload != undefined) {
-                const listTypeRecipesReceive = Object.values(resultAction.payload);
-                setListTypes(listTypeRecipesReceive);
-            }
-        }
     };
 
     const validateForm = () => {

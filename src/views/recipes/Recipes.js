@@ -19,15 +19,12 @@ import {
   getAllRecipes
 } from '../../redux/recipe/actions';
 
-import {
-  getAllTypesRecipes
-} from '../../redux/type/actions';
-import { getAllOrders } from 'src/redux/orders/actions';
-import {getAllLevels} from 'src/redux/levels/actions';
-
-// ----------------------------------------------------------------------
+import { useRecipeData } from '../../contexts/RecipeDataContext'
 
 const Recipes = () => {
+
+  const { listRecipes, refreshData } = useRecipeData();
+
   const location = useLocation();
   const theme = useTheme();
   const navigate = useNavigate();
@@ -37,10 +34,8 @@ const Recipes = () => {
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(20);
 
-  const [listRecipes, setListRecipes] = useState([]);
+  const [listRecipesAPI, setListRecipes] = useState([]);
   const [paginatedRecipes, setPaginatedRecipes] = useState([]);
-
-  //const listRecipesAPI = useSelector((state) => state.recipesComponent.listAllRecipes);
 
   const startIndex = page * pageSize;
   const endIndex = startIndex + pageSize;
@@ -52,61 +47,25 @@ const Recipes = () => {
 
   const handleChangePageSize = (event) => {
     setPageSize(event.target.value);
-    setPage(0); // Al cambiar el tamaño de la página, volvemos a la primera página
+    setPage(0);
   };
 
   useEffect(() => {
-    setListRecipes([])
-    getListOrder();
-    getListDifficulty();
-    getListTypesRecipes();
-  }, [location.pathname]);
+    getListRecipes();
+  }, [location.pathname, listRecipes]);
 
   useEffect(() => {
-    setArraysRecipeos(listRecipes);
-  }, [page, pageSize, listRecipes]);
-
-  const getListOrder = async () => {
-    const resultAction = await dispatch(getAllOrders());
-    if (getAllOrders.fulfilled.match(resultAction)) {
-      if (resultAction.payload != undefined && resultAction.payload.length != 0) {
-        console.log("GET LIST ORDER COMPLETED")
-      }
-    }
-  }
-
-  const getListDifficulty = async () => {
-    const resultAction = await dispatch(getAllLevels());
-    if (getAllLevels.fulfilled.match(resultAction)) {
-      if (resultAction.payload != undefined && resultAction.payload.length != 0) {
-        console.log("GET LIST LEVELS COMPLETED")
-      }
-    }
-  }
-
-  const getListTypesRecipes = async () => {
-    const resultAction = await dispatch(getAllTypesRecipes());
-    if (getAllTypesRecipes.fulfilled.match(resultAction)) {
-      if (resultAction.payload != undefined && resultAction.payload.length != 0) {
-        const listTypeRecipesReceive = Object.values(resultAction.payload);
-        getListRecipes();
-      }
-    }
-  }
+    setArraysRecipeos(listRecipesAPI);
+  }, [page, pageSize, listRecipesAPI]);
 
   const getListRecipes = async () => {
-    const resultAction = await dispatch(getAllRecipes());
-    if (getAllRecipes.fulfilled.match(resultAction)) {
-      if (resultAction.payload != undefined && resultAction.payload.length != 0) {
-        const listRecipesReceive = Object.values(resultAction.payload);
-        setListRecipes(listRecipesReceive);
-      }
-    }
+    const listRecipesReceive = Object.values(listRecipes);
+    setListRecipes(listRecipesReceive);
   };
 
-  const setArraysRecipeos = (listRecipes) => {
-    let listSlice = listRecipes.slice(startIndex, endIndex);
-    setListRecipes(listRecipes);
+  const setArraysRecipeos = (listRecipesAPI) => {
+    let listSlice = listRecipesAPI.slice(startIndex, endIndex);
+    setListRecipes(listRecipesAPI);
     setPaginatedRecipes(listSlice);
   };
 
@@ -115,7 +74,7 @@ const Recipes = () => {
   };
 
   const handleClick = (recipe) => {
-    //navigate(`/recipes/${recipe._id}`);
+    navigate(`/recipe/${recipe.id}`);
   };
 
   return (
@@ -149,7 +108,7 @@ const Recipes = () => {
       <Stack direction="row" flexShrink={0} sx={{ my: 4, width: '100%' }} justifyContent="flex-end">
         <TablePagination
           component="div"
-          count={listRecipes.length}
+          count={listRecipesAPI.length}
           page={page}
           onPageChange={handleChangePage}
           rowsPerPage={pageSize}

@@ -7,10 +7,33 @@ import {
   GET_ALL_INGREDIENTS,
   POST_INGREDIENT,
   POST_INGREDIENTS_RECIPE,
+  GET_INGREDIENTS_BY_RECIPE,
   INIT_VALUE,
 } from './types';
 
 export const initValue = createAction(INIT_VALUE);
+
+export const getIngredientsByRecipe = createAsyncThunk(
+  GET_INGREDIENTS_BY_RECIPE,
+  async (idRecipe, { rejectWithValue }) => {
+    try {
+      const { data, error } = await supabase
+        .from('Ingredients_recipes')
+        .select('*')
+        .eq('recipe', idRecipe)
+        .order('id', { ascending: false });
+
+      if (error) {
+        return rejectWithValue(error.message);
+      }
+
+      return data || [];
+
+    } catch (error) {
+      return rejectWithValue(error.message || "Error inesperado");
+    }
+  }
+);
 
 export const getAllIngredients = createAsyncThunk(
   GET_ALL_INGREDIENTS,
