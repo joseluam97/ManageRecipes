@@ -1,0 +1,2 @@
+Para ejecutar task de manera local, ejecutar el comando desde PowerShell
+Invoke-WebRequest -Uri http://localhost:8004/tasks -Method POST -Headers @{ "Content-Type" = "application/json" } -Body '{"type": 0}'
