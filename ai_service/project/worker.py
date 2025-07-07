@@ -3,6 +3,7 @@ import time
 
 from celery import Celery
 from model_mistral_tiktok import procesar_receta
+from scrapping_clirecipe import parse_recipe_from_url
 
 
 celery = Celery(__name__)
@@ -17,4 +18,11 @@ def create_task(task_type):
 
 @celery.task(bind=True, name="procesar_receta_task")
 def procesar_receta_task(self, url: str) -> str:
-    return procesar_receta(url)
+    self.update_state(state="PROGRESS", meta={"progreso": 10, "mensaje": "Descargando video..."})
+    result = procesar_receta(url)
+    return result
+
+@celery.task(bind=True, name="get_recipe_from_url")
+def get_recipe_from_url(self, url: str) -> str:
+    self.update_state(state="PROGRESS", meta={"progreso": 10, "mensaje": "Analizando la URL..."})
+    return parse_recipe_from_url(url)

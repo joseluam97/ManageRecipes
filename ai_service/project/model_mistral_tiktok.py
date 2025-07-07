@@ -77,7 +77,7 @@ def extract_recipe_with_mistral(description, transcription):
     Añade en el texto final unicamente el json solicitado
     """
 
-    mistral = Llama(model_path="./models/mistral-7b-instruct-v0.1.Q8_0.gguf", n_ctx=4096, verbose=False)
+    mistral = Llama(model_path="./models/mistral-7b-instruct-v0.1.Q4_K_M.gguf", n_ctx=4096)
 
     # Asumiendo max_tokens = 512, puedes cambiarlo
     max_tokens = 2048
