@@ -1,0 +1,3 @@
+export const LAUNCH_TASK = 'LAUNCH_TASK'
+export const GET_STATE_PROGRESS = 'GET_STATE_PROGRESS'
+export const INIT_VALUE = 'INIT_VALUE'

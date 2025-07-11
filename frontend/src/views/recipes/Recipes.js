@@ -8,9 +8,9 @@ import Grid from '@mui/material/Unstable_Grid2';
 import RecipeCard from './components/recipes-card';
 import TablePagination from '@mui/material/TablePagination';
 import { Stack, IconButton, Badge, Button } from '@mui/material';
-import { IconLayoutGridAdd, IconMenu } from '@tabler/icons';
+import { IconLayoutGridAdd } from '@tabler/icons';
 import RecipeFormPage from './components/RecipeForm';
-
+import { Add } from '@mui/icons-material';
 import { useTheme } from '@mui/material/styles';
 
 import { useLocation } from 'react-router-dom';
@@ -20,6 +20,7 @@ import {
 } from '../../redux/recipe/actions';
 
 import { useRecipeData } from '../../contexts/RecipeDataContext'
+import { launchProcess, getStateProcess } from '../../redux/ai_service/actions'
 
 const Recipes = () => {
 
@@ -39,6 +40,9 @@ const Recipes = () => {
 
   const startIndex = page * pageSize;
   const endIndex = startIndex + pageSize;
+
+  const [taskId, setTaskId] = useState(null);
+  const [estadoTarea, setEstadoTarea] = useState(null);
 
   //Getion de paginas
   const handleChangePage = (event, newPage) => {
@@ -77,6 +81,40 @@ const Recipes = () => {
     navigate(`/recipe/${recipe.id}`);
   };
 
+  const getRecipeByIA = async () => {
+    console.log("-getRecipeByIA-");
+    const url_search = "https://www.tiktok.com/@comiendobienn/video/7518837827455552790";
+    const resultAction = await dispatch(launchProcess(url_search));
+
+    if (launchProcess.fulfilled.match(resultAction)) {
+      const id_new_task = resultAction.payload;
+      setTaskId(id_new_task); // Guarda el ID
+    }
+  };
+
+  useEffect(() => {
+    if (!taskId) return;
+
+    console.log("-useEffect polling activado-");
+    const interval = setInterval(async () => {
+      const resultAction = await dispatch(getStateProcess(taskId));
+      if (getStateProcess.fulfilled.match(resultAction)) {
+        const estado = resultAction.payload;
+        console.log("Estado actual:", estado);
+        setEstadoTarea(estado);
+
+        if (estado.estado === "SUCCESS" || estado.estado === "FAILURE") {
+          console.log("RESULTADO");
+          console.log(estado.resultado);
+          clearInterval(interval); // Detén el polling
+        }
+      }
+    }, 3000);
+
+    return () => clearInterval(interval); // Limpieza al desmontar componente
+  }, [taskId]);
+
+
   return (
     <Container>
       <Stack direction="row" flexShrink={0} sx={{ my: 4, width: '100%' }} justifyContent="flex-end">
@@ -96,6 +134,9 @@ const Recipes = () => {
             <IconLayoutGridAdd size="21" stroke="1.5" />
           </Badge>
 
+        </IconButton>
+        <IconButton onClick={getRecipeByIA} color="primary">
+          <Add />
         </IconButton>
       </Stack>
       <Grid container spacing={3}>

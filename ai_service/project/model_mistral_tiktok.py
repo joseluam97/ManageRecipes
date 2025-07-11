@@ -102,7 +102,8 @@ def extract_recipe_with_mistral(description, transcription, task=None):
                 print(f"[{progreso}%] 💡 Extrayendo receta completa...")
 
     pbar.close()
-    return "".join(tokens).strip()
+    #return "".join(tokens).strip()
+    return tokens.json()
 
 def procesar_receta(url, task=None):
     from time import sleep
@@ -127,7 +128,7 @@ def procesar_receta(url, task=None):
     receta = extract_recipe_with_mistral(descripcion, transcripcion, task)
 
     update_state(90, "💾 Generando archivo...")
-    generar_archivo(receta)
+    #generar_archivo(receta)
 
     update_state(100, "✅ Proceso completado")
     return receta

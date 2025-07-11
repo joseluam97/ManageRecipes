@@ -6,11 +6,21 @@ from celery.result import AsyncResult
 from worker import celery
 from pydantic import BaseModel
 from tasks import procesar_receta_task, get_recipe_from_url, create_task
-
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
+
+# 🔓 Configuración de CORS
+app.add_middleware(
+    CORSMiddleware,
+    #allow_origins=["http://localhost:3000"],  # Production => Origen del frontend
+    allow_origins=["*"], # Development
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 class URLInput(BaseModel):
     url: str
@@ -64,6 +74,7 @@ def obtener_estado(task_id: str):
     info = task_result.info if isinstance(task_result.info, dict) else {}
 
     return {
+        "task_id": task_id,
         "estado": task_result.status,
         "resultado": task_result.result,
         "progreso": info.get("progreso"),
