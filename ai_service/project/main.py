@@ -2,11 +2,11 @@ from fastapi import Body, FastAPI, Form, Request, HTTPException
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from worker import create_task, get_recipe_from_url
 from celery.result import AsyncResult
-from worker import procesar_receta_task
 from worker import celery
 from pydantic import BaseModel
+from tasks import procesar_receta_task, get_recipe_from_url, create_task
+
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -59,12 +59,17 @@ def get_status(task_id):
 @app.get("/estado/{task_id}")
 def obtener_estado(task_id: str):
     task_result = AsyncResult(task_id, app=celery)
+
+    # Si info no es un dict, usamos uno vacío
+    info = task_result.info if isinstance(task_result.info, dict) else {}
+
     return {
         "estado": task_result.status,
         "resultado": task_result.result,
-        "progreso": task_result.info.get("progreso") if task_result.info else None,
-        "mensaje": task_result.info.get("mensaje") if task_result.info else None,
+        "progreso": info.get("progreso"),
+        "mensaje": info.get("mensaje"),
     }
+
 
 @app.post("/extract")
 def extract_recipe(data: URLInput):

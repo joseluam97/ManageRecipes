@@ -7,9 +7,14 @@ import unicodedata
 import json
 from datetime import datetime
 from tqdm import tqdm
+import torch
+from celery.result import AsyncResult
+import time
 
 # Transcripcion con Whisper local
-model_whisper = whisper.load_model("base")
+model_whisper = whisper.load_model("tiny")
+
+mistral = Llama(model_path="./models/mistral-7b-instruct-v0.1.Q4_K_M.gguf", n_ctx=4096)
 
 def nombre_archivo_valido(texto):
     # Normalizar texto y eliminar acentos
@@ -52,7 +57,12 @@ def download_audio_only(url, output_path):
 
 def transcribe_with_whisper_local(audio_path):
     print("🧠 Transcribiendo con Whisper local...")
-    result = model_whisper.transcribe(audio_path, language='es')
+
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    print(f"🧠 Usando dispositivo: {device}")
+
+    model = whisper.load_model("tiny", device=device)
+    result = model.transcribe(audio_path, language='es')
     return result['text']
 
 def extract_recipe_with_mistral(description, transcription):
@@ -77,10 +87,8 @@ def extract_recipe_with_mistral(description, transcription):
     Añade en el texto final unicamente el json solicitado
     """
 
-    mistral = Llama(model_path="./models/mistral-7b-instruct-v0.1.Q4_K_M.gguf", n_ctx=4096)
-
     # Asumiendo max_tokens = 512, puedes cambiarlo
-    max_tokens = 2048
+    max_tokens = 512
 
     stream = mistral(prompt, max_tokens=max_tokens, stream=True)
 
@@ -97,30 +105,45 @@ def extract_recipe_with_mistral(description, transcription):
     texto_completo = "".join(tokens).strip()
     return texto_completo
 
-
-def procesar_receta(url, task=None):
+def procesar_receta(url, task=None, transcripcion_task=None):  # ⬅️ nuevo parámetro
     def update_state(percent, mensaje):
         if task:
             task.update_state(state="PROGRESS", meta={"progreso": percent, "mensaje": mensaje})
+        print(f"[{percent}%] {mensaje}")
 
     timestamp = datetime.now().strftime("%Y%m%d%H%M")
 
-    update_state(10, "⏬ Descargando vídeo...")
+    update_state(5, "📥 Iniciando descarga del vídeo...")
     titulo, descripcion, thumbnail = download_tiktok_video(url, f'./videos/video{timestamp}.mp4')
 
-    update_state(30, "🎵 Descargando solo audio...")
+    update_state(25, "🎧 Extrayendo audio...")
     audio_path = download_audio_only(url, f'./records/audio{timestamp}.m4a')
 
-    update_state(50, "🧠 Transcribiendo con Whisper...")
-    transcripcion = transcribe_with_whisper_local(audio_path)
+    update_state(45, "🧠 Enviando tarea de transcripción...")
 
-    update_state(80, "📋 Analizando contenido con Mistral...")
+#    if not transcripcion_task:
+#        raise Exception("transcripcion_task no fue proporcionada")
+#
+#    tarea_transcripcion = transcripcion_task.delay(audio_path)
+#
+#    while not tarea_transcripcion.ready():
+#        time.sleep(1)
+#        print("⌛ Esperando transcripción...")
+#
+#    if tarea_transcripcion.failed():
+#        raise Exception("❌ La transcripción falló")
+
+#    transcripcion = tarea_transcripcion.result
+    print("⌛ Esperando transcripción...")
+    transcripcion = transcribe_with_whisper_local(audio_path)
+    
+    update_state(70, "💡 Extrayendo receta con Mistral...")
     receta = extract_recipe_with_mistral(descripcion, transcripcion)
 
-    update_state(95, "📁 Generando archivo...")
+    update_state(90, "💾 Generando archivo local...")
     generar_archivo(receta)
 
-    update_state(100, "✅ Finalizado")
+    update_state(100, "✅ Proceso completado")
     return receta
 
 

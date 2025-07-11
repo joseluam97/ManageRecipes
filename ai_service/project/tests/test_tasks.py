@@ -1,4 +1,4 @@
-from worker import create_task
+from ai_service.project.tasks import create_task
 
 def test_home(test_app):
     response = test_app.get("/")
