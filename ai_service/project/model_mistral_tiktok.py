@@ -53,7 +53,7 @@ def transcribe_with_whisper_local(audio_path):
     result = model.transcribe(audio_path, language='es')
     return result['text']
 
-def extract_recipe_with_mistral(description, transcription):
+def extract_recipe_with_mistral(description, transcription, task=None):
     prompt = f"""
     Extrae la receta del siguiente contenido en formato JSON:
 
@@ -74,17 +74,35 @@ def extract_recipe_with_mistral(description, transcription):
 
     Añade en el texto final unicamente el json solicitado
     """
-    max_tokens = 512
+    # max_tokens = 512
+    max_tokens = 2048
+    progreso_inicio = 20
+    progreso_final = 90
+    last_reported_progress = -1
+    num_tokens_to_progress = 20
+
     stream = mistral(prompt, max_tokens=max_tokens, stream=True)
     tokens = []
     pbar = tqdm(total=max_tokens, desc="Generando respuesta", ncols=80)
-    for output in stream:
+
+    for i, output in enumerate(stream, start=1):
         token_text = output["choices"][0]["text"]
         tokens.append(token_text)
         pbar.update(1)
+
+        if i % num_tokens_to_progress == 0:
+            progreso = progreso_inicio + int((i / max_tokens) * (progreso_final - progreso_inicio))
+            if progreso != last_reported_progress:
+                last_reported_progress = progreso
+                if task:
+                    task.update_state(
+                        state="PROGRESS",
+                        meta={"progreso": progreso, "mensaje": "💡 Extrayendo receta completa..."}
+                    )
+                print(f"[{progreso}%] 💡 Extrayendo receta completa...")
+
     pbar.close()
-    texto_completo = "".join(tokens).strip()
-    return texto_completo
+    return "".join(tokens).strip()
 
 def procesar_receta(url, task=None):
     from time import sleep
@@ -99,16 +117,16 @@ def procesar_receta(url, task=None):
     update_state(5, "📥 Iniciando descarga del vídeo...")
     titulo, descripcion, thumbnail = download_tiktok_video(url, f'./videos/video{timestamp}.mp4')
 
-    update_state(25, "🎧 Extrayendo audio...")
+    update_state(10, "🎧 Extrayendo audio...")
     audio_path = download_audio_only(url, f'./records/audio{timestamp}.m4a')
 
-    update_state(45, "🧠 Transcribiendo con Whisper local...")
+    update_state(15, "🧠 Transcribiendo el video...")
     transcripcion = transcribe_with_whisper_local(audio_path)
 
-    update_state(70, "💡 Extrayendo receta con Mistral...")
-    receta = extract_recipe_with_mistral(descripcion, transcripcion)
+    update_state(20, "💡 Extrayendo receta completa...")
+    receta = extract_recipe_with_mistral(descripcion, transcripcion, task)
 
-    update_state(90, "💾 Generando archivo local...")
+    update_state(90, "💾 Generando archivo...")
     generar_archivo(receta)
 
     update_state(100, "✅ Proceso completado")

@@ -23,7 +23,7 @@ def transcribir_audio_task(self, audio_path: str):
 def procesar_receta_task(self, url: str):
     self.update_state(state="PROGRESS", meta={"progreso": 10, "mensaje": "Descargando video..."})
     # 🔁 Se inyecta la tarea en lugar de importarla desde model_mistral_tiktok
-    return procesar_receta(url)
+    return procesar_receta(url, task=self)
 
 @celery.task(bind=True, name="get_recipe_from_url")
 def get_recipe_from_url(self, url: str):
