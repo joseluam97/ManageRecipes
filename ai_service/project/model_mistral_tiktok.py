@@ -1,3 +1,4 @@
+
 import os
 import yt_dlp
 import whisper
@@ -8,24 +9,14 @@ import json
 from datetime import datetime
 from tqdm import tqdm
 import torch
-from celery.result import AsyncResult
-import time
 
-# Transcripcion con Whisper local
-model_whisper = whisper.load_model("tiny")
-
-mistral = Llama(model_path="./models/mistral-7b-instruct-v0.1.Q4_K_M.gguf", n_ctx=4096)
+# Carga del modelo Mistral con hilos configurados
+mistral = Llama(model_path="./models/mistral-7b-instruct-v0.1.Q4_K_M.gguf", n_ctx=4096, n_threads=8)
 
 def nombre_archivo_valido(texto):
-    # Normalizar texto y eliminar acentos
     texto = unicodedata.normalize('NFKD', texto).encode('ascii', 'ignore').decode('ascii')
-
-    # Reemplazar espacios por guiones bajos
     texto = texto.replace(" ", "_")
-
-    # Eliminar caracteres no válidos para nombres de archivo en Windows
     texto = re.sub(r'[\\/*?:"<>|]', "", texto)
-
     return texto.lower()
 
 def download_tiktok_video(url, output_path):
@@ -54,13 +45,10 @@ def download_audio_only(url, output_path):
         ydl.extract_info(url, download=True)
         return output_path
 
-
 def transcribe_with_whisper_local(audio_path):
     print("🧠 Transcribiendo con Whisper local...")
-
     device = "cuda" if torch.cuda.is_available() else "cpu"
     print(f"🧠 Usando dispositivo: {device}")
-
     model = whisper.load_model("tiny", device=device)
     result = model.transcribe(audio_path, language='es')
     return result['text']
@@ -86,26 +74,21 @@ def extract_recipe_with_mistral(description, transcription):
 
     Añade en el texto final unicamente el json solicitado
     """
-
-    # Asumiendo max_tokens = 512, puedes cambiarlo
     max_tokens = 512
-
     stream = mistral(prompt, max_tokens=max_tokens, stream=True)
-
     tokens = []
     pbar = tqdm(total=max_tokens, desc="Generando respuesta", ncols=80)
-
     for output in stream:
         token_text = output["choices"][0]["text"]
         tokens.append(token_text)
         pbar.update(1)
-
     pbar.close()
-
     texto_completo = "".join(tokens).strip()
     return texto_completo
 
-def procesar_receta(url, task=None, transcripcion_task=None):  # ⬅️ nuevo parámetro
+def procesar_receta(url, task=None):
+    from time import sleep
+
     def update_state(percent, mensaje):
         if task:
             task.update_state(state="PROGRESS", meta={"progreso": percent, "mensaje": mensaje})
@@ -119,24 +102,9 @@ def procesar_receta(url, task=None, transcripcion_task=None):  # ⬅️ nuevo pa
     update_state(25, "🎧 Extrayendo audio...")
     audio_path = download_audio_only(url, f'./records/audio{timestamp}.m4a')
 
-    update_state(45, "🧠 Enviando tarea de transcripción...")
-
-#    if not transcripcion_task:
-#        raise Exception("transcripcion_task no fue proporcionada")
-#
-#    tarea_transcripcion = transcripcion_task.delay(audio_path)
-#
-#    while not tarea_transcripcion.ready():
-#        time.sleep(1)
-#        print("⌛ Esperando transcripción...")
-#
-#    if tarea_transcripcion.failed():
-#        raise Exception("❌ La transcripción falló")
-
-#    transcripcion = tarea_transcripcion.result
-    print("⌛ Esperando transcripción...")
+    update_state(45, "🧠 Transcribiendo con Whisper local...")
     transcripcion = transcribe_with_whisper_local(audio_path)
-    
+
     update_state(70, "💡 Extrayendo receta con Mistral...")
     receta = extract_recipe_with_mistral(descripcion, transcripcion)
 
@@ -146,11 +114,9 @@ def procesar_receta(url, task=None, transcripcion_task=None):  # ⬅️ nuevo pa
     update_state(100, "✅ Proceso completado")
     return receta
 
-
 def generar_archivo(receta):
     print("📁 Generando archivo de texto...")
     titulo = ""
-
     match = re.search(r'\{.*\}', receta, re.DOTALL)
     if match:
         receta_limpia = match.group(0)
@@ -162,31 +128,17 @@ def generar_archivo(receta):
             print("❌ Error al decodificar JSON:", e)
     else:
         print("❌ No se encontró estructura JSON en la variable 'receta'")
-
     if not titulo:
         ahora = datetime.now().strftime("%Y_%m_%d_%H%M%S")
         titulo = f"Archivo_receta_{ahora}"
         print("📁 Nombre generado automáticamente:", titulo)
-
     nombre_archivo = nombre_archivo_valido(titulo) + ".txt"
     carpeta_destino = "./reports/"
-
-    # Asegura que la carpeta exista
     os.makedirs(carpeta_destino, exist_ok=True)
-
-    # Ruta completa al archivo
     ruta_archivo = os.path.join(carpeta_destino, nombre_archivo)
-
-    # Crear el archivo
     with open(ruta_archivo, "w", encoding="utf-8") as f:
         f.write(receta)
 
 if __name__ == "__main__":
-    #url = "https://www.tiktok.com/@digesti_on/video/7518704890164546838"
-    #procesar_receta(url)
-
-    #url = "https://www.tiktok.com/@elchefkent/video/7156908639326833925"
-    #procesar_receta(url)
-
     url = "https://www.tiktok.com/@comiendobienn/video/7518837827455552790"
     procesar_receta(url)
