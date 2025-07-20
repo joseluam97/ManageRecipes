@@ -6,97 +6,56 @@ import { getAllIngredients, postIngredient } from 'src/redux/ingredients/actions
 import { IconPlus } from '@tabler/icons';
 import { setListIngredientsNewRecipe } from '../../redux/recipe/actions'
 
-export default function DetailsIngredients({ ingredient, index }) {
+export default function DetailsIngredients({ ingredient_recipe, index, changeListIngredient }) {
 
     const location = useLocation();
     const dispatch = useDispatch();
 
     const [nameIngredientCreate, setNameIngredientCreate] = useState('');
-    const [unitSelected, setUnitSelected] = useState('');
-    const [quantitySelected, setQuantitySelected] = useState('');
-
-    const [ingredientSelected, setIngredientSelected] = useState(null);
 
     const [activateOptionCreateIngredient, setActivateOptionCreateIngredient] = useState(false);
 
     const listAllIngredientsAPI = useSelector((state) => state.ingredientsComponent.listAllIngredients);
     const listAllUnitsAPI = useSelector((state) => state.unitsComponent.listAllUnits);
 
+    const handleChangeIngredient = (index, value) => {
 
-    const listIngredientsNewRecipesAPI = useSelector((state) => state.recipesComponent.listIngredientsNewRecipes);
+        let update_element = {
+            ingredient: value,
+            quantity: ingredient_recipe.quantity,
+            unit: ingredient_recipe.unit,
+        };
 
-    const getValueAboutIntegredients = (value_fields) => {
-        if (value_fields != undefined) {
-            return value_fields;
-        }
-        return "";
+        changeListIngredient(update_element, index)
+        
+    }
+    const handleChangeQuantity = (index, value) => {
+
+        let update_element = {
+            ingredient: ingredient_recipe.ingredient,
+            quantity: value,
+            unit: ingredient_recipe.unit,
+        };
+
+        changeListIngredient(update_element, index)
+    }
+    const handleChangeUnit = (index, value) => {
+
+        let update_element = {
+            ingredient: ingredient_recipe.ingredient,
+            quantity: ingredient_recipe.quantity,
+            unit: value
+        };
+
+        changeListIngredient(update_element, index)
     }
 
-    const handleChange = (index, label, value) => {
-        const newIngredients = [...Object.values(listIngredientsNewRecipesAPI)];
-
-        if (newIngredients.length > index) {
-            if (label == "name") {
-                newIngredients[index] = {
-                    name: value,
-                    quantity: getValueAboutIntegredients(newIngredients[index].quantity),
-                    unit: getValueAboutIntegredients(newIngredients[index].unit)
-                };
-            }
-            else if (label == "quantity") {
-                newIngredients[index] = {
-                    name: getValueAboutIntegredients(newIngredients[index].name),
-                    quantity: value,
-                    unit: getValueAboutIntegredients(newIngredients[index].unit)
-                };
-            }
-            else if (label == "units") {
-                newIngredients[index] = {
-                    name: getValueAboutIntegredients(newIngredients[index].name),
-                    quantity: getValueAboutIntegredients(newIngredients[index].quantity),
-                    unit: value
-                };
-            }
-        }
-
-        dispatch(setListIngredientsNewRecipe(newIngredients));
-    };
-
-    useEffect(() => {
-        let listIngredientsNewRecipes = [...Object.values(listIngredientsNewRecipesAPI)];
-        if (listIngredientsNewRecipes != undefined && listIngredientsNewRecipes.length != 0 && listIngredientsNewRecipes.length > index) {
-            // There are values selected => name
-            const listAllIngredients = Object.values(listAllIngredientsAPI);
-            const posNameIngredient = listAllIngredients.findIndex(element => element.id === ingredient.name);
-
-            setIngredientSelected(listAllIngredients[posNameIngredient]);
-
-            handleChange(index, "name", listAllIngredients[posNameIngredient]?.id)
-
-            // There are values selected => name
-            setQuantitySelected(ingredient.quantity);
-
-            handleChange(index, "quantity", ingredient?.quantity)
-
-            // There are values selected => unit
-            const listAllUnits = Object.values(listAllUnitsAPI);
-            const posUnitIngredient = listAllUnits.findIndex(element => element.id === ingredient?.unit);
-            setUnitSelected(listAllUnits[posUnitIngredient]);
-
-            handleChange(index, "unit", listAllUnits[posUnitIngredient]?.id)
-        }
-    }, [location.pathname]);
-
     const createNewIngredients = async () => {
-        console.log("-createNewIngredients-")
-        console.log(nameIngredientCreate)
-
         if (nameIngredientCreate != "") {
             // Create new ingredients
             postNewIngredient();
         }
     };
-
 
     const postNewIngredient = async () => {
         const resultAction = await dispatch(postIngredient(nameIngredientCreate));
@@ -115,15 +74,12 @@ export default function DetailsIngredients({ ingredient, index }) {
         if (getAllIngredients.fulfilled.match(resultAction)) {
             if (resultAction.payload != undefined) {
                 const listIngredientsReceive = Object.values(resultAction.payload);
-
+                
                 //Select the ingredients create
                 const postNewElement = listIngredientsReceive.findIndex(element => element.name === nameIngredientCreate);
-                console.log("-listIngredientsReceive[postNewElement]-")
-                console.log(listIngredientsReceive[postNewElement])
-                setIngredientSelected(listIngredientsReceive[postNewElement]);
 
                 // Notify ListIngredients
-                handleChange(index, "name", listIngredientsReceive[postNewElement].id)
+                handleChangeIngredient(index, listIngredientsReceive[postNewElement])
 
                 // Disable buton
                 setActivateOptionCreateIngredient(false);
@@ -158,8 +114,8 @@ export default function DetailsIngredients({ ingredient, index }) {
         <Box sx={{ width: '100%' }} display="flex" flexDirection="row" gap={2}>
             <Autocomplete
                 options={Object.values(listAllIngredientsAPI)}
-                value={ingredientSelected}
-                getOptionLabel={(option) => option.name}
+                value={ingredient_recipe?.ingredient || null}
+                getOptionLabel={(option) => option?.name ?? ''}
                 isOptionEqualToValue={(option, value) => option?.id === value?.id}
                 noOptionsText="The option that you have searched not found. If you want add this ingredients, you must touch the add button. "
                 fullWidth
@@ -194,8 +150,7 @@ export default function DetailsIngredients({ ingredient, index }) {
                     />
                 )}
                 onChange={(event, value) => {
-                    setIngredientSelected(value)
-                    handleChange(index, "name", value.id)
+                    handleChangeIngredient(index, value)
                 }}
                 onInputChange={(event, newInputValue) => {
                     setNameIngredientCreate(newInputValue);
@@ -204,17 +159,16 @@ export default function DetailsIngredients({ ingredient, index }) {
 
             <TextField
                 fullWidth
-                value={quantitySelected}
+                value={ingredient_recipe?.quantity || null}
                 placeholder="Quantity"
                 type='number'
                 onChange={(e) => {
-                    setQuantitySelected(e.target.value)
-                    handleChange(index, "quantity", e.target.value)
+                    handleChangeQuantity(index, e.target.value)
                 }}
             />
             <Autocomplete
                 fullWidth
-                value={unitSelected}
+                value={ingredient_recipe?.unit || null}
                 options={Object.values(listAllUnitsAPI)}
                 getOptionLabel={(option) => option?.name ?? ''}
                 isOptionEqualToValue={(option, value) => option?.id === value?.id}
@@ -226,8 +180,7 @@ export default function DetailsIngredients({ ingredient, index }) {
                     />
                 )}
                 onChange={(event, value) => {
-                    setUnitSelected(value)
-                    handleChange(index, "units", value.id)
+                    handleChangeUnit(index, value)
                 }}
             />
 

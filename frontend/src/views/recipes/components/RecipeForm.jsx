@@ -47,16 +47,10 @@ export default function RecipeFormPage() {
 
     const [selectedTags, setSelectedTags] = useState([]);
 
-    const [showIngredients, setShowIngredients] = useState(false);
+    const [showIngredients, setShowIngredients] = useState(true);
     const [showElaborationSteps, setShowElaborationSteps] = useState(false);
 
     const listIngredientsNewRecipesAPI = useSelector((state) => state.recipesComponent.listIngredientsNewRecipes);
-
-    const listAllLevelsAPI = useSelector((state) => state.levelsComponent.listAllLevels);
-    const listAllOrdersAPI = useSelector((state) => state.ordersComponent.listAllOrders);
-    const listAllSourcesAPI = useSelector((state) => state.sourcesComponent.listAllSources);
-    const listAllTagsAPI = useSelector((state) => state.tagsComponent.listAllTags);
-    const listAllTypesRecipesAPI = useSelector((state) => state.typeRecipesComponent.listAllTypesRecipes);
 
     const [form, setForm] = useState({
         name: '',
@@ -156,7 +150,6 @@ export default function RecipeFormPage() {
                 console.log(recipesReceive.id);
 
                 createNewAssociationIngredientsAndRecipe(recipesReceive.id);
-
 
                 // Reset ingredients about current recipe
                 dispatch(setListIngredientsNewRecipe([]));
@@ -398,7 +391,7 @@ export default function RecipeFormPage() {
                     </Box>
                 </Box>
                 {showIngredients && (
-                    <Box width="65%">
+                    <Box width="80%">
                         <IngredientsPanel
                             onClose={() => setShowIngredients(false)}
                             setIdIngredients={(idIngredients) => setForm({ ...form, ingredients: idIngredients })}

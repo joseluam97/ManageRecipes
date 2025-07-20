@@ -31,6 +31,8 @@ services:
     environment:
       - API_URL=http://web:8000
       - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - SUPABASE_URL=${REACT_APP_SUPABASE_URL}
+      - SUPABASE_KEY=${REACT_APP_SUPABASE_ANON_KEY}
     depends_on:
       - web
 

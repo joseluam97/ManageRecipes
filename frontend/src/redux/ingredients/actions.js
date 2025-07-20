@@ -2,6 +2,7 @@ import axios from 'axios';
 import { createAction } from "@reduxjs/toolkit";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { supabase } from "../../utils/supabase";
+import {toLowerCaseSentence} from "../../utils/format-text"
 
 import {
   GET_ALL_INGREDIENTS,
@@ -19,7 +20,17 @@ export const getIngredientsByRecipe = createAsyncThunk(
     try {
       const { data, error } = await supabase
         .from('Ingredients_recipes')
-        .select('*')
+        .select(`
+          id,
+          cuantity,
+          unit,
+          recipe,
+          ingredient:Ingredients(*),
+          group (
+            id,
+            name
+          )
+        `)
         .eq('recipe', idRecipe)
         .order('id', { ascending: false });
 
@@ -60,8 +71,10 @@ export const postIngredient = createAsyncThunk(
   POST_INGREDIENT,
   async (name_ingredient, { rejectWithValue }) => {
 
+    let name_ingredient_formatted = toLowerCaseSentence(name_ingredient);
+
     const newIngredient = {
-      name: name_ingredient,
+      name: name_ingredient_formatted,
     };
 
     try {
@@ -92,7 +105,7 @@ export const postIngredient = createAsyncThunk(
 
 export const postIngredientRecipe = createAsyncThunk(
   POST_INGREDIENTS_RECIPE,
-  async ( newIngredients, {rejectWithValue}) => {
+  async (newIngredients, { rejectWithValue }) => {
 
     console.log("-newIngredients-")
     console.log(newIngredients)

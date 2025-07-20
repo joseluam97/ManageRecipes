@@ -6,10 +6,17 @@ import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setListIngredientsNewRecipe } from '../../redux/recipe/actions'
 import { TextField } from '@mui/material';
-import { parseIngredient } from 'parse-ingredient';
-import { UNIT_MAP, SPECIAL_UNITS_ES, ADJECTIVES_ES } from '../../utils/constant';
+import { submitTextToRead } from '../../utils/format-text'
+import { postIngredient } from 'src/redux/ingredients/actions'
+import { postUnit } from 'src/redux/units/actions'
+import { useRecipeData } from '../../contexts/RecipeDataContext'
 
 export default function IngredientsPanel({ onClose, setIdIngredients }) {
+
+  const { refreshData } = useRecipeData();
+
+  const [enterIngredientsManual, setEnterIngredientsManual] = useState(false);
+  const [processReadIngredientEnd, setProcessReadIngredientEnd] = useState(false);
 
   const [delayRender, setDelayRender] = useState(false);
   const [textIngredient, setTextIngredient] = useState('');
@@ -19,6 +26,9 @@ export default function IngredientsPanel({ onClose, setIdIngredients }) {
 
   const [listIngredientsBackup, setListIngredientsBackup] = useState([]);
   const listIngredientsNewRecipesAPI = useSelector((state) => state.recipesComponent.listIngredientsNewRecipes);
+
+  const listAllIngredientsAPI = useSelector((state) => state.ingredientsComponent.listAllIngredients);
+  const listAllUnitsAPI = useSelector((state) => state.unitsComponent.listAllUnits);
 
   const [showValidationError, setShowValidationError] = useState(false);
 
@@ -52,13 +62,17 @@ export default function IngredientsPanel({ onClose, setIdIngredients }) {
 
   const checkIngredientsValid = () => {
     let listIngredients = Object.values(listIngredientsNewRecipesAPI);
+
+    console.log("-listIngredients-")
+    console.log(listIngredients)
+
     if (listIngredients.length === 0) return false;
 
     for (let index in listIngredients) {
-      if (
-        !listIngredients[index].name ||
-        !listIngredients[index].quantity ||
-        !listIngredients[index].unit
+      if (listIngredients[index].name == "" ||
+        listIngredients[index].quantity == "" ||
+        listIngredients[index].quantity == 0 ||
+        listIngredients[index].unit == ""
       ) {
         return false;
       }
@@ -67,129 +81,149 @@ export default function IngredientsPanel({ onClose, setIdIngredients }) {
     return true;
   }
 
-  const translateUnits = (line) => {
-    return line.replace(/\b([a-záéíóúñ]+)\b/gi, (match) => {
-      const normalized = match.toLowerCase();
-      return UNIT_MAP[normalized] || match;
-    });
-  };
+  const postNewIngredient = async (name_ingredient) => {
+    const resultAction = await dispatch(postIngredient(name_ingredient));
+    if (postIngredient.fulfilled.match(resultAction)) {
+      if (resultAction.payload != undefined) {
+        refreshData();
+        const newIngredientsReceive = Object.values(resultAction.payload);
 
-  // Procesa líneas y arregla unidades especiales y descripción
-  const fixSpecialUnitsAndDescription = ({ quantity, unitOfMeasureID, unitOfMeasure, description }) => {
-    if (!description) return { quantity, unitOfMeasureID, unitOfMeasure, description };
-
-    let words = description.trim().split(' ');
-    if (words.length > 1) {
-      const posibleUnidad = words[0].toLowerCase();
-      if (SPECIAL_UNITS_ES[posibleUnidad]) {
-        const unidad_en = SPECIAL_UNITS_ES[posibleUnidad];
-        return {
-          quantity,
-          unitOfMeasureID: unidad_en,
-          unitOfMeasure: unidad_en,
-          description: cleanAdjectives(words.slice(1).join(' '))
-        };
+        return newIngredientsReceive
       }
     }
-
-    // Si no es unidad especial, limpia adjetivos normales
-    return {
-      quantity,
-      unitOfMeasureID,
-      unitOfMeasure,
-      description: cleanAdjectives(description)
-    };
   };
 
-  const removeInvisibleAndEmojis = (text) => {
-    // elimina emojis
-    let clean = text.replace(/[\p{Emoji_Presentation}\p{Extended_Pictographic}]/gu, '');
-    // elimina caracteres no imprimibles al inicio (incluyendo zero-width spaces)
-    clean = clean.replace(/^[^\S\r\n]+/, '');
-    // elimina cualquier caracter Unicode invisible más específico (cero width spaces, etc)
-    clean = clean.replace(/[\u200B-\u200D\uFEFF]/g, '');
-    clean = clean.replace(/\uFE0F/g, ''); // elimina variation selector-16
-    return clean.trim();
+  const postNewUnit = async (name_unit) => {
+    const resultAction = await dispatch(postUnit(name_unit));
+    if (postUnit.fulfilled.match(resultAction)) {
+      if (resultAction.payload != undefined) {
+        refreshData();
+        const newUnitReceive = Object.values(resultAction.payload);
+
+        return newUnitReceive
+      }
+    }
   };
 
-  // Elimina adjetivos del nombre (por ejemplo "aguacate maduro" -> "aguacate")
-  const cleanAdjectives = (text) => {
-    let cleanText = text;
-    ADJECTIVES_ES.forEach(adj => {
-      // usar expresión regular para eliminar la frase adjetiva completa, ignorando mayúsculas
-      const regex = new RegExp(`\\b${adj}\\b`, 'gi');
-      cleanText = cleanText.replace(regex, '');
-    });
-    // luego limpiar espacios sobrantes
-    return cleanText.trim().replace(/\s{2,}/g, ' ');
-  };
+  const readText = () => {
+    let text_complete = submitTextToRead(textIngredient)
 
-  const sanitizeLine = (line) => {
-    let clean = line.trim();
+    console.log(text_complete);
 
-    clean = clean.replace(/^-+\s*/, '');  // elimina guiones al principio
-    clean = clean.replace(/^[-•\u2022]+\s*/, '');  // elimina guiones, viñetas • y bullets Unicode al principio
-    clean = removeInvisibleAndEmojis(clean);
-    clean = clean.replace(/\(.*?\)/g, '');  // elimina paréntesis
-    clean = clean.replace(/(\d)([a-zA-Z]+)/g, '$1 $2'); // inserta espacio entre número y unidad pegada
-    clean = translateUnits(clean);          // traduce unidades
-    clean = clean.replace(/\bde\b\s+/gi, ''); // elimina la palabra 'de'
-    clean = clean.replace('.', ''); // elimina los puntos (.)
-    clean = clean.trim();
+    const listCurrentIngredients = Object.values(listAllIngredientsAPI);
+    const listCurrentUnits = Object.values(listAllUnitsAPI);
 
-    return clean;
-  };
+    let new_ingredients_created = 0;
+    let new_units_created = 0;
 
-  const submitTextToRead = () => {
-    const list_ingredients_parsed = textIngredient
-      .split('\n')
-      .map(sanitizeLine)
-      .filter(line => line.length > 0)
-      .filter(line => !line.match(/^[\w\s]+:$/)); // filtra encabezados como "Secos:"
+    let newIngredientsByText = []
+    for (let element in text_complete) {
 
-    console.log("-TEXTO A PROCESAR-");
-    console.log(list_ingredients_parsed);
+      let ingredient_recipe = "";
+      if (text_complete[element]["description"] != null && text_complete[element]["description"] != undefined && text_complete[element]["description"] != "") {
+        let description_search = text_complete[element]["description"];
+        let result_ingredient_search = listCurrentIngredients.filter(element => element.name == description_search)
 
-    console.log("-INGREDIENTS-");
-    list_ingredients_parsed.map(line => {
-      let readLine = parseIngredient(line, { normalizeUOM: true })[0]
-
-      if (readLine) {
-        // arregla unidades especiales y adjetivos
-        readLine = fixSpecialUnitsAndDescription(readLine);
+        if (result_ingredient_search.length == 0) {
+          // Create new ingredient
+          ingredient_recipe = postNewIngredient(text_complete[element]["description"])
+          new_ingredients_created = new_ingredients_created + 1;
+        }
+        else {
+          // Set ingredient register
+          ingredient_recipe = result_ingredient_search[0]
+        }
       }
 
-      console.log(readLine);
-    }
-    );
-    console.log("-END INGREDIENTS-");
+      let unit_recipe = "";
+      if (text_complete[element]["unitOfMeasure"] != null && text_complete[element]["unitOfMeasure"] != undefined && text_complete[element]["unitOfMeasure"] != "") {
+        let unit_search = text_complete[element]["unitOfMeasure"];
+        let result_unit_search = listCurrentUnits.filter(element => element.name == unit_search)
 
+        if (result_unit_search.length == 0) {
+          // Create new ingredient
+          unit_recipe = postNewUnit(text_complete[element]["unitOfMeasure"])
+          new_units_created = new_units_created + 1;
+        }
+        else {
+          // Set ingredient register
+          unit_recipe = result_unit_search[0]
+        }
+      }
+
+      // Create new element
+      let update_element = {
+        ingredient: ingredient_recipe,
+        quantity: text_complete[element]["quantity"],
+        unit: unit_recipe,
+      };
+
+      newIngredientsByText.push(update_element)
+    }
+
+    dispatch(setListIngredientsNewRecipe(newIngredientsByText));
+
+    console.log("-newIngredientsByText-")
+    console.log(newIngredientsByText)
+
+    console.log("-new_ingredients_created-")
+    console.log(new_ingredients_created)
+
+    console.log("-new_units_created-")
+    console.log(new_units_created)
+
+    setProcessReadIngredientEnd(true)
+
+  }
+
+  const changeMethodSubmitIngredient = () => {
+    setShowValidationError(false)
+    setEnterIngredientsManual(!enterIngredientsManual)
   }
 
   return (
     <Box sx={{ width: '100%', pl: 2 }}>
       <Typography variant="h5" gutterBottom>Ingredients</Typography>
 
-      <TextField
-        label="Descripción"
-        multiline
-        rows={20}
-        value={textIngredient}
-        onChange={(e) => setTextIngredient(e.target.value)}
-        fullWidth
-      />
-
-
-      <Button variant="contained" color="primary" onClick={submitTextToRead}>
-        Send
+      <Button
+        variant="contained"
+        color="primary"
+        target="_blank"
+        onClick={changeMethodSubmitIngredient}
+        sx={{ mt: 2, mb: 2 }}
+      >
+        {enterIngredientsManual == true ? "Enter ingredients manually" : "Enter ingredients using text"}
       </Button>
 
+      {enterIngredientsManual == false && (
+        <>
+          <TextField
+            label="Ingredients text"
+            multiline
+            rows={enterIngredientsManual == true || processReadIngredientEnd == true ? 5 : 20}
+            value={textIngredient}
+            onChange={(e) => setTextIngredient(e.target.value)}
+            fullWidth
+          />
 
-      <Box sx={{ width: '100%', paddingBottom: '20px', paddingTop: '20px' }}>
-        {delayRender && (
-          <ListIngredients title="List ingredients" />
-        )}
-      </Box>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={readText}
+            sx={{ mt: 2, mb: 2 }}
+          >
+            Read
+          </Button>
+        </>
+      )}
+
+      {(enterIngredientsManual == true || processReadIngredientEnd == true) && (
+        <Box sx={{ width: '100%', paddingBottom: '20px', paddingTop: '20px' }}>
+          {delayRender && (
+            <ListIngredients title="List ingredients" />
+          )}
+        </Box>
+      )}
 
       <Box sx={{ width: '100%', paddingBottom: '5px', paddingTop: '5px' }}>
         {showValidationError && (
@@ -207,12 +241,16 @@ export default function IngredientsPanel({ onClose, setIdIngredients }) {
         )}
       </Box>
 
-      <Button variant="contained" color="primary" onClick={saveIngredients}>
-        Save ingredients
-      </Button>
-      <Button variant="contained" color="red" sx={{ marginLeft: 2, color: "#FFFFFF" }} onClick={cancelSave}>
-        Cancel
-      </Button>
+      {(enterIngredientsManual == true || processReadIngredientEnd == true) && (
+        <>
+          <Button variant="contained" color="primary" onClick={saveIngredients}>
+            Save ingredients
+          </Button>
+          <Button variant="contained" color="red" sx={{ marginLeft: 2, color: "#FFFFFF" }} onClick={cancelSave}>
+            Cancel
+          </Button>
+        </>
+      )}
     </Box>
   );
 }

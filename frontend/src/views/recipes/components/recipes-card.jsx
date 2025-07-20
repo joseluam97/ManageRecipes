@@ -23,36 +23,12 @@ import {
 
 export default function RecipeCard({ recipe }) {
 
+  console.log("-RECIPE-")
+  console.log(recipe)
+
   const listAllTypesRecipesAPI = useSelector((state) => state.typeRecipesComponent.listAllTypesRecipes);
   const listAllOrdersAPI = useSelector((state) => state.ordersComponent.listAllOrders);
   const listAllLevelsAPI = useSelector((state) => state.levelsComponent.listAllLevels);
-
-  const getTypeRecipe = () => {
-    const listAllTypesRecipes = Object.values(listAllTypesRecipesAPI);
-    let elementType = listAllTypesRecipes.filter(element => element.id == recipe.type)[0]
-    if (elementType != undefined) {
-      return elementType.name;
-    }
-    return ""
-  }
-
-  const getOrderRecipe = () => {
-    const listAllOrders = Object.values(listAllOrdersAPI);
-    let elementOrder = listAllOrders.filter(element => element.id == recipe.order)[0]
-    if (elementOrder != undefined) {
-      return elementOrder.name;
-    }
-    return ""
-  }
-
-  const getDifficultyRecipe = () => {
-    const listAllLevels = Object.values(listAllLevelsAPI);
-    let elementDifficulty = listAllLevels.filter(element => element.id == recipe.difficulty)[0]
-    if (elementDifficulty != undefined) {
-      return elementDifficulty.name;
-    }
-    return ""
-  }
 
   const getColorTypeRecipe = () => {
     const listAllTypesRecipes = Object.values(listAllTypesRecipesAPI);
@@ -73,10 +49,10 @@ export default function RecipeCard({ recipe }) {
           left: 16,
           position: 'absolute',
           textTransform: 'uppercase',
-          backgroundColor: {getColorTypeRecipe},
+          backgroundColor: recipe.type.color
         }}
       >
-        {getTypeRecipe()}
+        {recipe.type.name}
       </Label>
 
 
@@ -124,7 +100,7 @@ export default function RecipeCard({ recipe }) {
           color: 'text.disabled',
         }}
       >
-        {getOrderRecipe(recipe.order)}
+        {recipe.order.name}
       </Typography>
     </Stack>
   );
@@ -142,7 +118,7 @@ export default function RecipeCard({ recipe }) {
         color: '#ffffff',
       }}
     >
-      {getDifficultyRecipe(recipe.difficulty)}
+      {recipe.difficulty.name}
     </Label>
   );
 

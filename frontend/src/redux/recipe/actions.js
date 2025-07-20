@@ -32,8 +32,15 @@ export const getAllRecipes = createAsyncThunk(
     try {
       const { data, error } = await supabase
         .from('Recipes')
-        .select('*')
+        .select(`
+          *,
+          type:Types(*),
+          difficulty:Levels(*),
+          order:Orders(*),
+          source:Sources(*)
+        `)
         .order('name', { ascending: false });
+
 
       if (error) {
         return rejectWithValue(error.message);
@@ -49,7 +56,7 @@ export const getAllRecipes = createAsyncThunk(
 
 export const postNewRecipe = createAsyncThunk(
   POST_RECIPE,
-  async ( newRecipe, {rejectWithValue}) => {
+  async (newRecipe, { rejectWithValue }) => {
 
     console.log("-newMessage-")
     console.log(newRecipe)

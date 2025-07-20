@@ -1,7 +1,6 @@
 import { Autocomplete, Box, IconButton, TextField, Typography, Paper, Stack, Badge } from '@mui/material';
 import { Add, DragIndicator } from '@mui/icons-material';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { getAllUnits } from '../../redux/units/actions'
 import { useDispatch, useSelector } from 'react-redux';
@@ -9,6 +8,7 @@ import { getAllIngredients } from 'src/redux/ingredients/actions'
 import DetailsIngredients from './DetailsIngredients'
 import { setListIngredientsNewRecipe } from '../../redux/recipe/actions'
 import { IconTrash } from '@tabler/icons';
+import { useState, useEffect } from 'react';
 
 export default function ListIngredients({ title }) {
 
@@ -17,7 +17,19 @@ export default function ListIngredients({ title }) {
 
     const listIngredientsNewRecipesAPI = useSelector((state) => state.recipesComponent.listIngredientsNewRecipes);
 
-    const listIngredients = Object.values(listIngredientsNewRecipesAPI);
+    const [listIngredients, setListIngredients] = useState([]);
+    //const listIngredients = Object.values(listIngredientsNewRecipesAPI);
+
+    useEffect(() => {
+        if (listIngredients !== undefined) {
+            // Solo actualiza si realmente ha cambiado el contenido
+            let listIngredientsNewRecipesAPIFormated = Object.values(listIngredientsNewRecipesAPI);
+            if (JSON.stringify(listIngredientsNewRecipesAPIFormated) !== JSON.stringify(listIngredients)) {
+                dispatch(setListIngredientsNewRecipe(listIngredients));
+            }
+        }
+    }, [listIngredients]);
+
 
     useEffect(() => {
         getListIngredients();
@@ -25,44 +37,61 @@ export default function ListIngredients({ title }) {
         if (Object.values(listIngredientsNewRecipesAPI).length == 0) {
             handleAdd();
         }
+        else {
+            let listIngredients = Object.values(listIngredientsNewRecipesAPI)
+            setListIngredients([...listIngredients])
+        }
     }, [location.pathname]);
+
+    useEffect(() => {
+        let listIngredientsReceive = Object.values(listIngredientsNewRecipesAPI)
+        console.log("--listIngredientsReceive-")
+        console.log(listIngredientsReceive)
+        setListIngredients(listIngredientsReceive)
+    }, [listIngredientsNewRecipesAPI]);
+
+    const changeListIngredient = (ingredient, index) => {
+        let current_elements = [...listIngredients]
+
+        current_elements[index] = ingredient
+
+        setListIngredients(current_elements)
+    };
 
     const getListUnits = async () => {
         const resultAction = await dispatch(getAllUnits());
-        console.log("-getListUnits-")
-        console.log(resultAction)
     };
 
     const getListIngredients = async () => {
         const resultAction = await dispatch(getAllIngredients());
-        console.log("-getListIngredients-")
-        console.log(resultAction)
     };
 
     const handleAdd = () => {
-        let listIngredientsNewRecipes = [...Object.values(listIngredientsNewRecipesAPI)]
+        let listIngredientsNewRecipes = [...Object.values(listIngredients)]
         listIngredientsNewRecipes.push({
             name: "",
             quantity: 0,
             unit: ""
         })
-        dispatch(setListIngredientsNewRecipe(listIngredientsNewRecipes));
+        setListIngredients(listIngredientsNewRecipes);
 
     };
 
     const handleDragEnd = (result) => {
         if (!result.destination) return;
-        let listIngredientsNewRecipes = [...Object.values(listIngredientsNewRecipesAPI)]
+        let listIngredientsNewRecipes = [...Object.values(listIngredients)]
         const newIngredients = Array.from(listIngredientsNewRecipes);
         const [removed] = newIngredients.splice(result.source.index, 1);
         newIngredients.splice(result.destination.index, 0, removed);
-        dispatch(setListIngredientsNewRecipe(newIngredients));
+        setListIngredients(newIngredients);
+        //dispatch(setListIngredientsNewRecipe(newIngredients));
     };
 
     const deleteIngredients = (indexToDelete) => {
-        const currentIngredients = [...Object.values(listIngredientsNewRecipesAPI)];
+        const currentIngredients = [...Object.values(listIngredients)];
         const newIngredients = currentIngredients.filter((_, index) => index !== indexToDelete);
-        dispatch(setListIngredientsNewRecipe(newIngredients));
+        setListIngredients(newIngredients);
+        //dispatch(setListIngredientsNewRecipe(newIngredients));
     };
 
     return (
@@ -79,7 +108,7 @@ export default function ListIngredients({ title }) {
                     {(provided) => (
                         <Box ref={provided.innerRef} {...provided.droppableProps}>
                             {listIngredients.map((ingredient, index) => (
-                                <Draggable key={ingredient.name} draggableId={`ingredient-${ingredient.name}`} index={index}>
+                                <Draggable key={`ingredient-key-${ingredient.name}-${index}`} draggableId={`ingredient-${ingredient.name}-${index}`} index={index}>
                                     {(provided) => (
                                         <Paper
                                             ref={provided.innerRef}
@@ -90,8 +119,9 @@ export default function ListIngredients({ title }) {
                                                 <DragIndicator />
                                             </Box>
                                             <DetailsIngredients
-                                                ingredient={ingredient}
+                                                ingredient_recipe={ingredient}
                                                 index={index}
+                                                changeListIngredient={changeListIngredient}
                                             />
                                             <IconButton
                                                 fullWidth

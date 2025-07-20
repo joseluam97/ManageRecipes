@@ -55,19 +55,25 @@ const Recipes = () => {
   };
 
   useEffect(() => {
+    setListRecipes([]);
+    console.log("-execute-")
     getListRecipes();
   }, [location.pathname, listRecipes]);
 
   useEffect(() => {
-    setArraysRecipeos(listRecipesAPI);
-  }, [page, pageSize, listRecipesAPI]);
+    setArraysRecipeos(listRecipes);
+  }, [page, pageSize, listRecipes]);
 
   const getListRecipes = async () => {
+    console.log("-listRecipes-")
+    console.log(listRecipes)
     const listRecipesReceive = Object.values(listRecipes);
-    setListRecipes(listRecipesReceive);
+    let listRecipesNew = [...listRecipesReceive]
+    setListRecipes(listRecipesNew);
   };
 
   const setArraysRecipeos = (listRecipesAPI) => {
+    console.log("-setArraysRecipeos-")
     let listSlice = listRecipesAPI.slice(startIndex, endIndex);
     setListRecipes(listRecipesAPI);
     setPaginatedRecipes(listSlice);

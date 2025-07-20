@@ -76,8 +76,14 @@ def extract_recipe_with_mistral(description, transcription, task=None, intento=1
         - nombre del ingrediente
         - cantidad
         - unidad de la cantidad (gramos, unidades, litros, mililitros...)
+        - grupo (si los ingredientes están agrupados por partes como "Para el caldo", "Para el pollo", etc., extrae ese nombre de grupo y asígnalo a los ingredientes correspondientes. Si no hay grupos, deja este campo vacío, como una cadena vacia)
     - pasos (array de strings)
     - tips (Si el usuario comenta algun tips en el video, crea un array de strings)
+    - tiempo: Tiempo en minutos estimados de la preparacion de la receta
+    - pais: Sera el pais originario de la receta del video
+    - difficulty: Debe ser una de las siguientes opciones, la mas acorde al video: Lower, Medium o High
+    - order: Debe ser una de las siguientes opciones, la mas acorde al video: Meal, Breakfast and Snack, Basic, Dip, Accompaniment o Dessert
+    - etiquetas (array de strings): Lista de etiquetas las cuales representen al video proporcionado, no deben estar duplicadas
 
     Añade en el texto final unicamente el json solicitado
     """
@@ -104,10 +110,16 @@ def extract_recipe_with_mistral(description, transcription, task=None, intento=1
         "nombre": "...",
         "cantidad": ...,
         "unidad": "..."
+        "grupo": "..."
         }}
     ],
     "pasos": ["...", "..."],
-    "tips": ["...", "..."]
+    "tips": ["...", "..."],
+    "tiempo": "...",               Tiempo en minutos estimados de la preparacion de la receta
+    "pais": "...",                 Sera el pais originario de la receta del video
+    "difficulty": "...",           Debe ser una de las siguientes opciones, la mas acorde al video: Lower, Medium o High
+    "order": "...",                Debe ser una de las siguientes opciones, la mas acorde al video: Meal, Breakfast and Snack, Basic, Dip, Accompaniment o Dessert
+    "etiquetas": ["...", "..."]    Lista de etiquetas las cuales representen al video proporcionado, no deben estar duplicadas
     }}
 
     ⚠️ IMPORTANTE:
@@ -120,9 +132,9 @@ def extract_recipe_with_mistral(description, transcription, task=None, intento=1
     """
 
     # Select prompt
-    if intento == 1 or intento == 3:
+    if intento == 1 or intento == 2:
         prompt = prompt_principal
-    elif intento == 2:
+    elif intento == 3:
         prompt = prompt_alternativo
 
     # max_tokens = 512
@@ -226,11 +238,12 @@ def procesar_receta(url, task=None):
             break
         print(f"⚠️⚠️ Intento {intento} fallido: JSON inválido.⚠️⚠️")
         print(receta)
+        generar_archivo_error(receta)
 
         if task:
             task.update_state(
                 state="PROGRESS",
-                meta={"n_task": "4/6", "progreso": 20 + intento * 5, "mensaje": f"🔁 Reintentando extracción ({intento}/{intentos_maximos})..."}
+                meta={"n_task": "4/6", "progreso": 20 + intento * 5, "mensaje": f"🔁 Reintentando extracción ({intento + 1}/{intentos_maximos})..."}
             )
     else:
         receta = json.dumps({
@@ -242,7 +255,7 @@ def procesar_receta(url, task=None):
         }, indent=2)
 
     update_state("5/6", 90, "💾 Generando archivo...")
-    #generar_archivo(receta)
+    generar_archivo(receta)
 
     update_state("6/6", 100, "✅ Proceso completado")
     return receta
@@ -271,6 +284,23 @@ def generar_archivo(receta):
     ruta_archivo = os.path.join(carpeta_destino, nombre_archivo)
     with open(ruta_archivo, "w", encoding="utf-8") as f:
         f.write(receta)
+
+def generar_archivo_error(receta):
+    print("📁 Generando archivo de texto de error...")
+
+    ahora = datetime.now().strftime("%Y_%m_%d_%H%M%S")
+    nombre_archivo = f"error_extraccion_receta_{ahora}.txt"
+    carpeta_destino = "./reports/"
+    os.makedirs(carpeta_destino, exist_ok=True)
+    ruta_archivo = os.path.join(carpeta_destino, nombre_archivo)
+
+    try:
+        with open(ruta_archivo, "w", encoding="utf-8") as f:
+            f.write(receta)
+        print(f"✅ Archivo de error generado en: {ruta_archivo}")
+    except Exception as e:
+        print(f"❌ Error al guardar archivo de error: {e}")
+
 
 if __name__ == "__main__":
     url = "https://www.tiktok.com/@comiendobienn/video/7518837827455552790"

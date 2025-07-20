@@ -28,6 +28,7 @@ import { useParams } from 'react-router-dom';
 import { useRecipeData } from '../../../contexts/RecipeDataContext';
 import { getIngredientsByRecipe } from '../../../redux/ingredients/actions'
 import { getListCountries } from '../../../utils/countries'
+import { toTitleCase } from '../../../utils/format-text'
 
 export default function RecipeView() {
 
@@ -63,7 +64,23 @@ export default function RecipeView() {
         const resultAction = await dispatch(getIngredientsByRecipe(id));
         if (getIngredientsByRecipe.fulfilled.match(resultAction) && resultAction.payload != undefined) {
             const listIngredientsByRecipe = Object.values(resultAction.payload);
-            setListIngredientsRecipes(listIngredientsByRecipe)
+
+            let pruebaIngredientes = [...listIngredientsByRecipe]
+            const agrupado = pruebaIngredientes.reduce((acc, item) => {
+                const grupo = item?.group?.name || '';
+                if (!acc[grupo]) {
+                    acc[grupo] = [];
+                }
+                acc[grupo].push(item);
+                return acc;
+            }, {});
+
+            const grupos = Object.entries(agrupado).map(([grupo, items]) => ({
+                grupo,
+                ingredientes: items
+            }));
+
+            setListIngredientsRecipes(Object.values(grupos))
         }
     };
 
@@ -123,7 +140,7 @@ export default function RecipeView() {
                                     Type
                                 </Typography>
                                 {recipe ? (
-                                    <Typography>{getNameType(recipe?.type)}</Typography>
+                                    <Typography>{recipe?.type?.name}</Typography>
                                 ) : (
                                     <Skeleton width="80%" />
                                 )}
@@ -134,7 +151,7 @@ export default function RecipeView() {
                                     Difficulty
                                 </Typography>
                                 {recipe ? (
-                                    <Typography>{getNameLevel(recipe?.difficulty)}</Typography>
+                                    <Typography>{recipe?.difficulty?.name}</Typography>
                                 ) : (
                                     <Skeleton width="80%" />
                                 )}
@@ -175,7 +192,7 @@ export default function RecipeView() {
                                     Order
                                 </Typography>
                                 {recipe ? (
-                                    <Typography>{getNameOrder(recipe?.order)}</Typography>
+                                    <Typography>{recipe?.order?.name}</Typography>
                                 ) : (
                                     <Skeleton width="80%" />
                                 )}
@@ -186,7 +203,7 @@ export default function RecipeView() {
                                     Source
                                 </Typography>
                                 {recipe ? (
-                                    <Typography>{getNameSource(recipe?.source)}</Typography>
+                                    <Typography>{recipe?.source?.name}</Typography>
                                 ) : (
                                     <Skeleton width="80%" />
                                 )}
@@ -223,59 +240,109 @@ export default function RecipeView() {
 
                 <Divider sx={{ my: 4 }} />
 
-                {/* Ingredientes */}
-                <Box>
-                    <Typography variant="h6" fontWeight="bold" gutterBottom>
-                        Ingredients
-                    </Typography>
+                <Box display="flex" flexDirection="row" gap={5}>
 
-                    {listIngredientsRecipe.length > 0 ? (
-                        <Grid container spacing={2}>
-                            {listIngredientsRecipe.map((item, idx) => (
-                                <Grid item xs={12} sm={6} md={3} key={idx}>
-                                    <Paper elevation={1} sx={{ p: 2, borderRadius: 2, display: 'flex', alignItems: 'center', gap: 2 }}>
-                                        <Avatar sx={{ bgcolor: 'primary.main', width: 32, height: 32, fontSize: 14 }}>
-                                            {getNameIngredient(item.ingredient).charAt(0).toUpperCase()}
-                                        </Avatar>
-                                        <Box>
-                                            <Typography variant="body1" fontWeight="medium">
-                                                {getNameIngredient(item.ingredient)}
+                    {/* Ingredientes */}
+                    <Box width="35%">
+                        <Typography variant="h5" fontWeight="medium" gutterBottom>
+                            Ingredients
+                        </Typography>
+
+                        {listIngredientsRecipe.length > 0 ? (
+                            <Box display="flex" flexDirection="column" gap={2}>
+                                {listIngredientsRecipe.map((grupoItem, grupoIdx) => (
+                                    <Box key={grupoIdx} display="flex" flexDirection="column" gap={1}>
+                                        {grupoItem.grupo != "" ? (
+                                            <Typography variant="body1" fontWeight="bold">
+                                                {grupoItem.grupo}
                                             </Typography>
-                                            <Typography variant="body2" color="text.secondary">
-                                                {item.cuantity} {getNameUnit(item.unit)}
-                                            </Typography>
-                                        </Box>
-                                    </Paper>
-                                </Grid>
-                            ))}
-                        </Grid>
-                    ) : (
-                        <Skeleton variant="rectangular" width="100%" height={100} />
-                    )}
-                </Box>
+                                        ) : <></>}
 
-                <Divider sx={{ my: 4 }} />
-
-                {/* Elaboration steps */}
-                <Box>
-                    <Typography variant="h6" fontWeight="bold" gutterBottom>
-                        Elaboration
-                    </Typography>
-                    <Box component="ol" sx={{ pl: 3 }}>
-                        {recipe ? (
-                            recipe.elaboration.map((step, idx) => (
-                                <li key={idx}>
-                                    <Typography>{step}</Typography>
-                                </li>
-                            ))
+                                        {grupoItem.ingredientes.map((item, idx) => (
+                                            <Paper
+                                                key={grupoIdx + "-" + idx}
+                                                elevation={1}
+                                                sx={{
+                                                    p: 1.5,
+                                                    borderRadius: 2,
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'space-between',
+                                                }}
+                                            >
+                                                <Box display="flex" alignItems="center" gap={1}>
+                                                    <Avatar
+                                                        sx={{
+                                                            bgcolor: 'primary.main',
+                                                            width: 24,
+                                                            height: 24,
+                                                            fontSize: 12,
+                                                        }}
+                                                    >
+                                                        {item.ingredient?.name.charAt(0).toUpperCase()}
+                                                    </Avatar>
+                                                    <Typography variant="body1" fontWeight="medium">
+                                                        {toTitleCase(item?.ingredient?.name)}
+                                                    </Typography>
+                                                </Box>
+                                                <Typography variant="body2" color="text.secondary">
+                                                    {item.cuantity} {toTitleCase(item?.unit?.name)}
+                                                </Typography>
+                                            </Paper>
+                                        ))}
+                                    </Box>
+                                ))}
+                            </Box>
                         ) : (
-                            [1, 2, 3].map((i) => (
-                                <li key={i}>
-                                    <Skeleton width="90%" />
-                                </li>
-                            ))
+                            <Skeleton variant="rectangular" width="100%" height={100} />
                         )}
+
                     </Box>
+
+                    {/* Elaboration steps */}
+                    <Box width="65%">
+                        <Typography variant="h5" fontWeight="medium" gutterBottom>
+                            Elaboration
+                        </Typography>
+                        <Box component="ol" sx={{ pl: 3 }}>
+                            {recipe ? (
+                                <Box component="ul" sx={{ pl: 2, m: 0 }}>
+                                    {recipe.elaboration.map((step, idx) => (
+                                        <Box
+                                            component="li"
+                                            key={idx}
+                                            sx={{
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: 1,
+                                                mb: 1,
+                                                listStyle: 'none',
+                                            }}
+                                        >
+                                            <Avatar
+                                                sx={{
+                                                    bgcolor: 'primary.main',
+                                                    width: 24,
+                                                    height: 24,
+                                                    fontSize: 12,
+                                                }}
+                                            >
+                                                {idx + 1}
+                                            </Avatar>
+                                            <Typography variant="body2">{step}</Typography>
+                                        </Box>
+                                    ))}
+                                </Box>
+                            ) : (
+                                [1, 2, 3].map((i) => (
+                                    <li key={i}>
+                                        <Skeleton width="90%" />
+                                    </li>
+                                ))
+                            )}
+                        </Box>
+                    </Box>
+
                 </Box>
 
             </Paper>
