@@ -55,7 +55,9 @@ const Recipes = () => {
   };
 
   useEffect(() => {
+    refreshData();
     setListRecipes([]);
+    
     console.log("-execute-")
     getListRecipes();
   }, [location.pathname, listRecipes]);

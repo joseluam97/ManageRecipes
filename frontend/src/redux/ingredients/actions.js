@@ -23,7 +23,7 @@ export const getIngredientsByRecipe = createAsyncThunk(
         .select(`
           id,
           cuantity,
-          unit,
+          unit:Units(*),
           recipe,
           ingredient:Ingredients(*),
           group (

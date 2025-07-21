@@ -11,7 +11,8 @@ import {
     Chip,
     Grid,
     Paper,
-    Skeleton
+    Skeleton,
+    Stack
 } from '@mui/material';
 import LaunchIcon from '@mui/icons-material/Launch';
 import { useDispatch, useSelector } from 'react-redux';
@@ -35,7 +36,7 @@ export default function RecipeView() {
     const { id } = useParams();
     const { getNameIngredient, getNameUnit, getNameType, getNameLevel, getNameOrder, getNameSource } = useEntityUtils();
 
-    const { listRecipes } = useRecipeData();
+    const { listRecipes, refreshData } = useRecipeData();
     const location = useLocation();
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -66,6 +67,7 @@ export default function RecipeView() {
             const listIngredientsByRecipe = Object.values(resultAction.payload);
 
             let pruebaIngredientes = [...listIngredientsByRecipe]
+
             const agrupado = pruebaIngredientes.reduce((acc, item) => {
                 const grupo = item?.group?.name || '';
                 if (!acc[grupo]) {
@@ -79,8 +81,14 @@ export default function RecipeView() {
                 grupo,
                 ingredientes: items
             }));
+            const list_groups = Object.values(grupos);
 
-            setListIngredientsRecipes(Object.values(grupos))
+            const list_group_sort = [
+                ...list_groups.filter(item => item.grupo === ""),
+                ...list_groups.filter(item => item.grupo !== "")
+            ];
+
+            setListIngredientsRecipes(Object.values(list_group_sort))
         }
     };
 
@@ -285,9 +293,14 @@ export default function RecipeView() {
                                                         {toTitleCase(item?.ingredient?.name)}
                                                     </Typography>
                                                 </Box>
-                                                <Typography variant="body2" color="text.secondary">
-                                                    {item.cuantity} {toTitleCase(item?.unit?.name)}
-                                                </Typography>
+                                                <Stack direction="row" spacing={1}>
+                                                    <Typography variant="body2" color="text.secondary">
+                                                        {item.cuantity}
+                                                    </Typography>
+                                                    <Typography variant="body2" color="text.secondary">
+                                                        {toTitleCase(item?.unit?.name)}
+                                                    </Typography>
+                                                </Stack>
                                             </Paper>
                                         ))}
                                     </Box>

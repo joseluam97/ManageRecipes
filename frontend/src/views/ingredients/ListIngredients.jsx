@@ -1,4 +1,3 @@
-import { Autocomplete, Box, IconButton, TextField, Typography, Paper, Stack, Badge } from '@mui/material';
 import { Add, DragIndicator } from '@mui/icons-material';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { useLocation } from 'react-router-dom';
@@ -9,11 +8,25 @@ import DetailsIngredients from './DetailsIngredients'
 import { setListIngredientsNewRecipe } from '../../redux/recipe/actions'
 import { IconTrash } from '@tabler/icons';
 import { useState, useEffect } from 'react';
+import * as React from 'react';
+import FormGroup from '@mui/material/FormGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Switch from '@mui/material/Switch';
+import { Box, Stack, Typography, IconButton, TextField, Chip, Paper } from '@mui/material';
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
 
-export default function ListIngredients({ title }) {
+export default function ListIngredients({ title, setErrorListIngredients }) {
 
     const location = useLocation();
     const dispatch = useDispatch();
+
+    const [idIngredientDuplicated, setIdIngredientDuplicated] = useState(0);
+    const [openError, setOpenError] = useState(false);
+
+    const [groupSpecify, setGroupSpecify] = React.useState(false);
+    const [groupInput, setGroupInput] = useState('');
+    const [groupList, setGroupList] = useState([]);
 
     const listIngredientsNewRecipesAPI = useSelector((state) => state.recipesComponent.listIngredientsNewRecipes);
 
@@ -45,14 +58,34 @@ export default function ListIngredients({ title }) {
 
     useEffect(() => {
         let listIngredientsReceive = Object.values(listIngredientsNewRecipesAPI)
-        console.log("--listIngredientsReceive-")
-        console.log(listIngredientsReceive)
-        setListIngredients(listIngredientsReceive)
+        if (listIngredientsReceive.length != 0) {
+            setListIngredients(listIngredientsReceive)
+        }
+        else {
+            handleAdd();
+        }
     }, [listIngredientsNewRecipesAPI]);
 
     const changeListIngredient = (ingredient, index) => {
         let current_elements = [...listIngredients]
 
+        // Check if ingredients exits in list
+        if (ingredient.ingredient != undefined) {
+            let list_search_element = [...current_elements]
+            let result_filter = list_search_element.filter((element, indice) => element?.ingredient?.id == ingredient?.ingredient?.id && indice != index)
+            if (result_filter.length != 0) {
+                // The ingredient is duplicated
+                setIdIngredientDuplicated(ingredient.ingredient.id)
+                setOpenError(true);
+                setErrorListIngredients(true);
+            }
+            else{
+                setIdIngredientDuplicated(0)
+                setOpenError(false);
+                setErrorListIngredients(false);
+            }
+        }
+        // Add new ingredient
         current_elements[index] = ingredient
 
         setListIngredients(current_elements)
@@ -74,7 +107,6 @@ export default function ListIngredients({ title }) {
             unit: ""
         })
         setListIngredients(listIngredientsNewRecipes);
-
     };
 
     const handleDragEnd = (result) => {
@@ -94,8 +126,58 @@ export default function ListIngredients({ title }) {
         //dispatch(setListIngredientsNewRecipe(newIngredients));
     };
 
+    const handleChange = (event) => {
+        setGroupSpecify(event.target.checked);
+    };
+
+    const handleKeyDown = (event) => {
+        if (event.key === 'Enter' && groupInput.trim() !== '') {
+            event.preventDefault();
+            if (!groupList.includes(groupInput.trim())) {
+                setGroupList([...groupList, groupInput.trim()]);
+            }
+            setGroupInput('');
+        }
+    };
+
+    const handleDelete = (chipToDelete) => {
+        setGroupList((chips) => chips.filter((chip) => chip !== chipToDelete));
+    };
+
     return (
         <Box>
+            <FormControlLabel control={
+                <Switch
+                    checked={groupSpecify}
+                    onChange={handleChange}
+                    inputProps={{ 'aria-label': 'controlled' }}
+                />
+            } label="Especificar grupos" />
+
+            {groupSpecify && (
+                <Box sx={{ mt: 2 }}>
+                    <TextField
+                        fullWidth
+                        variant="outlined"
+                        label="Añadir grupo"
+                        value={groupInput}
+                        onChange={(e) => setGroupInput(e.target.value)}
+                        onKeyDown={handleKeyDown}
+                    />
+
+                    <Stack direction="row" spacing={1} sx={{ mt: 2, flexWrap: 'wrap' }}>
+                        {groupList.map((group, index) => (
+                            <Chip
+                                key={index}
+                                label={group}
+                                onDelete={() => handleDelete(group)}
+                                sx={{ mb: 1 }}
+                            />
+                        ))}
+                    </Stack>
+                </Box>
+            )}
+
             <Stack direction="row" flexShrink={0} sx={{ my: 0, width: '100%' }} justifyContent="flex-start" alignItems="center">
                 <Typography variant="subtitle1" gutterBottom>{title}</Typography>
                 <IconButton onClick={handleAdd} color="primary">
@@ -110,40 +192,51 @@ export default function ListIngredients({ title }) {
                             {listIngredients.map((ingredient, index) => (
                                 <Draggable key={`ingredient-key-${ingredient.name}-${index}`} draggableId={`ingredient-${ingredient.name}-${index}`} index={index}>
                                     {(provided) => (
-                                        <Paper
-                                            ref={provided.innerRef}
-                                            {...provided.draggableProps}
-                                            sx={{ display: 'flex', alignItems: 'center', mb: 1, p: 1 }}
-                                        >
-                                            <Box {...provided.dragHandleProps} sx={{ mr: 1 }}>
-                                                <DragIndicator />
-                                            </Box>
-                                            <DetailsIngredients
-                                                ingredient_recipe={ingredient}
-                                                index={index}
-                                                changeListIngredient={changeListIngredient}
-                                            />
-                                            <IconButton
-                                                fullWidth
-                                                color="inherit"
-                                                aria-controls="msgs-menu"
-                                                aria-haspopup="true"
-                                                onClick={() => deleteIngredients(index)}
-                                                sx={{
-                                                    ...(typeof anchorEl2 === 'object' && {
-                                                        color: 'primary.main',
-                                                        width: 24,
-                                                        height: 24,
-                                                    }),
-                                                }}
+                                        <Box>
+                                            <Paper
+                                                ref={provided.innerRef}
+                                                {...provided.draggableProps}
+                                                sx={{ display: 'flex', alignItems: 'center', mb: 1, p: 1 }}
                                             >
-                                                <IconTrash size="20" stroke="1.0" />
+                                                <Box {...provided.dragHandleProps} sx={{ mr: 1 }}>
+                                                    <DragIndicator />
+                                                </Box>
+                                                <DetailsIngredients
+                                                    ingredient_recipe={ingredient}
+                                                    index={index}
+                                                    changeListIngredient={changeListIngredient}
+                                                    groupSpecify={groupSpecify}
+                                                    groupList={groupList}
+                                                />
+                                                <IconButton
+                                                    fullWidth
+                                                    color="inherit"
+                                                    aria-controls="msgs-menu"
+                                                    aria-haspopup="true"
+                                                    onClick={() => deleteIngredients(index)}
+                                                    sx={{
+                                                        ...(typeof anchorEl2 === 'object' && {
+                                                            color: 'primary.main',
+                                                            width: 24,
+                                                            height: 24,
+                                                        }),
+                                                    }}
+                                                >
+                                                    <IconTrash size="20" stroke="1.0" />
+                                                </IconButton>
+                                            </Paper>
 
-                                            </IconButton>
-                                        </Paper>
+                                            {/* ✅ Mensaje de error si hay ingrediente duplicado */}
+                                            {openError && idIngredientDuplicated == ingredient?.ingredient?.id && (
+                                                <Typography variant="body2" color="error" sx={{ ml: 4, mb: 1 }}>
+                                                    The ingredient is duplicated
+                                                </Typography>
+                                            )}
+                                        </Box>
                                     )}
                                 </Draggable>
                             ))}
+
                             {provided.placeholder}
                         </Box>
                     )}

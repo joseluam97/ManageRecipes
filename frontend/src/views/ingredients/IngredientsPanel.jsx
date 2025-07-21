@@ -15,9 +15,10 @@ export default function IngredientsPanel({ onClose, setIdIngredients }) {
 
   const { refreshData } = useRecipeData();
 
-  const [enterIngredientsManual, setEnterIngredientsManual] = useState(false);
+  const [enterIngredientsManual, setEnterIngredientsManual] = useState(true);
   const [processReadIngredientEnd, setProcessReadIngredientEnd] = useState(false);
 
+  const [errorListIngredients, setErrorListIngredients] = useState(false);
   const [delayRender, setDelayRender] = useState(false);
   const [textIngredient, setTextIngredient] = useState('');
 
@@ -42,16 +43,13 @@ export default function IngredientsPanel({ onClose, setIdIngredients }) {
   }, [location.pathname]);
 
   const cancelSave = () => {
-
-    dispatch(setListIngredientsNewRecipe(listIngredientsBackup));
+    dispatch(setListIngredientsNewRecipe([]));
     onClose();
-
   }
 
   const saveIngredients = () => {
 
     if (!checkIngredientsValid()) {
-      console.log("ERROR");
       setShowValidationError(true);
     }
     else {
@@ -62,9 +60,6 @@ export default function IngredientsPanel({ onClose, setIdIngredients }) {
 
   const checkIngredientsValid = () => {
     let listIngredients = Object.values(listIngredientsNewRecipesAPI);
-
-    console.log("-listIngredients-")
-    console.log(listIngredients)
 
     if (listIngredients.length === 0) return false;
 
@@ -107,8 +102,6 @@ export default function IngredientsPanel({ onClose, setIdIngredients }) {
 
   const readText = () => {
     let text_complete = submitTextToRead(textIngredient)
-
-    console.log(text_complete);
 
     const listCurrentIngredients = Object.values(listAllIngredientsAPI);
     const listCurrentUnits = Object.values(listAllUnitsAPI);
@@ -163,15 +156,6 @@ export default function IngredientsPanel({ onClose, setIdIngredients }) {
 
     dispatch(setListIngredientsNewRecipe(newIngredientsByText));
 
-    console.log("-newIngredientsByText-")
-    console.log(newIngredientsByText)
-
-    console.log("-new_ingredients_created-")
-    console.log(new_ingredients_created)
-
-    console.log("-new_units_created-")
-    console.log(new_units_created)
-
     setProcessReadIngredientEnd(true)
 
   }
@@ -220,7 +204,10 @@ export default function IngredientsPanel({ onClose, setIdIngredients }) {
       {(enterIngredientsManual == true || processReadIngredientEnd == true) && (
         <Box sx={{ width: '100%', paddingBottom: '20px', paddingTop: '20px' }}>
           {delayRender && (
-            <ListIngredients title="List ingredients" />
+            <ListIngredients 
+              title="List ingredients"
+              setErrorListIngredients={setErrorListIngredients}
+            />
           )}
         </Box>
       )}
@@ -243,10 +230,20 @@ export default function IngredientsPanel({ onClose, setIdIngredients }) {
 
       {(enterIngredientsManual == true || processReadIngredientEnd == true) && (
         <>
-          <Button variant="contained" color="primary" onClick={saveIngredients}>
+          <Button 
+            variant="contained"
+            color="primary" 
+            onClick={saveIngredients}
+            disabled={errorListIngredients}
+          >
             Save ingredients
           </Button>
-          <Button variant="contained" color="red" sx={{ marginLeft: 2, color: "#FFFFFF" }} onClick={cancelSave}>
+          <Button 
+            variant="contained"
+            color="red" 
+            sx={{ marginLeft: 2, color: "#FFFFFF" }} 
+            onClick={cancelSave}
+          >
             Cancel
           </Button>
         </>

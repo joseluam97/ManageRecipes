@@ -5,8 +5,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getAllIngredients, postIngredient } from 'src/redux/ingredients/actions'
 import { IconPlus } from '@tabler/icons';
 import { setListIngredientsNewRecipe } from '../../redux/recipe/actions'
+import OutlinedInput from '@mui/material/OutlinedInput';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 
-export default function DetailsIngredients({ ingredient_recipe, index, changeListIngredient }) {
+export default function DetailsIngredients({ ingredient_recipe, index, changeListIngredient, groupSpecify, groupList}) {
 
     const location = useLocation();
     const dispatch = useDispatch();
@@ -24,10 +29,11 @@ export default function DetailsIngredients({ ingredient_recipe, index, changeLis
             ingredient: value,
             quantity: ingredient_recipe.quantity,
             unit: ingredient_recipe.unit,
+            group: ingredient_recipe.group != undefined ? ingredient_recipe.group : ""
         };
 
         changeListIngredient(update_element, index)
-        
+
     }
     const handleChangeQuantity = (index, value) => {
 
@@ -35,6 +41,7 @@ export default function DetailsIngredients({ ingredient_recipe, index, changeLis
             ingredient: ingredient_recipe.ingredient,
             quantity: value,
             unit: ingredient_recipe.unit,
+            group: ingredient_recipe.group != undefined ? ingredient_recipe.group : ""
         };
 
         changeListIngredient(update_element, index)
@@ -44,7 +51,21 @@ export default function DetailsIngredients({ ingredient_recipe, index, changeLis
         let update_element = {
             ingredient: ingredient_recipe.ingredient,
             quantity: ingredient_recipe.quantity,
-            unit: value
+            unit: value,
+            group: ingredient_recipe.group != undefined ? ingredient_recipe.group : ""
+        };
+
+        changeListIngredient(update_element, index)
+    }
+
+    const handleChangeGroup = (index, event) => {
+
+        const value = event.target.value;
+        let update_element = {
+            ingredient: ingredient_recipe.ingredient,
+            quantity: ingredient_recipe.quantity,
+            unit: ingredient_recipe.unit,
+            group: value
         };
 
         changeListIngredient(update_element, index)
@@ -74,7 +95,7 @@ export default function DetailsIngredients({ ingredient_recipe, index, changeLis
         if (getAllIngredients.fulfilled.match(resultAction)) {
             if (resultAction.payload != undefined) {
                 const listIngredientsReceive = Object.values(resultAction.payload);
-                
+
                 //Select the ingredients create
                 const postNewElement = listIngredientsReceive.findIndex(element => element.name === nameIngredientCreate);
 
@@ -183,6 +204,30 @@ export default function DetailsIngredients({ ingredient_recipe, index, changeLis
                     handleChangeUnit(index, value)
                 }}
             />
+
+            {groupSpecify == true && (
+                <FormControl fullWidth>
+                    <InputLabel id="demo-multiple-name-label">Group</InputLabel>
+                    <Select
+                        labelId="demo-multiple-name-label"
+                        id="demo-multiple-name"
+                        value={ingredient_recipe?.group}
+                        onChange={(event, value) => {
+                            handleChangeGroup(index, event)
+                        }}
+                        input={<OutlinedInput label="Name" />}
+                    >
+                        {groupList.map((name) => (
+                            <MenuItem
+                                key={name}
+                                value={name}
+                            >
+                                {name}
+                            </MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
+            )}
 
         </Box>
     );
