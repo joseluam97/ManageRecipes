@@ -17,7 +17,7 @@ import {
     COUNTRY_DEFAULT
 } from 'src/utils/constant';
 
-import IngredientsPanel from '../../ingredients/IngredientsPanel';
+import IngredientsPanel from '../../ingredients/components/IngredientsPanel';
 import ElaborationPanel from '../../elaboration/ElaborationPanel';
 import MultiSelectAutocomplete from '../../../components/selectors/MultiSelectAutocomplete'
 

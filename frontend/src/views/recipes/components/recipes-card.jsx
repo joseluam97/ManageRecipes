@@ -52,7 +52,7 @@ export default function RecipeCard({ recipe }) {
           backgroundColor: recipe.type.color
         }}
       >
-        {recipe.type.name}
+        {recipe.type != undefined ? recipe.type?.name : "Not defined"}
       </Label>
 
 
@@ -75,7 +75,7 @@ export default function RecipeCard({ recipe }) {
   const renderImg = (
     <Box
       component="img"
-      alt={recipe.name}
+      alt={recipe?.name}
       src={Menu1}
       sx={{
         top: 0,
@@ -90,7 +90,7 @@ export default function RecipeCard({ recipe }) {
   const renderTittle = (
     <Stack direction="column" alignItems="left" justifyContent="space-between">
       <Link color="inherit" underline="hover" variant="h6" noWrap>
-        {recipe.name}
+        {recipe?.name}
       </Link>
       <Typography
         component="span"
@@ -100,7 +100,7 @@ export default function RecipeCard({ recipe }) {
           color: 'text.disabled',
         }}
       >
-        {recipe.order.name}
+        {recipe.order != undefined ? recipe.order?.name : "Not defined"}
       </Typography>
     </Stack>
   );
@@ -109,8 +109,8 @@ export default function RecipeCard({ recipe }) {
     <Label
       variant="filled"
       color={recipe.difficulty == LOWER_LEVEL_DIFFICULTY_RECIPE ? 'green' :
-            recipe.difficulty == MEDIUM_LEVEL_DIFFICULTY_RECIPE ? 'yellow' :
-            'red'
+        recipe.difficulty == MEDIUM_LEVEL_DIFFICULTY_RECIPE ? 'yellow' :
+          'red'
       }
       sx={{
         top: 16,
@@ -118,7 +118,7 @@ export default function RecipeCard({ recipe }) {
         color: '#ffffff',
       }}
     >
-      {recipe.difficulty.name}
+      {recipe.difficulty != undefined ? recipe.difficulty?.name : "Not defined"}
     </Label>
   );
 

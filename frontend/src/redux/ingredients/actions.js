@@ -7,12 +7,44 @@ import {toLowerCaseSentence} from "../../utils/format-text"
 import {
   GET_ALL_INGREDIENTS,
   POST_INGREDIENT,
+  PUT_INGREDIENT,
+  DELETE_INGREDIENT,
   POST_INGREDIENTS_RECIPE,
   GET_INGREDIENTS_BY_RECIPE,
+  GET_RECIPES_BY_INGREDIENT,
   INIT_VALUE,
 } from './types';
 
 export const initValue = createAction(INIT_VALUE);
+
+export const getRecipesByIngredient = createAsyncThunk(
+  GET_RECIPES_BY_INGREDIENT,
+  async (idIngredient, { rejectWithValue }) => {
+    try {
+      const { data, error } = await supabase
+        .from('Ingredients_recipes')
+        .select(`
+          id,
+          cuantity,
+          unit:Units(*),
+          recipe:Recipes(*),
+          ingredient,
+          group (*)
+        `)
+        .eq('ingredient', idIngredient)
+        .order('id', { ascending: false });
+
+      if (error) {
+        return rejectWithValue(error.message);
+      }
+
+      return data || [];
+
+    } catch (error) {
+      return rejectWithValue(error.message || "Error inesperado");
+    }
+  }
+);
 
 export const getIngredientsByRecipe = createAsyncThunk(
   GET_INGREDIENTS_BY_RECIPE,
@@ -131,6 +163,58 @@ export const postIngredientRecipe = createAsyncThunk(
 
     } catch (error) {
       console.error("Error al enviar el mensaje:", error.message);
+    }
+  }
+);
+
+export const putIngredient = createAsyncThunk(
+  PUT_INGREDIENT,
+  async ({ id, name }, { rejectWithValue }) => {
+    const formattedName = toLowerCaseSentence(name);
+
+    try {
+      const { data, error } = await supabase
+        .from('Ingredients')
+        .update({ name: formattedName })
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (error) {
+        console.log("ERROR:", error.message);
+        return rejectWithValue(error.message);
+      }
+
+      console.log("Ingrediente actualizado:", data);
+      return data;
+
+    } catch (err) {
+      return rejectWithValue(err.message || "Error updating ingredient");
+    }
+  }
+);
+
+export const deleteIngredient = createAsyncThunk(
+  DELETE_INGREDIENT,
+  async (id, { rejectWithValue }) => {
+    try {
+      const { data, error } = await supabase
+        .from('Ingredients')
+        .delete()
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (error) {
+        console.error("ERROR al eliminar:", error.message);
+        return rejectWithValue(error.message);
+      }
+
+      console.log("Ingrediente eliminado:", data);
+      return data;
+
+    } catch (err) {
+      return rejectWithValue(err.message || "Error deleting ingredient");
     }
   }
 );

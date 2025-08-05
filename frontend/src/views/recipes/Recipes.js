@@ -35,7 +35,7 @@ const Recipes = () => {
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(20);
 
-  const [listRecipesAPI, setListRecipes] = useState([]);
+  const [listAllRecipes, setListAllRecipes] = useState([]);
   const [paginatedRecipes, setPaginatedRecipes] = useState([]);
 
   const startIndex = page * pageSize;
@@ -43,6 +43,8 @@ const Recipes = () => {
 
   const [taskId, setTaskId] = useState(null);
   const [estadoTarea, setEstadoTarea] = useState(null);
+
+  const newRecipeCreated = useSelector((state) => state.recipesComponent.createdNewRecipe);
 
   //Getion de paginas
   const handleChangePage = (event, newPage) => {
@@ -55,31 +57,25 @@ const Recipes = () => {
   };
 
   useEffect(() => {
-    refreshData();
-    setListRecipes([]);
-    
     console.log("-execute-")
-    getListRecipes();
-  }, [location.pathname, listRecipes]);
+    getRecipes();
+  }, [location.pathname, newRecipeCreated]);
 
-  useEffect(() => {
-    setArraysRecipeos(listRecipes);
-  }, [page, pageSize, listRecipes]);
+  const getRecipes = async () => {
+    const resultAction = await dispatch(getAllRecipes(newRecipe));
+    if (getAllRecipes.fulfilled.match(resultAction)) {
+      if (resultAction.payload != undefined) {
+        const listRecipesReceive = Object.values(resultAction.payload);
 
-  const getListRecipes = async () => {
-    console.log("-listRecipes-")
-    console.log(listRecipes)
-    const listRecipesReceive = Object.values(listRecipes);
-    let listRecipesNew = [...listRecipesReceive]
-    setListRecipes(listRecipesNew);
-  };
+        setListAllRecipes(listRecipesReceive);
 
-  const setArraysRecipeos = (listRecipesAPI) => {
-    console.log("-setArraysRecipeos-")
-    let listSlice = listRecipesAPI.slice(startIndex, endIndex);
-    setListRecipes(listRecipesAPI);
-    setPaginatedRecipes(listSlice);
-  };
+        // Set details page
+        let listSlice = listRecipesReceive.slice(startIndex, endIndex);
+        setPaginatedRecipes(listSlice);
+
+      }
+    }
+  }
 
   const newRecipe = () => {
     navigate(`/recipesForm`);
@@ -157,7 +153,7 @@ const Recipes = () => {
       <Stack direction="row" flexShrink={0} sx={{ my: 4, width: '100%' }} justifyContent="flex-end">
         <TablePagination
           component="div"
-          count={listRecipesAPI.length}
+          count={listAllRecipes.length}
           page={page}
           onPageChange={handleChangePage}
           rowsPerPage={pageSize}

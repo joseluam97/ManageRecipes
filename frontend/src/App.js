@@ -2,6 +2,7 @@ import { CssBaseline, ThemeProvider } from '@mui/material';
 import { useRoutes } from 'react-router-dom';
 import Router from './routes/Router';
 import { RecipeDataProvider } from './contexts/RecipeDataContext';
+import { SnackbarProvider } from './components/SnackbarProvider';
 import { baselightTheme } from "./theme/DefaultColors";
 
 function App() {
@@ -12,7 +13,9 @@ function App() {
 
       <CssBaseline />
       <RecipeDataProvider>
-        {routing}
+        <SnackbarProvider>
+          {routing}
+        </SnackbarProvider>
       </RecipeDataProvider>
 
     </ThemeProvider>

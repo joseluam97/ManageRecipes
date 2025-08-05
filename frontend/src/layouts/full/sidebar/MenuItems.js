@@ -1,5 +1,5 @@
 import {
-  IconLayoutDashboard, IconLogin
+  IconLayoutDashboard, IconLogin, IconMeat
 } from '@tabler/icons';
 
 import { uniqueId } from 'lodash';
@@ -17,9 +17,15 @@ const Menuitems = [
   },
   {
     id: uniqueId(),
-    title: 'List',
+    title: 'Recipes',
     icon: IconLayoutDashboard,
     href: '/recipes',
+  },
+  {
+    id: uniqueId(),
+    title: 'Ingredients',
+    icon: IconMeat,
+    href: '/ingredients',
   },
   {
     navlabel: true,

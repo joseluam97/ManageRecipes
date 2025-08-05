@@ -4,7 +4,7 @@ import { useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllIngredients, postIngredient } from 'src/redux/ingredients/actions'
 import { IconPlus } from '@tabler/icons';
-import { setListIngredientsNewRecipe } from '../../redux/recipe/actions'
+import { setListIngredientsNewRecipe } from '../../../redux/recipe/actions'
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';

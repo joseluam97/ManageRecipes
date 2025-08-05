@@ -1,15 +1,15 @@
 import { Box, Button, Typography } from '@mui/material';
-import ListIngredients from 'src/views/ingredients/ListIngredients'
+import ListIngredients from 'src/views/ingredients/components/ListIngredients'
 import Label from 'src/components/label';
 import { useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { setListIngredientsNewRecipe } from '../../redux/recipe/actions'
+import { setListIngredientsNewRecipe } from '../../../redux/recipe/actions'
 import { TextField } from '@mui/material';
-import { submitTextToRead } from '../../utils/format-text'
+import { submitTextToRead } from '../../../utils/format-text'
 import { postIngredient } from 'src/redux/ingredients/actions'
 import { postUnit } from 'src/redux/units/actions'
-import { useRecipeData } from '../../contexts/RecipeDataContext'
+import { useRecipeData } from '../../../contexts/RecipeDataContext'
 
 export default function IngredientsPanel({ onClose, setIdIngredients }) {
 

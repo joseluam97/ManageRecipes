@@ -1,11 +1,11 @@
 import { Add, DragIndicator } from '@mui/icons-material';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { useLocation } from 'react-router-dom';
-import { getAllUnits } from '../../redux/units/actions'
+import { getAllUnits } from '../../../redux/units/actions'
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllIngredients } from 'src/redux/ingredients/actions'
 import DetailsIngredients from './DetailsIngredients'
-import { setListIngredientsNewRecipe } from '../../redux/recipe/actions'
+import { setListIngredientsNewRecipe } from '../../../redux/recipe/actions'
 import { IconTrash } from '@tabler/icons';
 import { useState, useEffect } from 'react';
 import * as React from 'react';

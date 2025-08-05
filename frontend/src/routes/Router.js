@@ -9,6 +9,7 @@ const BlankLayout = Loadable(lazy(() => import('../layouts/blank/BlankLayout')))
 /* ****Pages***** */
 const Dashboard = Loadable(lazy(() => import('../views/dashboard/Dashboard')))
 const Recipes = Loadable(lazy(() => import('../views/recipes/Recipes')))
+const Ingredients = Loadable(lazy(() => import('../views/ingredients/Ingredients')))
 const RecipeView = Loadable(lazy(() => import('../views/recipes/components/RecipeView')))
 const RecipeForm = Loadable(lazy(() => import('../views/recipes/components/RecipeForm')))
 const Error = Loadable(lazy(() => import('../views/authentication/Error')));
@@ -20,6 +21,7 @@ const Router = [
     element: <FullLayout />,
     children: [
       { path: '/', element: <Navigate to="/dashboard" /> },
+      { path: '/ingredients', exact: true, element: <Ingredients /> },
       { path: '/recipes', exact: true, element: <Recipes /> },
       { path: '/recipe/:id', exact: true, element: <RecipeView /> },
       { path: '/recipesForm', exact: true, element: <RecipeForm /> },
