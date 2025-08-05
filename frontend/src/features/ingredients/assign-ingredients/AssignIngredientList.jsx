@@ -1,11 +1,11 @@
 import { Add, DragIndicator } from '@mui/icons-material';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { useLocation } from 'react-router-dom';
-import { getAllUnits } from '../../../redux/units/actions'
+import { getAllUnits } from 'src/redux/units/actions'
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllIngredients } from 'src/redux/ingredients/actions'
-import DetailsIngredients from './DetailsIngredients'
-import { setListIngredientsNewRecipe } from '../../../redux/recipe/actions'
+import IngredientFormFields from './IngredientFormFields'
+import { setListIngredientsNewRecipe } from 'src/redux/recipe/actions'
 import { IconTrash } from '@tabler/icons';
 import { useState, useEffect } from 'react';
 import * as React from 'react';
@@ -16,7 +16,7 @@ import { Box, Stack, Typography, IconButton, TextField, Chip, Paper } from '@mui
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 
-export default function ListIngredients({ title, setErrorListIngredients }) {
+export default function AssignIngredientList({ title, setErrorListIngredients }) {
 
     const location = useLocation();
     const dispatch = useDispatch();
@@ -201,7 +201,7 @@ export default function ListIngredients({ title, setErrorListIngredients }) {
                                                 <Box {...provided.dragHandleProps} sx={{ mr: 1 }}>
                                                     <DragIndicator />
                                                 </Box>
-                                                <DetailsIngredients
+                                                <IngredientFormFields
                                                     ingredient_recipe={ingredient}
                                                     index={index}
                                                     changeListIngredient={changeListIngredient}

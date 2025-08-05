@@ -23,13 +23,14 @@ import {
     COUNTRY_DEFAULT
 } from 'src/utils/constant';
 
-import { useEntityUtils } from '../../../hooks/useEntityUtils';
+import { useEntityUtils } from '../../hooks/useEntityUtils';
 import Menu1 from 'src/assets/images/menu/menu1.jpg';
 import { useParams } from 'react-router-dom';
-import { useRecipeData } from '../../../contexts/RecipeDataContext';
-import { getIngredientsByRecipe } from '../../../redux/ingredients/actions'
-import { getListCountries } from '../../../utils/countries'
-import { toTitleCase } from '../../../utils/format-text'
+import { useRecipeData } from '../../contexts/RecipeDataContext';
+import { getIngredientsByRecipe } from 'src/redux/ingredients/actions'
+import { getListCountries } from 'src/utils/countries'
+import { toTitleCase } from 'src/utils/format-text'
+import { Edit } from '@mui/icons-material';
 
 export default function RecipeView() {
 
@@ -113,6 +114,21 @@ export default function RecipeView() {
                             />
                         ) : (
                             <Skeleton variant="rectangular" width="100%" height={200} sx={{ borderRadius: 2 }} />
+                        )}
+                        {recipe ? (
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                endIcon={<Edit />}
+                                href={recipe?.link}
+                                target="_blank"
+                                fullWidth
+                                sx={{ mt: 2 }}
+                            >
+                                Edit
+                            </Button>
+                        ) : (
+                            <Skeleton variant="rectangular" width="100%" height={40} sx={{ mt: 2, borderRadius: 1 }} />
                         )}
                         {recipe?.link ? (
                             <Button

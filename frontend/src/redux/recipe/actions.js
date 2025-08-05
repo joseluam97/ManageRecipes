@@ -1,6 +1,6 @@
 import { createAction } from "@reduxjs/toolkit";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { supabase } from "../../utils/supabase";
+import { supabase } from "src/utils/supabase";
 
 import {
   GET_ALL_RECIPES,

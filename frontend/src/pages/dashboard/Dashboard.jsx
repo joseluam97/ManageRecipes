@@ -6,7 +6,7 @@ import { Grid, Box } from '@mui/material';
 import PageContainer from 'src/components/container/PageContainer';
 
 import Typography from '@mui/material/Typography';
-import RecipeCard from '../recipes/components/recipes-card';
+import RecipeCard from '../../features/recipes/RecipesCard';
 
 const Dashboard = () => {
   const navigate = useNavigate();

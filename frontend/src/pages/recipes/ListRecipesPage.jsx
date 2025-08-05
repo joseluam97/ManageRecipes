@@ -5,11 +5,11 @@ import { useNavigate } from 'react-router-dom';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Unstable_Grid2';
 
-import RecipeCard from './components/recipes-card';
+import RecipeCard from '../../features/recipes/RecipesCard';
 import TablePagination from '@mui/material/TablePagination';
 import { Stack, IconButton, Badge, Button } from '@mui/material';
 import { IconLayoutGridAdd } from '@tabler/icons';
-import RecipeFormPage from './components/RecipeForm';
+import RecipeFormPage from './RecipeForm';
 import { Add } from '@mui/icons-material';
 import { useTheme } from '@mui/material/styles';
 
@@ -17,10 +17,10 @@ import { useLocation } from 'react-router-dom';
 
 import {
   getAllRecipes
-} from '../../redux/recipe/actions';
+} from 'src/redux/recipe/actions';
 
 import { useRecipeData } from '../../contexts/RecipeDataContext'
-import { launchProcess, getStateProcess } from '../../redux/ai_service/actions'
+import { launchProcess, getStateProcess } from 'src/redux/ai_service/actions'
 
 const Recipes = () => {
 
@@ -124,7 +124,6 @@ const Recipes = () => {
       <Stack direction="row" flexShrink={0} sx={{ my: 4, width: '100%' }} justifyContent="flex-end">
         <IconButton
           size="large"
-          color="inherit"
           aria-controls="msgs-menu"
           aria-haspopup="true"
           onClick={() => newRecipe()}
@@ -134,12 +133,6 @@ const Recipes = () => {
             }),
           }}
         >
-          <Badge variant="dot" color="primary">
-            <IconLayoutGridAdd size="21" stroke="1.5" />
-          </Badge>
-
-        </IconButton>
-        <IconButton onClick={getRecipeByIA} color="primary">
           <Add />
         </IconButton>
       </Stack>

@@ -4,14 +4,14 @@ import { useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllIngredients, postIngredient } from 'src/redux/ingredients/actions'
 import { IconPlus } from '@tabler/icons';
-import { setListIngredientsNewRecipe } from '../../../redux/recipe/actions'
+import { setListIngredientsNewRecipe } from 'src/redux/recipe/actions'
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 
-export default function DetailsIngredients({ ingredient_recipe, index, changeListIngredient, groupSpecify, groupList}) {
+export default function IngredientFormFields({ ingredient_recipe, index, changeListIngredient, groupSpecify, groupList}) {
 
     const location = useLocation();
     const dispatch = useDispatch();
@@ -99,7 +99,7 @@ export default function DetailsIngredients({ ingredient_recipe, index, changeLis
                 //Select the ingredients create
                 const postNewElement = listIngredientsReceive.findIndex(element => element.name === nameIngredientCreate);
 
-                // Notify ListIngredients
+                // Notify AssignIngredientList
                 handleChangeIngredient(index, listIngredientsReceive[postNewElement])
 
                 // Disable buton

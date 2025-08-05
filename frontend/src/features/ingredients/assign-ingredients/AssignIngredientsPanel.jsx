@@ -1,17 +1,17 @@
 import { Box, Button, Typography } from '@mui/material';
-import ListIngredients from 'src/views/ingredients/components/ListIngredients'
+import AssignIngredientList from 'src/features/ingredients/assign-ingredients/AssignIngredientList'
 import Label from 'src/components/label';
 import { useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { setListIngredientsNewRecipe } from '../../../redux/recipe/actions'
+import { setListIngredientsNewRecipe } from 'src/redux/recipe/actions'
 import { TextField } from '@mui/material';
-import { submitTextToRead } from '../../../utils/format-text'
+import { submitTextToRead } from 'src/utils/format-text'
 import { postIngredient } from 'src/redux/ingredients/actions'
 import { postUnit } from 'src/redux/units/actions'
-import { useRecipeData } from '../../../contexts/RecipeDataContext'
+import { useRecipeData } from 'src/contexts/RecipeDataContext'
 
-export default function IngredientsPanel({ onClose, setIdIngredients }) {
+export default function AssignIngredientsPanel({ onClose, setIdIngredients }) {
 
   const { refreshData } = useRecipeData();
 
@@ -204,7 +204,7 @@ export default function IngredientsPanel({ onClose, setIdIngredients }) {
       {(enterIngredientsManual == true || processReadIngredientEnd == true) && (
         <Box sx={{ width: '100%', paddingBottom: '20px', paddingTop: '20px' }}>
           {delayRender && (
-            <ListIngredients 
+            <AssignIngredientList 
               title="List ingredients"
               setErrorListIngredients={setErrorListIngredients}
             />

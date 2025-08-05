@@ -1,5 +1,5 @@
 import { Box, Button, Typography } from '@mui/material';
-import ListSteps from 'src/views/elaboration/ListSteps'
+import ListSteps from 'src/features/elaboration/ListSteps'
 import Label from 'src/components/label';
 import { useSelector } from 'react-redux';
 import { useState, useEffect } from 'react';

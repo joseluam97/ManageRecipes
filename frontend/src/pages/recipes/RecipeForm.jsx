@@ -17,17 +17,17 @@ import {
     COUNTRY_DEFAULT
 } from 'src/utils/constant';
 
-import IngredientsPanel from '../../ingredients/components/IngredientsPanel';
-import ElaborationPanel from '../../elaboration/ElaborationPanel';
-import MultiSelectAutocomplete from '../../../components/selectors/MultiSelectAutocomplete'
+import AssignIngredientsPanel from '../../features/ingredients/assign-ingredients/AssignIngredientsPanel';
+import ElaborationPanel from '../../features/elaboration/ElaborationPanel';
+import MultiSelectAutocomplete from '../../components/selectors/MultiSelectAutocomplete'
 
-import { getListCountries } from '../../../utils/countries'
-import { postNewRecipe } from '../../../redux/recipe/actions'
-import { postIngredientRecipe } from '../../../redux/ingredients/actions'
-import { setListIngredientsNewRecipe } from '../../../redux/recipe/actions'
-import { useRecipeData } from '../../../contexts/RecipeDataContext';
+import { getListCountries } from 'src/utils/countries'
+import { postNewRecipe } from 'src/redux/recipe/actions'
+import { postIngredientRecipe } from 'src/redux/ingredients/actions'
+import { setListIngredientsNewRecipe } from 'src/redux/recipe/actions'
+import { useRecipeData } from '../../contexts/RecipeDataContext';
 
-import { postGroup } from '../../../redux/groups/actions'
+import { postGroup } from 'src/redux/groups/actions'
 
 export default function RecipeFormPage() {
 
@@ -418,7 +418,7 @@ export default function RecipeFormPage() {
                 </Box>
                 {showIngredients && (
                     <Box width="80%">
-                        <IngredientsPanel
+                        <AssignIngredientsPanel
                             onClose={() => setShowIngredients(false)}
                             setIdIngredients={(idIngredients) => setForm({ ...form, ingredients: idIngredients })}
                         />

@@ -15,7 +15,7 @@ import {
 import { Edit, Delete, Visibility, Check, Close, Add } from '@mui/icons-material';
 import { useDispatch } from 'react-redux';
 
-const TableDetails = ({ title_element, list_element, createNewElement, editElement, deleteElement, getListRecipesIncludes, showListRecipesIncludes }) => {
+const SimpleTable = ({ title_element, list_element, createNewElement, editElement, deleteElement, getListRecipesIncludes, showListRecipesIncludes }) => {
     const dispatch = useDispatch();
     const [filteredList, setFilteredList] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
@@ -218,4 +218,4 @@ const TableDetails = ({ title_element, list_element, createNewElement, editEleme
     );
 };
 
-export default TableDetails;
+export default SimpleTable;

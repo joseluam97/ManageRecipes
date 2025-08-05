@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { getAllIngredients, postIngredient, putIngredient, deleteIngredient } from 'src/redux/ingredients/actions'
 import { getRecipesByIngredient } from 'src/redux/ingredients/actions'
-import TableDetails from '../TableDetails'
-import { useSnackbar } from 'src/components/SnackbarProvider';
-import IngredientsRecipeDialog from './dialog/IngredientsRecipeDialog';
+import SimpleTable from '../../components/table/SimpleTable'
+import { useSnackbar } from 'src/components/snackbar/SnackbarProvider';
+import IngredientsRecipeDialog from '../../features/ingredients/dialog/IngredientsRecipeDialog';
 
 const Ingredients = () => {
     const dispatch = useDispatch();
@@ -108,7 +108,7 @@ const Ingredients = () => {
 
     return (
         <>
-            <TableDetails
+            <SimpleTable
                 title_element={"ingredient"}
                 list_element={listTodosIngredientes}
                 createNewElement={createNewElement}

@@ -2,7 +2,7 @@ import { Box, IconButton, TextField, Typography, Paper, Stack } from '@mui/mater
 import { Add, DragIndicator } from '@mui/icons-material';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { useDispatch, useSelector } from 'react-redux';
-import { setListStepsNewRecipe } from '../../redux/recipe/actions'
+import { setListStepsNewRecipe } from 'src/redux/recipe/actions'
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { IconTrash } from '@tabler/icons';

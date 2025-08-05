@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { createAction } from "@reduxjs/toolkit";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { supabase } from "../../utils/supabase";
-import {toLowerCaseSentence} from "../../utils/format-text"
+import { supabase } from "src/utils/supabase";
+import {toLowerCaseSentence} from "src/utils/format-text"
 
 import {
   GET_ALL_UNITS,

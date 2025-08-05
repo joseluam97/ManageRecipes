@@ -7,13 +7,13 @@ const FullLayout = Loadable(lazy(() => import('../layouts/full/FullLayout')));
 const BlankLayout = Loadable(lazy(() => import('../layouts/blank/BlankLayout')));
 
 /* ****Pages***** */
-const Dashboard = Loadable(lazy(() => import('../views/dashboard/Dashboard')))
-const Recipes = Loadable(lazy(() => import('../views/recipes/Recipes')))
-const Ingredients = Loadable(lazy(() => import('../views/ingredients/Ingredients')))
-const RecipeView = Loadable(lazy(() => import('../views/recipes/components/RecipeView')))
-const RecipeForm = Loadable(lazy(() => import('../views/recipes/components/RecipeForm')))
-const Error = Loadable(lazy(() => import('../views/authentication/Error')));
-const Login = Loadable(lazy(() => import('../views/authentication/Login')));
+const Dashboard = Loadable(lazy(() => import('../pages/dashboard/Dashboard')))
+const Recipes = Loadable(lazy(() => import('../pages/recipes/ListRecipesPage')))
+const Ingredients = Loadable(lazy(() => import('../pages/ingredients/IngredientsPage')))
+const RecipeView = Loadable(lazy(() => import('../pages/recipes/DetailsRecipePage')))
+const RecipeForm = Loadable(lazy(() => import('../pages/recipes/RecipeForm')))
+const Error = Loadable(lazy(() => import('../pages/authentication/Error')));
+const Login = Loadable(lazy(() => import('../pages/authentication/Login')));
 
 const Router = [
   {
