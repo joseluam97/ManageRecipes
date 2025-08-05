@@ -9,7 +9,7 @@ import RecipeCard from '../../features/recipes/RecipesCard';
 import TablePagination from '@mui/material/TablePagination';
 import { Stack, IconButton, Badge, Button } from '@mui/material';
 import { IconLayoutGridAdd } from '@tabler/icons';
-import RecipeFormPage from './RecipeForm';
+import RecipeFormPage from './RecipeFormPage';
 import { Add } from '@mui/icons-material';
 import { useTheme } from '@mui/material/styles';
 
