@@ -69,32 +69,22 @@ const Ingredients = () => {
     const getListRecipesByIngredient = async (id_ingredient) => {
         const resultAction = await dispatch(getRecipesByIngredient(id_ingredient));
         if (getRecipesByIngredient.fulfilled.match(resultAction) && resultAction.payload != undefined) {
-            const listIngredientsByRecipe = Object.values(resultAction.payload);
-
-            console.log("LOL")
-            console.log(listIngredientsByRecipe)
-            return listIngredientsByRecipe;
+            return Object.values(resultAction.payload);
         }
         return [];
     };
 
 
     const createNewElement = (name_ingredient) => {
-        console.log("Name new ingredient: " + name_ingredient)
         postNewIngredient(name_ingredient)
     }
 
     const editElement = (id_ingredient, name_ingredient) => {
-        console.log("ID ingredient: " + id_ingredient);
-        console.log("New name ingredient: " + name_ingredient);
         updateIngredient(id_ingredient, name_ingredient)
     }
 
     const deleteElement = async (id_ingredient) => {
-        console.log("ID ingredient: " + id_ingredient)
         let listRecipesIncludeIngredient = await getListRecipesByIngredient(id_ingredient);
-        console.log("-listRecipesIncludeIngredient: ")
-        console.log(listRecipesIncludeIngredient)
         if (listRecipesIncludeIngredient.length != 0) {
             showSnackbar('It is not possible to delete the ingredient because it is associated with a recipe.', 'error');
             return;
@@ -104,7 +94,6 @@ const Ingredients = () => {
     }
 
     const getListRecipesIncludes = async (id_ingredient) => {
-        console.log("ID ingredient: " + id_ingredient)
         let listRecipesIncludeIngredient = await getListRecipesByIngredient(id_ingredient);
 
         if (listRecipesIncludeIngredient.length == 0) {
