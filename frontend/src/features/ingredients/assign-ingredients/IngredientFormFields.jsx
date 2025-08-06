@@ -138,97 +138,82 @@ export default function IngredientFormFields({ ingredient_recipe, index, changeL
                 value={ingredient_recipe?.ingredient || null}
                 getOptionLabel={(option) => option?.name ?? ''}
                 isOptionEqualToValue={(option, value) => option?.id === value?.id}
-                noOptionsText="The option that you have searched not found. If you want add this ingredients, you must touch the add button. "
+                noOptionsText="The option that you have searched not found..."
                 fullWidth
                 filterOptions={filterIngredientsList}
+                sx={{ width: groupSpecify || modeWindowEditIngredientAPI === "edit" ? '40%' : '45%' }}
                 renderInput={(params) => (
                     <TextField
                         {...params}
                         label="Name"
-                        fullWidth
                         InputProps={{
                             ...params.InputProps,
                             startAdornment: (
-                                activateOptionCreateIngredient && <IconButton
-                                    fullWidth
-                                    color="inherit"
-                                    aria-controls="msgs-menu"
-                                    aria-haspopup="true"
-                                    onClick={() => createNewIngredients()}
-                                    sx={{
-                                        ...(typeof anchorEl2 === 'object' && {
-                                            color: 'primary.main',
-                                            width: 24,
-                                            height: 24,
-                                        }),
-                                    }}
-                                >
-                                    <IconPlus size="20" stroke="3.0" />
-
-                                </IconButton>
-                            )
+                                activateOptionCreateIngredient && (
+                                    <IconButton
+                                        color="inherit"
+                                        aria-controls="msgs-menu"
+                                        aria-haspopup="true"
+                                        onClick={createNewIngredients}
+                                        sx={{
+                                            ...(typeof anchorEl2 === 'object' && {
+                                                color: 'primary.main',
+                                                width: 24,
+                                                height: 24,
+                                            }),
+                                        }}
+                                    >
+                                        <IconPlus size="20" stroke="3.0" />
+                                    </IconButton>
+                                )
+                            ),
                         }}
                     />
                 )}
-                onChange={(event, value) => {
-                    handleChangeIngredient(index, value)
-                }}
-                onInputChange={(event, newInputValue) => {
-                    setNameIngredientCreate(newInputValue);
-                }}
+                onChange={(event, value) => handleChangeIngredient(index, value)}
+                onInputChange={(event, newInputValue) => setNameIngredientCreate(newInputValue)}
             />
 
             <TextField
-                fullWidth
-                value={ingredient_recipe?.quantity || null}
+                label="Quantity"
+                value={ingredient_recipe?.quantity || ''}
                 placeholder="Quantity"
                 type='number'
-                onChange={(e) => {
-                    handleChangeQuantity(index, e.target.value)
-                }}
+                sx={{ width: groupSpecify || modeWindowEditIngredientAPI === "edit" ? '10%' : '25%' }}
+                onChange={(e) => handleChangeQuantity(index, e.target.value)}
             />
+
             <Autocomplete
-                fullWidth
                 value={ingredient_recipe?.unit || null}
                 options={Object.values(listAllUnitsAPI)}
                 getOptionLabel={(option) => option?.name ?? ''}
                 isOptionEqualToValue={(option, value) => option?.id === value?.id}
                 renderInput={(params) => (
-                    <TextField
-                        {...params}
-                        label="Unit"
-                        fullWidth
-                    />
+                    <TextField {...params} label="Unit" />
                 )}
-                onChange={(event, value) => {
-                    handleChangeUnit(index, value)
-                }}
+                sx={{ width: groupSpecify || modeWindowEditIngredientAPI === "edit" ? '20%' : '30%' }}
+                onChange={(event, value) => handleChangeUnit(index, value)}
             />
 
-            {(groupSpecify == true || modeWindowEditIngredientAPI == "edit") && (
-                <FormControl fullWidth>
+            {(groupSpecify === true || modeWindowEditIngredientAPI === "edit") && (
+                <FormControl sx={{ width: '30%' }}>
                     <InputLabel id="demo-multiple-name-label">Group</InputLabel>
                     <Select
                         labelId="demo-multiple-name-label"
                         id="demo-multiple-name"
-                        value={ingredient_recipe?.group}
-                        onChange={(event, value) => {
-                            handleChangeGroup(index, event)
-                        }}
-                        input={<OutlinedInput label="Name" />}
+                        value={ingredient_recipe?.group || ''}
+                        onChange={(event) => handleChangeGroup(index, event)}
+                        input={<OutlinedInput label="Group" />}
                     >
                         {groupList.map((name) => (
-                            <MenuItem
-                                key={name}
-                                value={name}
-                            >
+                            <MenuItem key={name} value={name}>
                                 {name}
                             </MenuItem>
                         ))}
                     </Select>
                 </FormControl>
             )}
-
         </Box>
+
     );
 }
