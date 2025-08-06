@@ -4,7 +4,7 @@ import Label from 'src/components/label';
 import { useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { setListIngredientsNewRecipe } from 'src/redux/recipe/actions'
+import { setListCurrentIngredient } from 'src/redux/assign_ingredients/actions'
 import { TextField } from '@mui/material';
 import { submitTextToRead } from 'src/utils/format-text'
 import { postIngredient } from 'src/redux/ingredients/actions'
@@ -26,19 +26,14 @@ export default function AssignIngredientsPanel({ onClose, setIdIngredients }) {
   const dispatch = useDispatch();
 
   const [listIngredientsBackup, setListIngredientsBackup] = useState([]);
-  const listIngredientsNewRecipesAPI = useSelector((state) => state.recipesComponent.listIngredientsNewRecipes);
+  const listIngredientsNewRecipesAPI = useSelector((state) => state.assignIngredientsComponent.listCurrentIngredients);
 
-  const modeWindowEditIngredientAPI = useSelector((state) => state.ingredientsComponent.modeWindowEditIngredient);
+  const modeWindowEditIngredientAPI = useSelector((state) => state.assignIngredientsComponent.modeWindowEditIngredient);
 
   const listAllIngredientsAPI = useSelector((state) => state.ingredientsComponent.listAllIngredients);
   const listAllUnitsAPI = useSelector((state) => state.unitsComponent.listAllUnits);
 
   const [showValidationError, setShowValidationError] = useState(false);
-
-  useEffect(() => {
-    console.log("-modeWindowEditIngredientAPI-")
-    console.log(modeWindowEditIngredientAPI)
-  }, [modeWindowEditIngredientAPI]);
 
   useEffect(() => {
     const timeout = setTimeout(() => setDelayRender(true), 10);
@@ -50,7 +45,7 @@ export default function AssignIngredientsPanel({ onClose, setIdIngredients }) {
   }, [location.pathname]);
 
   const cancelSave = () => {
-    dispatch(setListIngredientsNewRecipe([]));
+    dispatch(setListCurrentIngredient([]));
     onClose();
   }
 
@@ -161,7 +156,7 @@ export default function AssignIngredientsPanel({ onClose, setIdIngredients }) {
       newIngredientsByText.push(update_element)
     }
 
-    dispatch(setListIngredientsNewRecipe(newIngredientsByText));
+    dispatch(setListCurrentIngredient(newIngredientsByText));
 
     setProcessReadIngredientEnd(true)
 
@@ -174,9 +169,9 @@ export default function AssignIngredientsPanel({ onClose, setIdIngredients }) {
 
   return (
     <Box sx={{ width: '100%', pl: 2 }}>
-      <Typography variant="h5" gutterBottom>{modeWindowEditIngredientAPI == true ? "Edit Ingredients" : "Add Ingredients"}</Typography>
+      <Typography variant="h5" gutterBottom>{modeWindowEditIngredientAPI == "edit" ? "Edit Ingredients" : "Add Ingredients"}</Typography>
 
-      {modeWindowEditIngredientAPI == false && (
+      {modeWindowEditIngredientAPI == "new" && (
         <Button
           variant="contained"
           color="primary"

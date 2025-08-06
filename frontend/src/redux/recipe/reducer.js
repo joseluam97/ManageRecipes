@@ -3,7 +3,6 @@ import { createReducer } from "@reduxjs/toolkit";
 import {
     initValue,
     getAllRecipes,
-    setListIngredientsNewRecipe,
     setListStepsNewRecipe,
     postNewRecipe
 } from "./actions";
@@ -29,13 +28,6 @@ export default createReducer(initialState, (builder) => {
                 ...state,
                 error: false,
                 listAllRecipes: { ...action.payload },
-            };
-        })
-        .addCase(setListIngredientsNewRecipe.fulfilled, (state, action) => {
-            return {
-                ...state,
-                error: false,
-                listIngredientsNewRecipes: { ...action.payload },
             };
         })
         .addCase(setListStepsNewRecipe.fulfilled, (state, action) => {

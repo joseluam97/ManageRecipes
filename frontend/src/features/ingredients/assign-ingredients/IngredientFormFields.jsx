@@ -4,14 +4,13 @@ import { useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllIngredients, postIngredient } from 'src/redux/ingredients/actions'
 import { IconPlus } from '@tabler/icons';
-import { setListIngredientsNewRecipe } from 'src/redux/recipe/actions'
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 
-export default function IngredientFormFields({ ingredient_recipe, index, changeListIngredient, groupSpecify, groupList}) {
+export default function IngredientFormFields({ ingredient_recipe, index, changeListIngredient, groupSpecify, groupList }) {
 
     const location = useLocation();
     const dispatch = useDispatch();
@@ -22,7 +21,7 @@ export default function IngredientFormFields({ ingredient_recipe, index, changeL
 
     const listAllIngredientsAPI = useSelector((state) => state.ingredientsComponent.listAllIngredients);
     const listAllUnitsAPI = useSelector((state) => state.unitsComponent.listAllUnits);
-        const modeWindowEditIngredientAPI = useSelector((state) => state.ingredientsComponent.modeWindowEditIngredient);
+    const modeWindowEditIngredientAPI = useSelector((state) => state.assignIngredientsComponent.modeWindowEditIngredient);
 
     const handleChangeIngredient = (index, value) => {
 
@@ -206,7 +205,7 @@ export default function IngredientFormFields({ ingredient_recipe, index, changeL
                 }}
             />
 
-            {(groupSpecify == true || modeWindowEditIngredientAPI == true) && (
+            {(groupSpecify == true || modeWindowEditIngredientAPI == "edit") && (
                 <FormControl fullWidth>
                     <InputLabel id="demo-multiple-name-label">Group</InputLabel>
                     <Select

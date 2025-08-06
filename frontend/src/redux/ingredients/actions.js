@@ -13,17 +13,9 @@ import {
   GET_INGREDIENTS_BY_RECIPE,
   GET_RECIPES_BY_INGREDIENT,
   INIT_VALUE,
-  MODE_WINDOW_ADD_EDIT_INGREDIENT,
 } from './types';
 
 export const initValue = createAction(INIT_VALUE);
-
-export const setModeWindowIngredient = createAsyncThunk(
-  MODE_WINDOW_ADD_EDIT_INGREDIENT,
-  async (new_mode, { rejectWithValue }) => {
-    return new_mode;
-  }
-);
 
 export const getRecipesByIngredient = createAsyncThunk(
   GET_RECIPES_BY_INGREDIENT,

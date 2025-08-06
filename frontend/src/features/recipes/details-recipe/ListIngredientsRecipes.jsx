@@ -11,8 +11,8 @@ import { useState, useEffect } from 'react';
 import { toTitleCase } from 'src/utils/format-text'
 import { useDispatch, useSelector } from 'react-redux';
 import { Edit } from '@mui/icons-material';
-import { setListIngredientsNewRecipe } from 'src/redux/recipe/actions'
-import { setModeWindowIngredient } from 'src/redux/ingredients/actions'
+import { setListCurrentIngredient } from 'src/redux/assign_ingredients/actions'
+import { setModeWindowIngredient } from 'src/redux/assign_ingredients/actions'
 import AssignIngredientsPanel from 'src/features/ingredients/assign-ingredients/AssignIngredientsPanel';
 
 export default function ListIngredientsRecipes({ listIngredientsRecipe, setEditIngredients }) {
@@ -28,7 +28,7 @@ export default function ListIngredientsRecipes({ listIngredientsRecipe, setEditI
     }, [listNewIngredients]);
 
     const editIngredients = () => {
-        dispatch(setModeWindowIngredient(true));
+        dispatch(setModeWindowIngredient("edit"));
         setEditIngredients(true)
         let listIngredientsInclude = []
         for (let index_group in listIngredientsRecipe) {
@@ -46,7 +46,7 @@ export default function ListIngredientsRecipes({ listIngredientsRecipe, setEditI
         
         console.log("-listIngredientsInclude-")
         console.log(listIngredientsInclude)
-        dispatch(setListIngredientsNewRecipe(listIngredientsInclude));
+        dispatch(setListCurrentIngredient(listIngredientsInclude));
 
         setShowEditIngredients(true);
     }

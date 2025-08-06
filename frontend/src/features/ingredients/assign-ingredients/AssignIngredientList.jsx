@@ -5,7 +5,7 @@ import { getAllUnits } from 'src/redux/units/actions'
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllIngredients } from 'src/redux/ingredients/actions'
 import IngredientFormFields from './IngredientFormFields'
-import { setListIngredientsNewRecipe } from 'src/redux/recipe/actions'
+import { setListCurrentIngredient } from 'src/redux/assign_ingredients/actions'
 import { IconTrash } from '@tabler/icons';
 import { useState, useEffect } from 'react';
 import * as React from 'react';
@@ -28,9 +28,9 @@ export default function AssignIngredientList({ title, setErrorListIngredients })
     const [groupInput, setGroupInput] = useState('');
     const [groupList, setGroupList] = useState([]);
 
-    const modeWindowEditIngredientAPI = useSelector((state) => state.ingredientsComponent.modeWindowEditIngredient);
+    const modeWindowEditIngredientAPI = useSelector((state) => state.assignIngredientsComponent.modeWindowEditIngredient);
 
-    const listIngredientsNewRecipesAPI = useSelector((state) => state.recipesComponent.listIngredientsNewRecipes);
+    const listIngredientsNewRecipesAPI = useSelector((state) => state.assignIngredientsComponent.listCurrentIngredients);
 
     const [listIngredients, setListIngredients] = useState([]);
     //const listIngredients = Object.values(listIngredientsNewRecipesAPI);
@@ -40,10 +40,10 @@ export default function AssignIngredientList({ title, setErrorListIngredients })
             // Solo actualiza si realmente ha cambiado el contenido
             let listIngredientsNewRecipesAPIFormated = Object.values(listIngredientsNewRecipesAPI);
             if (JSON.stringify(listIngredientsNewRecipesAPIFormated) !== JSON.stringify(listIngredients)) {
-                dispatch(setListIngredientsNewRecipe(listIngredients));
+                dispatch(setListCurrentIngredient(listIngredients));
             }
 
-            if (modeWindowEditIngredientAPI == true) {
+            if (modeWindowEditIngredientAPI == "edit") {
                 console.log("Mode edit is available")
                 console.log(listIngredientsNewRecipesAPIFormated)
                 let listGroupsEdit = [];
@@ -129,14 +129,12 @@ export default function AssignIngredientList({ title, setErrorListIngredients })
         const [removed] = newIngredients.splice(result.source.index, 1);
         newIngredients.splice(result.destination.index, 0, removed);
         setListIngredients(newIngredients);
-        //dispatch(setListIngredientsNewRecipe(newIngredients));
     };
 
     const deleteIngredients = (indexToDelete) => {
         const currentIngredients = [...Object.values(listIngredients)];
         const newIngredients = currentIngredients.filter((_, index) => index !== indexToDelete);
         setListIngredients(newIngredients);
-        //dispatch(setListIngredientsNewRecipe(newIngredients));
     };
 
     const handleChange = (event) => {
@@ -159,7 +157,7 @@ export default function AssignIngredientList({ title, setErrorListIngredients })
 
     return (
         <Box>
-            {modeWindowEditIngredientAPI == false && (
+            {modeWindowEditIngredientAPI == "new" && (
                 <FormControlLabel control={
                     <Switch
                         checked={groupSpecify}
@@ -169,7 +167,7 @@ export default function AssignIngredientList({ title, setErrorListIngredients })
                 } label="Especificar grupos" />
             )}
 
-            {(groupSpecify || modeWindowEditIngredientAPI == true) && (
+            {(groupSpecify || modeWindowEditIngredientAPI == "edit") && (
                 <Box sx={{ mt: 2 }}>
                     <TextField
                         fullWidth

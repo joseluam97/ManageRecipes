@@ -8,6 +8,7 @@ import tagsReducer from "./redux/tags/reducer";
 import levelsReducer from "./redux/levels/reducer";
 import ordersReducer from "./redux/orders/reducer";
 import groupsReducer from "./redux/groups/reducer";
+import assignIngredientsReducer from "./redux/assign_ingredients/reducer";
 
 const rootReducer = combineReducers({
     recipesComponent: recipeReducer,
@@ -19,6 +20,7 @@ const rootReducer = combineReducers({
     levelsComponent: levelsReducer,
     ordersComponent: ordersReducer,
     groupsComponent: groupsReducer,
+    assignIngredientsComponent: assignIngredientsReducer,
 });
 
 export default rootReducer

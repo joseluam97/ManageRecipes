@@ -24,9 +24,9 @@ import MultiSelectAutocomplete from '../../components/selectors/MultiSelectAutoc
 import { getListCountries } from 'src/utils/countries'
 import { postNewRecipe } from 'src/redux/recipe/actions'
 import { postIngredientRecipe } from 'src/redux/ingredients/actions'
-import { setListIngredientsNewRecipe } from 'src/redux/recipe/actions'
+import { setListCurrentIngredient } from 'src/redux/assign_ingredients/actions'
 import { useRecipeData } from '../../contexts/RecipeDataContext';
-import { setModeWindowIngredient } from 'src/redux/ingredients/actions'
+import { setModeWindowIngredient } from 'src/redux/assign_ingredients/actions'
 
 import { postGroup } from 'src/redux/groups/actions'
 
@@ -44,7 +44,7 @@ export default function RecipeFormPage() {
     const [showIngredients, setShowIngredients] = useState(false);
     const [showElaborationSteps, setShowElaborationSteps] = useState(false);
 
-    const listIngredientsNewRecipesAPI = useSelector((state) => state.recipesComponent.listIngredientsNewRecipes);
+    const listIngredientsNewRecipesAPI = useSelector((state) => state.assignIngredientsComponent.listCurrentIngredients);
 
     const [form, setForm] = useState({
         name: '',
@@ -144,7 +144,7 @@ export default function RecipeFormPage() {
                 createGroupsIngredient(recipesReceive.id);
 
                 // Reset ingredients about current recipe
-                dispatch(setListIngredientsNewRecipe([]));
+                dispatch(setListCurrentIngredient([]));
 
                 //Navigate to home
                 navigate(`/recipes`);
@@ -345,7 +345,7 @@ export default function RecipeFormPage() {
                             //onClick={() => setShowIngredients(true)} 
                             onClick={() => {
                                 setTimeout(() => setShowIngredients(true), 0);
-                                dispatch(setModeWindowIngredient(false));
+                                dispatch(setModeWindowIngredient("new"));
                             }}
                             variant="outlined"
                             color="secondary"

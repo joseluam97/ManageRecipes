@@ -4,20 +4,12 @@ import { supabase } from "src/utils/supabase";
 
 import {
   GET_ALL_RECIPES,
-  SET_INGREDIENTS_NEW_RECIPES,
   SET_STEPS_NEW_RECIPES,
   INIT_VALUE,
   POST_RECIPE
 } from './types';
 
 export const initValue = createAction(INIT_VALUE);
-
-export const setListIngredientsNewRecipe = createAsyncThunk(
-  SET_INGREDIENTS_NEW_RECIPES,
-  async (listIngredient, { rejectWithValue }) => {
-    return listIngredient;
-  }
-);
 
 export const setListStepsNewRecipe = createAsyncThunk(
   SET_STEPS_NEW_RECIPES,
