@@ -26,6 +26,7 @@ import { postNewRecipe } from 'src/redux/recipe/actions'
 import { postIngredientRecipe } from 'src/redux/ingredients/actions'
 import { setListIngredientsNewRecipe } from 'src/redux/recipe/actions'
 import { useRecipeData } from '../../contexts/RecipeDataContext';
+import { setModeWindowIngredient } from 'src/redux/ingredients/actions'
 
 import { postGroup } from 'src/redux/groups/actions'
 
@@ -342,7 +343,10 @@ export default function RecipeFormPage() {
 
                         <Button
                             //onClick={() => setShowIngredients(true)} 
-                            onClick={() => setTimeout(() => setShowIngredients(true), 0)}
+                            onClick={() => {
+                                setTimeout(() => setShowIngredients(true), 0);
+                                dispatch(setModeWindowIngredient(false));
+                            }}
                             variant="outlined"
                             color="secondary"
                         >

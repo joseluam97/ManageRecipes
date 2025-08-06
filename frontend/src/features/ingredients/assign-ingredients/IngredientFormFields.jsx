@@ -22,6 +22,7 @@ export default function IngredientFormFields({ ingredient_recipe, index, changeL
 
     const listAllIngredientsAPI = useSelector((state) => state.ingredientsComponent.listAllIngredients);
     const listAllUnitsAPI = useSelector((state) => state.unitsComponent.listAllUnits);
+        const modeWindowEditIngredientAPI = useSelector((state) => state.ingredientsComponent.modeWindowEditIngredient);
 
     const handleChangeIngredient = (index, value) => {
 
@@ -205,7 +206,7 @@ export default function IngredientFormFields({ ingredient_recipe, index, changeL
                 }}
             />
 
-            {groupSpecify == true && (
+            {(groupSpecify == true || modeWindowEditIngredientAPI == true) && (
                 <FormControl fullWidth>
                     <InputLabel id="demo-multiple-name-label">Group</InputLabel>
                     <Select

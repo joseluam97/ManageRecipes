@@ -23,22 +23,6 @@ import {
 
 export default function RecipeCard({ recipe }) {
 
-  console.log("-RECIPE-")
-  console.log(recipe)
-
-  const listAllTypesRecipesAPI = useSelector((state) => state.typeRecipesComponent.listAllTypesRecipes);
-  const listAllOrdersAPI = useSelector((state) => state.ordersComponent.listAllOrders);
-  const listAllLevelsAPI = useSelector((state) => state.levelsComponent.listAllLevels);
-
-  const getColorTypeRecipe = () => {
-    const listAllTypesRecipes = Object.values(listAllTypesRecipesAPI);
-    let elementType = listAllTypesRecipes.filter(element => element.id == recipe.type)[0]
-    if (elementType != undefined) {
-      return elementType.color;
-    }
-    return COLOR_DEFAULT_TYPE_RECIPES
-  }
-
   const renderStatus = (
     <>
       <Label

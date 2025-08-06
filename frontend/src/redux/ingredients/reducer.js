@@ -6,11 +6,13 @@ import {
     putIngredient,
     postIngredientRecipe,
     deleteIngredient,
-    postIngredient
+    postIngredient,
+    setModeWindowIngredient
 } from "./actions";
 
 // Cada reducer tiene su propio state
 const initialState = {
+    modeWindowEditIngredient: '',
     newIngredient: undefined,
     updateIngredient: undefined,
     eraseIngredient: undefined,
@@ -25,6 +27,13 @@ export default createReducer(initialState, (builder) => {
     builder
         .addCase(initValue, () => {
             return initialState;
+        })
+        .addCase(setModeWindowIngredient.fulfilled, (state, action) => {
+            return {
+                ...state,
+                error: false,
+                modeWindowEditIngredient: action.payload,
+            };
         })
         .addCase(getAllIngredients.fulfilled, (state, action) => {
             return {

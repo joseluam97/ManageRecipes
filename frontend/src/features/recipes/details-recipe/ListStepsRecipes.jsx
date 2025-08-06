@@ -5,7 +5,7 @@ import {
     Skeleton,
 } from '@mui/material';
 
-export default function ListStepsRecipes({ recipe }) {
+export default function ListStepsRecipes({ recipe, setEditSteps }) {
 
     return (
         <Box width="65%">

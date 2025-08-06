@@ -33,6 +33,8 @@ export default function RecipeView() {
 
     const [countries, setCountries] = useState([]);
 
+    const [editIngredients, setEditIngredients] = useState(false);
+    const [editSteps, setEditSteps] = useState(false);
 
     useEffect(() => {
         getRecipeReceive();
@@ -90,7 +92,7 @@ export default function RecipeView() {
         <Container maxWidth="xl">
             <Paper elevation={3} sx={{ p: 4, borderRadius: 4 }}>
                 <Grid container spacing={4}>
-                    
+
                     {/* Header */}
                     <HeaderRecipe
                         recipe={recipe}
@@ -108,15 +110,21 @@ export default function RecipeView() {
                 <Box display="flex" flexDirection="row" gap={5}>
 
                     {/* Ingredientes */}
-                    <ListIngredientsRecipes
-                        listIngredientsRecipe={listIngredientsRecipe}
-                    />
+                    {!editSteps && (
+                        <ListIngredientsRecipes
+                            listIngredientsRecipe={listIngredientsRecipe}
+                            setEditIngredients={setEditIngredients}
+                        />
+                    )}
 
                     {/* Elaboration steps */}
-                    <ListStepsRecipes
-                        recipe={recipe}
-                    />
-                    
+                    {!editIngredients && (
+                        <ListStepsRecipes
+                            recipe={recipe}
+                            setEditSteps={setEditSteps}
+                        />
+                    )}
+
 
                 </Box>
 

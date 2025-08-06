@@ -28,10 +28,17 @@ export default function AssignIngredientsPanel({ onClose, setIdIngredients }) {
   const [listIngredientsBackup, setListIngredientsBackup] = useState([]);
   const listIngredientsNewRecipesAPI = useSelector((state) => state.recipesComponent.listIngredientsNewRecipes);
 
+  const modeWindowEditIngredientAPI = useSelector((state) => state.ingredientsComponent.modeWindowEditIngredient);
+
   const listAllIngredientsAPI = useSelector((state) => state.ingredientsComponent.listAllIngredients);
   const listAllUnitsAPI = useSelector((state) => state.unitsComponent.listAllUnits);
 
   const [showValidationError, setShowValidationError] = useState(false);
+
+  useEffect(() => {
+    console.log("-modeWindowEditIngredientAPI-")
+    console.log(modeWindowEditIngredientAPI)
+  }, [modeWindowEditIngredientAPI]);
 
   useEffect(() => {
     const timeout = setTimeout(() => setDelayRender(true), 10);
@@ -167,17 +174,19 @@ export default function AssignIngredientsPanel({ onClose, setIdIngredients }) {
 
   return (
     <Box sx={{ width: '100%', pl: 2 }}>
-      <Typography variant="h5" gutterBottom>Ingredients</Typography>
+      <Typography variant="h5" gutterBottom>{modeWindowEditIngredientAPI == true ? "Edit Ingredients" : "Add Ingredients"}</Typography>
 
-      <Button
-        variant="contained"
-        color="primary"
-        target="_blank"
-        onClick={changeMethodSubmitIngredient}
-        sx={{ mt: 2, mb: 2 }}
-      >
-        {enterIngredientsManual == true ? "Enter ingredients manually" : "Enter ingredients using text"}
-      </Button>
+      {modeWindowEditIngredientAPI == false && (
+        <Button
+          variant="contained"
+          color="primary"
+          target="_blank"
+          onClick={changeMethodSubmitIngredient}
+          sx={{ mt: 2, mb: 2 }}
+        >
+          {enterIngredientsManual == true ? "Enter ingredients manually" : "Enter ingredients using text"}
+        </Button>
+      )}
 
       {enterIngredientsManual == false && (
         <>
@@ -204,7 +213,7 @@ export default function AssignIngredientsPanel({ onClose, setIdIngredients }) {
       {(enterIngredientsManual == true || processReadIngredientEnd == true) && (
         <Box sx={{ width: '100%', paddingBottom: '20px', paddingTop: '20px' }}>
           {delayRender && (
-            <AssignIngredientList 
+            <AssignIngredientList
               title="List ingredients"
               setErrorListIngredients={setErrorListIngredients}
             />
@@ -230,18 +239,18 @@ export default function AssignIngredientsPanel({ onClose, setIdIngredients }) {
 
       {(enterIngredientsManual == true || processReadIngredientEnd == true) && (
         <>
-          <Button 
+          <Button
             variant="contained"
-            color="primary" 
+            color="primary"
             onClick={saveIngredients}
             disabled={errorListIngredients}
           >
             Save ingredients
           </Button>
-          <Button 
+          <Button
             variant="contained"
-            color="red" 
-            sx={{ marginLeft: 2, color: "#FFFFFF" }} 
+            color="red"
+            sx={{ marginLeft: 2, color: "#FFFFFF" }}
             onClick={cancelSave}
           >
             Cancel

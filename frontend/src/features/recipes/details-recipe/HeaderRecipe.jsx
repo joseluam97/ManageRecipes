@@ -22,6 +22,21 @@ export default function HeaderRecipe({ recipe }) {
             ) : (
                 <Skeleton variant="rectangular" width="100%" height={200} sx={{ borderRadius: 2 }} />
             )}
+            {recipe ? (
+                <Button
+                    variant="contained"
+                    color="primary"
+                    endIcon={<Edit />}
+                    href={recipe?.link}
+                    target="_blank"
+                    fullWidth
+                    sx={{ mt: 2 }}
+                >
+                    Edit
+                </Button>
+            ) : (
+                <Skeleton variant="rectangular" width="100%" height={40} sx={{ mt: 2, borderRadius: 1 }} />
+            )}
             {recipe?.link ? (
                 <Button
                     variant="contained"

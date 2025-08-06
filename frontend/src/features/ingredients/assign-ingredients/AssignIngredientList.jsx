@@ -28,6 +28,8 @@ export default function AssignIngredientList({ title, setErrorListIngredients })
     const [groupInput, setGroupInput] = useState('');
     const [groupList, setGroupList] = useState([]);
 
+    const modeWindowEditIngredientAPI = useSelector((state) => state.ingredientsComponent.modeWindowEditIngredient);
+
     const listIngredientsNewRecipesAPI = useSelector((state) => state.recipesComponent.listIngredientsNewRecipes);
 
     const [listIngredients, setListIngredients] = useState([]);
@@ -40,9 +42,23 @@ export default function AssignIngredientList({ title, setErrorListIngredients })
             if (JSON.stringify(listIngredientsNewRecipesAPIFormated) !== JSON.stringify(listIngredients)) {
                 dispatch(setListIngredientsNewRecipe(listIngredients));
             }
+
+            if (modeWindowEditIngredientAPI == true) {
+                console.log("Mode edit is available")
+                console.log(listIngredientsNewRecipesAPIFormated)
+                let listGroupsEdit = [];
+                for (let index in listIngredientsNewRecipesAPIFormated) {
+                    console.log("GROUP: " + index)
+                    console.log(listIngredientsNewRecipesAPIFormated[index]?.group)
+                    if (listIngredientsNewRecipesAPIFormated[index]?.group != "" && listIngredientsNewRecipesAPIFormated[index]?.group != undefined) {
+                        listGroupsEdit.push(listIngredientsNewRecipesAPIFormated[index]?.group)
+                    }
+                }
+                setGroupList(listGroupsEdit)
+
+            }
         }
     }, [listIngredients]);
-
 
     useEffect(() => {
         getListIngredients();
@@ -61,9 +77,6 @@ export default function AssignIngredientList({ title, setErrorListIngredients })
         if (listIngredientsReceive.length != 0) {
             setListIngredients(listIngredientsReceive)
         }
-        else {
-            handleAdd();
-        }
     }, [listIngredientsNewRecipesAPI]);
 
     const changeListIngredient = (ingredient, index) => {
@@ -79,7 +92,7 @@ export default function AssignIngredientList({ title, setErrorListIngredients })
                 setOpenError(true);
                 setErrorListIngredients(true);
             }
-            else{
+            else {
                 setIdIngredientDuplicated(0)
                 setOpenError(false);
                 setErrorListIngredients(false);
@@ -146,15 +159,17 @@ export default function AssignIngredientList({ title, setErrorListIngredients })
 
     return (
         <Box>
-            <FormControlLabel control={
-                <Switch
-                    checked={groupSpecify}
-                    onChange={handleChange}
-                    inputProps={{ 'aria-label': 'controlled' }}
-                />
-            } label="Especificar grupos" />
+            {modeWindowEditIngredientAPI == false && (
+                <FormControlLabel control={
+                    <Switch
+                        checked={groupSpecify}
+                        onChange={handleChange}
+                        inputProps={{ 'aria-label': 'controlled' }}
+                    />
+                } label="Especificar grupos" />
+            )}
 
-            {groupSpecify && (
+            {(groupSpecify || modeWindowEditIngredientAPI == true) && (
                 <Box sx={{ mt: 2 }}>
                     <TextField
                         fullWidth
