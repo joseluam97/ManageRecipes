@@ -5,7 +5,9 @@ import {
     setListCurrentIngredient,
     setGroupSpecify,
     setModeWindowIngredient,
-    setGroupList
+    setGroupList,
+    setErrorListIngredient,
+    setIdIngredientError
 } from "./actions";
 
 // Cada reducer tiene su propio state
@@ -14,6 +16,8 @@ const initialState = {
     listCurrentIngredients: [],
     groupSpecify: false,
     groupList: [],
+    errorListIngredient: false,
+    idIngredientError: '',
     error: null,
     loading: false,
 }
@@ -34,7 +38,7 @@ export default createReducer(initialState, (builder) => {
             return {
                 ...state,
                 error: false,
-                listCurrentIngredients: {...action.payload},
+                listCurrentIngredients: action.payload,
             };
         })
         .addCase(setGroupSpecify.fulfilled, (state, action) => {
@@ -48,7 +52,21 @@ export default createReducer(initialState, (builder) => {
             return {
                 ...state,
                 error: false,
-                groupList: {...action.payload},
+                groupList: action.payload,
+            };
+        })
+        .addCase(setErrorListIngredient.fulfilled, (state, action) => {
+            return {
+                ...state,
+                error: false,
+                errorListIngredient: action.payload,
+            };
+        })
+        .addCase(setIdIngredientError.fulfilled, (state, action) => {
+            return {
+                ...state,
+                error: false,
+                idIngredientError: action.payload,
             };
         })
         .addDefaultCase((state) => {

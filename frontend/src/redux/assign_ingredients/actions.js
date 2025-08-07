@@ -9,7 +9,9 @@ import {
   MODE_WINDOW_ADD_EDIT_INGREDIENT,
   LIST_CURRENT_INGREDIENTS,
   GROUP_SPECIFY,
-  GROUP_LIST
+  GROUP_LIST,
+  ERROR_LIST_INGREDIENT,
+  ID_INGREDIENT_ERROR,
 } from './types';
 
 export const initValue = createAction(INIT_VALUE);
@@ -39,5 +41,19 @@ export const setGroupList = createAsyncThunk(
   GROUP_LIST,
   async (groupList, { rejectWithValue }) => {
     return groupList;
+  }
+);
+
+export const setErrorListIngredient = createAsyncThunk(
+  ERROR_LIST_INGREDIENT,
+  async (errorListIngredient, { rejectWithValue }) => {
+    return errorListIngredient;
+  }
+);
+
+export const setIdIngredientError = createAsyncThunk(
+  ID_INGREDIENT_ERROR,
+  async (idIngredientError, { rejectWithValue }) => {
+    return idIngredientError;
   }
 );

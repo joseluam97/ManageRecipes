@@ -13,7 +13,6 @@ import { useNavigate } from 'react-router-dom';
 import { useEntityUtils } from '../../hooks/useEntityUtils';
 import { useParams } from 'react-router-dom';
 import { useRecipeData } from '../../contexts/RecipeDataContext';
-import { getIngredientsByRecipe } from 'src/redux/ingredients/actions'
 import { getListCountries } from 'src/utils/countries'
 import HeaderRecipe from 'src/features/recipes/details-recipe/HeaderRecipe'
 import DetailsRecipe from 'src/features/recipes/details-recipe/DetailsRecipe'
@@ -29,8 +28,6 @@ export default function RecipeView() {
     const dispatch = useDispatch();
 
     const [recipe, setRecipe] = useState();
-    const [listIngredientsRecipe, setListIngredientsRecipes] = useState([]);
-
     const [countries, setCountries] = useState([]);
 
     const [editIngredients, setEditIngredients] = useState(false);
@@ -38,7 +35,6 @@ export default function RecipeView() {
 
     useEffect(() => {
         getRecipeReceive();
-        getListIngredientsByRecipe();
 
         // Get list Countries
         fetchCountries();
@@ -50,36 +46,6 @@ export default function RecipeView() {
         setCountries(listCountries);
     };
 
-    const getListIngredientsByRecipe = async () => {
-        const resultAction = await dispatch(getIngredientsByRecipe(id));
-        if (getIngredientsByRecipe.fulfilled.match(resultAction) && resultAction.payload != undefined) {
-            const listIngredientsByRecipe = Object.values(resultAction.payload);
-
-            let pruebaIngredientes = [...listIngredientsByRecipe]
-
-            const agrupado = pruebaIngredientes.reduce((acc, item) => {
-                const grupo = item?.group?.name || '';
-                if (!acc[grupo]) {
-                    acc[grupo] = [];
-                }
-                acc[grupo].push(item);
-                return acc;
-            }, {});
-
-            const grupos = Object.entries(agrupado).map(([grupo, items]) => ({
-                grupo,
-                ingredientes: items
-            }));
-            const list_groups = Object.values(grupos);
-
-            const list_group_sort = [
-                ...list_groups.filter(item => item.grupo === ""),
-                ...list_groups.filter(item => item.grupo !== "")
-            ];
-
-            setListIngredientsRecipes(Object.values(list_group_sort))
-        }
-    };
 
     const getRecipeReceive = () => {
         let listRecipesReceive = Object.values(listRecipes);
@@ -112,7 +78,7 @@ export default function RecipeView() {
                     {/* Ingredientes */}
                     {!editSteps && (
                         <ListIngredientsRecipes
-                            listIngredientsRecipe={listIngredientsRecipe}
+                            id_recipe={id}
                             setEditIngredients={setEditIngredients}
                         />
                     )}

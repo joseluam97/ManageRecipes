@@ -10,6 +10,7 @@ import { submitTextToRead } from 'src/utils/format-text'
 import { postIngredient } from 'src/redux/ingredients/actions'
 import { postUnit } from 'src/redux/units/actions'
 import { useRecipeData } from 'src/contexts/RecipeDataContext'
+import { setGroupList } from 'src/redux/assign_ingredients/actions'
 
 export default function AssignIngredientsPanel({ onClose, setIdIngredients }) {
 
@@ -29,7 +30,7 @@ export default function AssignIngredientsPanel({ onClose, setIdIngredients }) {
   const listIngredientsNewRecipesAPI = useSelector((state) => state.assignIngredientsComponent.listCurrentIngredients);
 
   const modeWindowEditIngredientAPI = useSelector((state) => state.assignIngredientsComponent.modeWindowEditIngredient);
-
+  const errorListIngredientAPI = useSelector((state) => state.assignIngredientsComponent.errorListIngredient);
   const listAllIngredientsAPI = useSelector((state) => state.ingredientsComponent.listAllIngredients);
   const listAllUnitsAPI = useSelector((state) => state.unitsComponent.listAllUnits);
 
@@ -41,12 +42,18 @@ export default function AssignIngredientsPanel({ onClose, setIdIngredients }) {
   }, []);
 
   useEffect(() => {
+    setErrorListIngredients(errorListIngredientAPI)
+  }, [errorListIngredientAPI]);
+
+  useEffect(() => {
     setListIngredientsBackup(Object.values(listIngredientsNewRecipesAPI))
   }, [location.pathname]);
 
   const cancelSave = () => {
     dispatch(setListCurrentIngredient([]));
+    setIdIngredients(listIngredientsNewRecipesAPI);
     onClose();
+    dispatch(setGroupList([]));
   }
 
   const saveIngredients = () => {
@@ -55,8 +62,10 @@ export default function AssignIngredientsPanel({ onClose, setIdIngredients }) {
       setShowValidationError(true);
     }
     else {
-      setIdIngredients(Object.values(listIngredientsNewRecipesAPI));
+      let newListElement = [...listIngredientsNewRecipesAPI]
+      setIdIngredients(newListElement);
       onClose();
+      dispatch(setGroupList([]));
     }
   }
 
@@ -210,7 +219,6 @@ export default function AssignIngredientsPanel({ onClose, setIdIngredients }) {
           {delayRender && (
             <AssignIngredientList
               title="List ingredients"
-              setErrorListIngredients={setErrorListIngredients}
             />
           )}
         </Box>

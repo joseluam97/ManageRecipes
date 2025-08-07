@@ -9,8 +9,11 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
+import { setListCurrentIngredient, setErrorListIngredient, setIdIngredientError } from 'src/redux/assign_ingredients/actions'
 
-export default function IngredientFormFields({ ingredient_recipe, index, changeListIngredient, groupSpecify, groupList }) {
+export default function IngredientFormFields(
+    { ingredient_recipe, index }
+) {
 
     const location = useLocation();
     const dispatch = useDispatch();
@@ -22,6 +25,34 @@ export default function IngredientFormFields({ ingredient_recipe, index, changeL
     const listAllIngredientsAPI = useSelector((state) => state.ingredientsComponent.listAllIngredients);
     const listAllUnitsAPI = useSelector((state) => state.unitsComponent.listAllUnits);
     const modeWindowEditIngredientAPI = useSelector((state) => state.assignIngredientsComponent.modeWindowEditIngredient);
+    const groupSpecifyAPI = useSelector((state) => state.assignIngredientsComponent.groupSpecify);
+    const groupListAPI = useSelector((state) => state.assignIngredientsComponent.groupList);
+    const listIngredientsNewRecipesAPI = useSelector((state) => state.assignIngredientsComponent.listCurrentIngredients);
+
+    const addIngredientInList = (ingredient, index) => {
+        let current_elements = [...listIngredientsNewRecipesAPI]
+
+        // Check if ingredients exits in list
+        if (ingredient.ingredient != undefined) {
+            let list_search_element = [...current_elements]
+            let result_filter = list_search_element.filter((element, indice) => element?.ingredient?.id == ingredient?.ingredient?.id && indice != index)
+            if (result_filter.length != 0) {
+                // The ingredient is duplicated
+                dispatch(setIdIngredientError(ingredient.ingredient.id))
+                dispatch(setErrorListIngredient(true));
+            }
+            else {
+                dispatch(setIdIngredientError(0))
+                dispatch(setErrorListIngredient(false));
+            }
+        }
+        console.log("-ingredient-")
+        console.log(ingredient)
+        // Add new ingredient
+        current_elements[index] = ingredient
+
+        dispatch(setListCurrentIngredient(current_elements));
+    }
 
     const handleChangeIngredient = (index, value) => {
 
@@ -32,43 +63,46 @@ export default function IngredientFormFields({ ingredient_recipe, index, changeL
             group: ingredient_recipe.group != undefined ? ingredient_recipe.group : ""
         };
 
-        changeListIngredient(update_element, index)
+        addIngredientInList(update_element, index)
 
     }
     const handleChangeQuantity = (index, value) => {
 
         let update_element = {
+            id: ingredient_recipe.id != undefined ? ingredient_recipe.id : "",
             ingredient: ingredient_recipe.ingredient,
             quantity: value,
             unit: ingredient_recipe.unit,
             group: ingredient_recipe.group != undefined ? ingredient_recipe.group : ""
         };
 
-        changeListIngredient(update_element, index)
+        addIngredientInList(update_element, index)
     }
     const handleChangeUnit = (index, value) => {
 
         let update_element = {
+            id: ingredient_recipe.id != undefined ? ingredient_recipe.id : "",
             ingredient: ingredient_recipe.ingredient,
             quantity: ingredient_recipe.quantity,
             unit: value,
             group: ingredient_recipe.group != undefined ? ingredient_recipe.group : ""
         };
 
-        changeListIngredient(update_element, index)
+        addIngredientInList(update_element, index)
     }
 
     const handleChangeGroup = (index, event) => {
 
         const value = event.target.value;
         let update_element = {
+            id: ingredient_recipe.id != undefined ? ingredient_recipe.id : "",
             ingredient: ingredient_recipe.ingredient,
             quantity: ingredient_recipe.quantity,
             unit: ingredient_recipe.unit,
             group: value
         };
 
-        changeListIngredient(update_element, index)
+        addIngredientInList(update_element, index)
     }
 
     const createNewIngredients = async () => {
@@ -141,7 +175,7 @@ export default function IngredientFormFields({ ingredient_recipe, index, changeL
                 noOptionsText="The option that you have searched not found..."
                 fullWidth
                 filterOptions={filterIngredientsList}
-                sx={{ width: groupSpecify || modeWindowEditIngredientAPI === "edit" ? '40%' : '45%' }}
+                sx={{ width: groupSpecifyAPI || modeWindowEditIngredientAPI === "edit" ? '40%' : '45%' }}
                 renderInput={(params) => (
                     <TextField
                         {...params}
@@ -179,7 +213,7 @@ export default function IngredientFormFields({ ingredient_recipe, index, changeL
                 value={ingredient_recipe?.quantity || ''}
                 placeholder="Quantity"
                 type='number'
-                sx={{ width: groupSpecify || modeWindowEditIngredientAPI === "edit" ? '10%' : '25%' }}
+                sx={{ width: groupSpecifyAPI || modeWindowEditIngredientAPI === "edit" ? '10%' : '25%' }}
                 onChange={(e) => handleChangeQuantity(index, e.target.value)}
             />
 
@@ -191,11 +225,11 @@ export default function IngredientFormFields({ ingredient_recipe, index, changeL
                 renderInput={(params) => (
                     <TextField {...params} label="Unit" />
                 )}
-                sx={{ width: groupSpecify || modeWindowEditIngredientAPI === "edit" ? '20%' : '30%' }}
+                sx={{ width: groupSpecifyAPI || modeWindowEditIngredientAPI === "edit" ? '20%' : '30%' }}
                 onChange={(event, value) => handleChangeUnit(index, value)}
             />
 
-            {(groupSpecify === true || modeWindowEditIngredientAPI === "edit") && (
+            {(groupSpecifyAPI === true || modeWindowEditIngredientAPI === "edit") && (
                 <FormControl sx={{ width: '30%' }}>
                     <InputLabel id="demo-multiple-name-label">Group</InputLabel>
                     <Select
@@ -205,7 +239,7 @@ export default function IngredientFormFields({ ingredient_recipe, index, changeL
                         onChange={(event) => handleChangeGroup(index, event)}
                         input={<OutlinedInput label="Group" />}
                     >
-                        {groupList.map((name) => (
+                        {groupListAPI?.map((name) => (
                             <MenuItem key={name} value={name}>
                                 {name}
                             </MenuItem>

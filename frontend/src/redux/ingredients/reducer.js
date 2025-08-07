@@ -7,6 +7,7 @@ import {
     postIngredientRecipe,
     deleteIngredient,
     postIngredient,
+    putIngredientRecipe,
 } from "./actions";
 
 // Cada reducer tiene su propio state
@@ -16,6 +17,7 @@ const initialState = {
     eraseIngredient: undefined,
     listAllIngredients: [],
     createdNewIngredientRecipe: {},
+    updateIngredientRecipe: {},
     error: null,
     loading: false,
 }
@@ -59,6 +61,13 @@ export default createReducer(initialState, (builder) => {
                 ...state,
                 error: false,
                 createdNewIngredientRecipe: action.payload,
+            };
+        })
+        .addCase(putIngredientRecipe.fulfilled, (state, action) => {
+            return {
+                ...state,
+                error: false,
+                updateIngredientRecipe: action.payload,
             };
         })
         .addDefaultCase((state) => {

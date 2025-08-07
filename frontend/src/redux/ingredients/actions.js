@@ -13,6 +13,8 @@ import {
   GET_INGREDIENTS_BY_RECIPE,
   GET_RECIPES_BY_INGREDIENT,
   INIT_VALUE,
+  PUT_INGREDIENTS_RECIPE,
+  DELETE_INGREDIENTS_RECIPE
 } from './types';
 
 export const initValue = createAction(INIT_VALUE);
@@ -166,6 +168,62 @@ export const postIngredientRecipe = createAsyncThunk(
     }
   }
 );
+
+export const putIngredientRecipe = createAsyncThunk(
+  PUT_INGREDIENTS_RECIPE,
+  async (updatedIngredient, { rejectWithValue }) => {
+    const { id, ...fieldsToUpdate } = updatedIngredient;
+
+    try {
+      const { data, error } = await supabase
+        .from('Ingredients_recipes')
+        .update(fieldsToUpdate)
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (error) {
+        console.error("ERROR:", error.message);
+        return rejectWithValue(error.message);
+      }
+
+      console.log("Ingrediente actualizado:", data);
+      return data;
+
+    } catch (error) {
+      console.error("Error al actualizar el ingrediente:", error.message);
+      return rejectWithValue(error.message || "Error al actualizar el ingrediente");
+    }
+  }
+);
+
+export const deleteIngredientRecipe = createAsyncThunk(
+  DELETE_INGREDIENTS_RECIPE,
+  async (id, { rejectWithValue }) => {
+    try {
+      const { data, error } = await supabase
+        .from('Ingredients_recipes')
+        .delete()
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (error) {
+        console.error("ERROR al eliminar:", error.message);
+        return rejectWithValue(error.message);
+      }
+
+      console.log("Ingrediente eliminado:", data);
+      return data;
+
+    } catch (error) {
+      console.error("Excepción al eliminar:", error.message);
+      return rejectWithValue(error.message || "Error al eliminar el ingrediente");
+    }
+  }
+);
+
+
 
 export const putIngredient = createAsyncThunk(
   PUT_INGREDIENT,

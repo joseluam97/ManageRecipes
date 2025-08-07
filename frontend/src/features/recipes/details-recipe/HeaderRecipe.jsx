@@ -6,7 +6,7 @@ import {
 } from '@mui/material';
 import LaunchIcon from '@mui/icons-material/Launch';
 import Menu1 from 'src/assets/images/menu/menu1.jpg';
-import { Edit } from '@mui/icons-material';
+import { Edit, Delete } from '@mui/icons-material';
 
 export default function HeaderRecipe({ recipe }) {
 
@@ -33,6 +33,21 @@ export default function HeaderRecipe({ recipe }) {
                     sx={{ mt: 2 }}
                 >
                     Edit
+                </Button>
+            ) : (
+                <Skeleton variant="rectangular" width="100%" height={40} sx={{ mt: 2, borderRadius: 1 }} />
+            )}
+            {recipe ? (
+                <Button
+                    variant="contained"
+                    color="red"
+                    endIcon={<Delete />}
+                    href={recipe?.link}
+                    target="_blank"
+                    fullWidth
+                    sx={{ mt: 2, color: "#FFFFFF" }}
+                >
+                    Delete
                 </Button>
             ) : (
                 <Skeleton variant="rectangular" width="100%" height={40} sx={{ mt: 2, borderRadius: 1 }} />

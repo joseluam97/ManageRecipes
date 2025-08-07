@@ -8,6 +8,7 @@ import {
   GET_ALL_GROUPS,
   INIT_VALUE,
   POST_GROUP,
+  DELETE_GROUP
 } from './types';
 
 export const initValue = createAction(INIT_VALUE);
@@ -17,7 +18,7 @@ export const getAllGroups = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const { data, error } = await supabase
-        .from('Groups')
+        .from('Groups_Ingredients')
         .select('*')
         .order('id', { ascending: false });
 
@@ -62,6 +63,30 @@ export const postGroup = createAsyncThunk(
 
     } catch (error) {
       return rejectWithValue(error.message || "Error when you created a new group");
+    }
+  }
+);
+
+export const deleteGroup = createAsyncThunk(
+  DELETE_GROUP,
+  async (id, { rejectWithValue }) => {
+    try {
+      const { error } = await supabase
+        .from("Groups_Ingredients")
+        .delete()
+        .eq("id", id);
+
+      if (error) {
+        console.log("ERROR:");
+        console.log(error.message);
+        return rejectWithValue(error.message);
+      }
+
+      console.log("Grupo eliminado con ID:", id);
+      return id; // Devuelve el ID eliminado para actualizar el estado si es necesario
+
+    } catch (error) {
+      return rejectWithValue(error.message || "Error when deleting group");
     }
   }
 );

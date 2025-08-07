@@ -5,7 +5,7 @@ import { getAllUnits } from 'src/redux/units/actions'
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllIngredients } from 'src/redux/ingredients/actions'
 import IngredientFormFields from './IngredientFormFields'
-import { setListCurrentIngredient } from 'src/redux/assign_ingredients/actions'
+import { setListCurrentIngredient, setGroupSpecify, setGroupList } from 'src/redux/assign_ingredients/actions'
 import { IconTrash } from '@tabler/icons';
 import { useState, useEffect } from 'react';
 import * as React from 'react';
@@ -15,50 +15,36 @@ import Switch from '@mui/material/Switch';
 import { Box, Stack, Typography, IconButton, TextField, Chip, Paper } from '@mui/material';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
+import { useSnackbar } from 'src/components/snackbar/SnackbarProvider';
 
-export default function AssignIngredientList({ title, setErrorListIngredients }) {
+export default function AssignIngredientList({ title }) {
 
     const location = useLocation();
     const dispatch = useDispatch();
+    const { showSnackbar } = useSnackbar();
 
     const [idIngredientDuplicated, setIdIngredientDuplicated] = useState(0);
     const [openError, setOpenError] = useState(false);
 
-    const [groupSpecify, setGroupSpecify] = React.useState(false);
     const [groupInput, setGroupInput] = useState('');
-    const [groupList, setGroupList] = useState([]);
 
     const modeWindowEditIngredientAPI = useSelector((state) => state.assignIngredientsComponent.modeWindowEditIngredient);
-
+    const groupSpecifyAPI = useSelector((state) => state.assignIngredientsComponent.groupSpecify);
     const listIngredientsNewRecipesAPI = useSelector((state) => state.assignIngredientsComponent.listCurrentIngredients);
-
-    const [listIngredients, setListIngredients] = useState([]);
-    //const listIngredients = Object.values(listIngredientsNewRecipesAPI);
+    const groupListAPI = useSelector((state) => state.assignIngredientsComponent.groupList);
+    const errorListIngredientAPI = useSelector((state) => state.assignIngredientsComponent.errorListIngredient);
+    const idIngredientErrorAPI = useSelector((state) => state.assignIngredientsComponent.idIngredientError);
 
     useEffect(() => {
-        if (listIngredients !== undefined) {
-            // Solo actualiza si realmente ha cambiado el contenido
-            let listIngredientsNewRecipesAPIFormated = Object.values(listIngredientsNewRecipesAPI);
-            if (JSON.stringify(listIngredientsNewRecipesAPIFormated) !== JSON.stringify(listIngredients)) {
-                dispatch(setListCurrentIngredient(listIngredients));
-            }
+        if (listIngredientsNewRecipesAPI !== undefined && modeWindowEditIngredientAPI == "edit" && groupListAPI.length == 0) {
+            console.log("Mode edit is available")
+            console.log(listIngredientsNewRecipesAPI)
 
-            if (modeWindowEditIngredientAPI == "edit") {
-                console.log("Mode edit is available")
-                console.log(listIngredientsNewRecipesAPIFormated)
-                let listGroupsEdit = [];
-                for (let index in listIngredientsNewRecipesAPIFormated) {
-                    console.log("GROUP: " + index)
-                    console.log(listIngredientsNewRecipesAPIFormated[index]?.group)
-                    if (listIngredientsNewRecipesAPIFormated[index]?.group != "" && listIngredientsNewRecipesAPIFormated[index]?.group != undefined) {
-                        listGroupsEdit.push(listIngredientsNewRecipesAPIFormated[index]?.group)
-                    }
-                }
-                setGroupList(listGroupsEdit)
+            const uniqueGroups = [...new Set(listIngredientsNewRecipesAPI.map(item => item.group).filter(g => g != undefined && g?.trim() !== ""))];
 
-            }
+            dispatch(setGroupList(uniqueGroups));
         }
-    }, [listIngredients]);
+    }, [listIngredientsNewRecipesAPI]);
 
     useEffect(() => {
         getListIngredients();
@@ -66,43 +52,12 @@ export default function AssignIngredientList({ title, setErrorListIngredients })
         if (Object.values(listIngredientsNewRecipesAPI).length == 0) {
             handleAdd();
         }
-        else {
-            let listIngredients = Object.values(listIngredientsNewRecipesAPI)
-            setListIngredients([...listIngredients])
-        }
     }, [location.pathname]);
 
     useEffect(() => {
-        let listIngredientsReceive = Object.values(listIngredientsNewRecipesAPI)
-        if (listIngredientsReceive.length != 0) {
-            setListIngredients(listIngredientsReceive)
-        }
-    }, [listIngredientsNewRecipesAPI]);
-
-    const changeListIngredient = (ingredient, index) => {
-        let current_elements = [...listIngredients]
-
-        // Check if ingredients exits in list
-        if (ingredient.ingredient != undefined) {
-            let list_search_element = [...current_elements]
-            let result_filter = list_search_element.filter((element, indice) => element?.ingredient?.id == ingredient?.ingredient?.id && indice != index)
-            if (result_filter.length != 0) {
-                // The ingredient is duplicated
-                setIdIngredientDuplicated(ingredient.ingredient.id)
-                setOpenError(true);
-                setErrorListIngredients(true);
-            }
-            else {
-                setIdIngredientDuplicated(0)
-                setOpenError(false);
-                setErrorListIngredients(false);
-            }
-        }
-        // Add new ingredient
-        current_elements[index] = ingredient
-
-        setListIngredients(current_elements)
-    };
+        setOpenError(errorListIngredientAPI)
+        setIdIngredientDuplicated(idIngredientErrorAPI)
+    }, [errorListIngredientAPI, idIngredientErrorAPI]);
 
     const getListUnits = async () => {
         const resultAction = await dispatch(getAllUnits());
@@ -113,46 +68,53 @@ export default function AssignIngredientList({ title, setErrorListIngredients })
     };
 
     const handleAdd = () => {
-        let listIngredientsNewRecipes = [...Object.values(listIngredients)]
+        let listIngredientsNewRecipes = [...Object.values(listIngredientsNewRecipesAPI)]
         listIngredientsNewRecipes.push({
             name: "",
             quantity: 0,
             unit: ""
         })
-        setListIngredients(listIngredientsNewRecipes);
+        dispatch(setListCurrentIngredient(listIngredientsNewRecipes));
     };
 
     const handleDragEnd = (result) => {
         if (!result.destination) return;
-        let listIngredientsNewRecipes = [...Object.values(listIngredients)]
+        let listIngredientsNewRecipes = [...Object.values(listIngredientsNewRecipesAPI)]
         const newIngredients = Array.from(listIngredientsNewRecipes);
         const [removed] = newIngredients.splice(result.source.index, 1);
         newIngredients.splice(result.destination.index, 0, removed);
-        setListIngredients(newIngredients);
+        dispatch(setListCurrentIngredient(newIngredients));
     };
 
     const deleteIngredients = (indexToDelete) => {
-        const currentIngredients = [...Object.values(listIngredients)];
+        const currentIngredients = [...Object.values(listIngredientsNewRecipesAPI)];
         const newIngredients = currentIngredients.filter((_, index) => index !== indexToDelete);
-        setListIngredients(newIngredients);
+        dispatch(setListCurrentIngredient(newIngredients));
     };
 
     const handleChange = (event) => {
-        setGroupSpecify(event.target.checked);
+        dispatch(setGroupSpecify(event.target.checked));
     };
 
     const handleKeyDown = (event) => {
         if (event.key === 'Enter' && groupInput.trim() !== '') {
             event.preventDefault();
-            if (!groupList.includes(groupInput.trim())) {
-                setGroupList([...groupList, groupInput.trim()]);
+            if (!groupListAPI.includes(groupInput.trim())) {
+                dispatch(setGroupList([...groupListAPI, groupInput.trim()]));
             }
             setGroupInput('');
         }
     };
 
     const handleDelete = (chipToDelete) => {
-        setGroupList((chips) => chips.filter((chip) => chip !== chipToDelete));
+        let result = listIngredientsNewRecipesAPI.filter(element => element.group == chipToDelete);
+        if (result.length != 0) {
+            showSnackbar('The group trying to eliminate this is in some of the ingredients', 'error');
+            return;
+        }
+        
+        let resultUpdate = groupListAPI.filter((chip) => chip !== chipToDelete);
+        dispatch(setGroupList(resultUpdate));
     };
 
     return (
@@ -160,14 +122,14 @@ export default function AssignIngredientList({ title, setErrorListIngredients })
             {modeWindowEditIngredientAPI == "new" && (
                 <FormControlLabel control={
                     <Switch
-                        checked={groupSpecify}
+                        checked={groupSpecifyAPI}
                         onChange={handleChange}
                         inputProps={{ 'aria-label': 'controlled' }}
                     />
                 } label="Especificar grupos" />
             )}
 
-            {(groupSpecify || modeWindowEditIngredientAPI == "edit") && (
+            {(groupSpecifyAPI || modeWindowEditIngredientAPI == "edit") && (
                 <Box sx={{ mt: 2 }}>
                     <TextField
                         fullWidth
@@ -179,7 +141,7 @@ export default function AssignIngredientList({ title, setErrorListIngredients })
                     />
 
                     <Stack direction="row" spacing={1} sx={{ mt: 2, flexWrap: 'wrap' }}>
-                        {groupList.map((group, index) => (
+                        {groupListAPI.map((group, index) => (
                             <Chip
                                 key={index}
                                 label={group}
@@ -202,7 +164,7 @@ export default function AssignIngredientList({ title, setErrorListIngredients })
                 <Droppable droppableId="ingredients">
                     {(provided) => (
                         <Box ref={provided.innerRef} {...provided.droppableProps}>
-                            {listIngredients.map((ingredient, index) => (
+                            {listIngredientsNewRecipesAPI.map((ingredient, index) => (
                                 <Draggable key={`ingredient-key-${ingredient.name}-${index}`} draggableId={`ingredient-${ingredient.name}-${index}`} index={index}>
                                     {(provided) => (
                                         <Box>
@@ -217,9 +179,6 @@ export default function AssignIngredientList({ title, setErrorListIngredients })
                                                 <IngredientFormFields
                                                     ingredient_recipe={ingredient}
                                                     index={index}
-                                                    changeListIngredient={changeListIngredient}
-                                                    groupSpecify={groupSpecify}
-                                                    groupList={groupList}
                                                 />
                                                 <IconButton
                                                     fullWidth
