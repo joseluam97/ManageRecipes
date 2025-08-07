@@ -26,7 +26,6 @@ export default function ListSteps({ title }) {
         let listStepsNewRecipe = [...Object.values(listStepsNewRecipeAPI)]
         listStepsNewRecipe.push('')
         dispatch(setListStepsNewRecipe(listStepsNewRecipe));
-
     };
 
     const handleChange = (index, value) => {
@@ -64,7 +63,7 @@ export default function ListSteps({ title }) {
                     {(provided) => (
                         <Box ref={provided.innerRef} {...provided.droppableProps}>
                             {listSteps.map((step, index) => (
-                                <Draggable key={index} draggableId={`step-${index}`} index={index}>
+                                <Draggable key={`step-recipe-${index}`} draggableId={`step-${index}`} index={index}>
                                     {(provided) => (
                                         <Paper
                                             ref={provided.innerRef}

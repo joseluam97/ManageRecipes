@@ -51,7 +51,6 @@ export default function RecipeView() {
         let listRecipesReceive = Object.values(listRecipes);
         let recipeSelected = listRecipesReceive.filter(element => element.id == id)[0]
         setRecipe(recipeSelected);
-
     };
 
     return (
