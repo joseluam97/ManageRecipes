@@ -15,6 +15,7 @@ import { useParams } from 'react-router-dom';
 import { useRecipeData } from '../../contexts/RecipeDataContext';
 import { getListCountries } from 'src/utils/countries'
 import HeaderRecipe from 'src/features/recipes/details-recipe/HeaderRecipe'
+import EditDetailsRecipe from 'src/features/recipes/details-recipe/EditDetailsRecipe'
 import DetailsRecipe from 'src/features/recipes/details-recipe/DetailsRecipe'
 import ListIngredientsRecipes from 'src/features/recipes/details-recipe/ListIngredientsRecipes'
 import ListStepsRecipes from 'src/features/recipes/details-recipe/ListStepsRecipes'
@@ -23,13 +24,14 @@ export default function RecipeView() {
 
     const { id } = useParams();
 
-    const { listRecipes } = useRecipeData();
+    const { listRecipes, refreshData } = useRecipeData();
     const location = useLocation();
     const dispatch = useDispatch();
 
     const [recipe, setRecipe] = useState();
     const [countries, setCountries] = useState([]);
 
+    const [editRecipe, setEditRecipe] = useState(false);
     const [editIngredients, setEditIngredients] = useState(false);
     const [editSteps, setEditSteps] = useState(false);
 
@@ -40,6 +42,11 @@ export default function RecipeView() {
         fetchCountries();
     }, [location.pathname, listRecipes]);
 
+    useEffect(() => {
+        refreshData();
+
+        getRecipeReceive();
+    }, [editRecipe]);
 
     const fetchCountries = async () => {
         const listCountries = await getListCountries();
@@ -57,17 +64,30 @@ export default function RecipeView() {
         <Container maxWidth="xl">
             <Paper elevation={3} sx={{ p: 4, borderRadius: 4 }}>
                 <Grid container spacing={4}>
+                    {/* Mode edit details */}
+                    {editRecipe && (
+                        <EditDetailsRecipe
+                            recipe={recipe}
+                            countries={countries}
+                            setEditRecipe={setEditRecipe}
+                        />
+                    )}
 
                     {/* Header */}
-                    <HeaderRecipe
-                        recipe={recipe}
-                    />
+                    {!editRecipe && (
+                        <HeaderRecipe
+                            recipe={recipe}
+                        />
+                    )}
 
                     {/* Información principal */}
-                    <DetailsRecipe
-                        recipe={recipe}
-                        countries={countries}
-                    />
+                    {!editRecipe && (
+                        <DetailsRecipe
+                            recipe={recipe}
+                            countries={countries}
+                            setEditRecipe={setEditRecipe}
+                        />
+                    )}
                 </Grid>
 
                 <Divider sx={{ my: 4 }} />

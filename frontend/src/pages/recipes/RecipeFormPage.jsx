@@ -106,7 +106,6 @@ export default function RecipeFormPage() {
 
     const handleChange = (field) => (e) => {
         setForm({ ...form, [field]: e.target.value });
-
     };
 
     const handleSave = () => {

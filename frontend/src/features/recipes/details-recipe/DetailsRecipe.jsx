@@ -5,16 +5,26 @@ import {
     Chip,
     Grid,
     Skeleton,
+    Stack,
+    IconButton
 } from '@mui/material';
+import { Edit } from '@mui/icons-material';
 
-export default function DetailsRecipe({ recipe, countries }) {
+export default function DetailsRecipe({ recipe, countries, setEditRecipe }) {
 
+    const editRecipe = () => {
+        setEditRecipe(true)
+    }
+    
     return (
         <Grid item xs={12} md={8}>
             {recipe ? (
-                <Typography variant="h4" fontWeight="bold" gutterBottom>
-                    {recipe.name}
-                </Typography>
+                <Stack direction="row" flexShrink={0} sx={{ my: 0, width: '100%' }} justifyContent="flex-start" alignItems="center">
+                    <Typography variant="h4" fontWeight="bold" gutterBottom>{recipe.name}</Typography>
+                    <IconButton onClick={editRecipe} color="primary">
+                        <Edit />
+                    </IconButton>
+                </Stack>
             ) : (
                 <Skeleton width="60%" height={40} />
             )}
