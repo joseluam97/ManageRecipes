@@ -8,6 +8,7 @@ import {
     deleteIngredient,
     postIngredient,
     putIngredientRecipe,
+    getIngredientsByRecipe,
 } from "./actions";
 
 // Cada reducer tiene su propio state
@@ -27,6 +28,13 @@ export default createReducer(initialState, (builder) => {
     builder
         .addCase(initValue, () => {
             return initialState;
+        })
+        .addCase(getIngredientsByRecipe.fulfilled, (state, action) => {
+            return {
+                ...state,
+                error: false,
+                listIngredientsByRecipe: { ...action.payload },
+            };
         })
         .addCase(getAllIngredients.fulfilled, (state, action) => {
             return {

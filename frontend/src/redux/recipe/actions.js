@@ -7,7 +7,8 @@ import {
   SET_STEPS_NEW_RECIPES,
   INIT_VALUE,
   POST_RECIPE,
-  PUT_RECIPE
+  PUT_RECIPE,
+  DELETE_RECIPE,
 } from './types';
 
 export const initValue = createAction(INIT_VALUE);
@@ -108,6 +109,32 @@ export const putRecipe = createAsyncThunk(
     } catch (error) {
       console.error("Error al actualizar la receta:", error.message);
       return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const deleteRecipe = createAsyncThunk(
+  DELETE_RECIPE,
+  async (id, { rejectWithValue }) => {
+    try {
+      const { data, error } = await supabase
+        .from('Recipes')
+        .delete()
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (error) {
+        console.error("ERROR al eliminar:", error.message);
+        return rejectWithValue(error.message);
+      }
+
+      console.log("Recipe eliminado:", data);
+      return data;
+
+    } catch (error) {
+      console.error("Excepción al eliminar:", error.message);
+      return rejectWithValue(error.message || "Error al eliminar la receta");
     }
   }
 );

@@ -4,6 +4,7 @@ import {
     Divider,
     Grid,
     Paper,
+    CircularProgress
 } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { useState, useEffect } from 'react';
@@ -30,7 +31,8 @@ export default function RecipeView() {
 
     const [recipe, setRecipe] = useState();
     const [countries, setCountries] = useState([]);
-
+    
+    const [removeInProgress, setRemoveInProgress] = useState(false);
     const [editRecipe, setEditRecipe] = useState(false);
     const [editIngredients, setEditIngredients] = useState(false);
     const [editSteps, setEditSteps] = useState(false);
@@ -77,6 +79,7 @@ export default function RecipeView() {
                     {!editRecipe && (
                         <HeaderRecipe
                             recipe={recipe}
+                            setRemoveInProgress={setRemoveInProgress}
                         />
                     )}
 
@@ -114,6 +117,28 @@ export default function RecipeView() {
                 </Box>
 
             </Paper>
+
+            {/* Overlay con spinner */}
+  {removeInProgress && (
+    <Box
+      sx={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        bgcolor: 'rgba(255,255,255,0.6)', // semitransparente
+        zIndex: 10,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        pointerEvents: 'all', // bloquea interacción debajo
+        borderRadius: 4,
+      }}
+    >
+      <CircularProgress />
+    </Box>
+  )}
         </Container>
     );
 
