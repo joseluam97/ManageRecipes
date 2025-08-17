@@ -12,15 +12,10 @@ import { IconLayoutGridAdd } from '@tabler/icons';
 import RecipeFormPage from './RecipeFormPage';
 import { Add } from '@mui/icons-material';
 import { useTheme } from '@mui/material/styles';
-
 import { useLocation } from 'react-router-dom';
-
-import {
-  getAllRecipes
-} from 'src/redux/recipe/actions';
-
 import { useRecipeData } from '../../contexts/RecipeDataContext'
 import { launchProcess, getStateProcess } from 'src/redux/ai_service/actions'
+import { getRecipes } from 'src/services/recipeService'
 
 const Recipes = () => {
 
@@ -57,24 +52,19 @@ const Recipes = () => {
   };
 
   useEffect(() => {
-    console.log("-execute-")
-    getRecipes();
+    getAllRecipes();
   }, [location.pathname, newRecipeCreated]);
 
-  const getRecipes = async () => {
-    const resultAction = await dispatch(getAllRecipes(newRecipe));
-    if (getAllRecipes.fulfilled.match(resultAction)) {
-      if (resultAction.payload != undefined) {
-        const listRecipesReceive = Object.values(resultAction.payload);
+  const getAllRecipes = async () => {
 
-        setListAllRecipes(listRecipesReceive);
+    const listRecipesReceive = await getRecipes(dispatch);
 
-        // Set details page
-        let listSlice = listRecipesReceive.slice(startIndex, endIndex);
-        setPaginatedRecipes(listSlice);
+    setListAllRecipes(listRecipesReceive);
 
-      }
-    }
+    // Set details page
+    let listSlice = listRecipesReceive.slice(startIndex, endIndex);
+    setPaginatedRecipes(listSlice);
+
   }
 
   const newRecipe = () => {

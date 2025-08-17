@@ -17,7 +17,7 @@ import { useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRecipeData } from 'src/contexts/RecipeDataContext';
 import MultiSelectAutocomplete from 'src/components/selectors/MultiSelectAutocomplete'
-import { putRecipe } from 'src/redux/recipe/actions'
+import { updateRecipe } from 'src/services/recipeService'
 
 export default function EditDetailsRecipe({ recipe, countries, setEditRecipe }) {
 
@@ -91,12 +91,12 @@ export default function EditDetailsRecipe({ recipe, countries, setEditRecipe }) 
         return Object.keys(newErrors).length === 0;
     };
 
-    const handleSave = () => {
+    const handleSave = async () => {
 
         if (!validateForm()) return;
 
         let tagsRecipe = selectedTags.map(tag => tag.name);
-        const updateRecipe = {
+        const details_recipe = {
             id: recipe?.id,
             name: form.name,
             preparation_time: parseInt(form.preparation_time),
@@ -112,19 +112,8 @@ export default function EditDetailsRecipe({ recipe, countries, setEditRecipe }) 
 
         console.log('Formulario completado:', form);
 
-        updateElaborationRecipe(updateRecipe);
+        await updateRecipe(details_recipe, dispatch);
         setEditRecipe(false);
-    };
-
-    const updateElaborationRecipe = async (new_elaboration) => {
-        const resultAction = await dispatch(putRecipe(new_elaboration));
-        if (putRecipe.fulfilled.match(resultAction)) {
-            if (resultAction.payload != undefined) {
-                const recipesReceive = resultAction.payload;
-                console.log("RECIPE UPDATE");
-                console.log(recipesReceive);
-            }
-        }
     };
 
     const handleCancel = () => {

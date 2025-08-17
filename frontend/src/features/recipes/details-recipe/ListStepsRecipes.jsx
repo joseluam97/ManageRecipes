@@ -12,7 +12,7 @@ import ElaborationPanel from 'src/features/elaboration/ElaborationPanel';
 import { setListStepsNewRecipe } from 'src/redux/recipe/actions'
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { putRecipe } from 'src/redux/recipe/actions'
+import { updateRecipe } from 'src/services/recipeService'
 
 export default function ListStepsRecipes({ recipe, setEditSteps }) {
 
@@ -22,7 +22,7 @@ export default function ListStepsRecipes({ recipe, setEditSteps }) {
     const [showEditSteps, setShowEditSteps] = useState(false);
 
     useEffect(() => {
-        if(recipe != undefined){
+        if (recipe != undefined) {
             setListElaboration(recipe?.elaboration)
         }
     }, [recipe]);
@@ -34,7 +34,7 @@ export default function ListStepsRecipes({ recipe, setEditSteps }) {
         setEditSteps(true)
     }
 
-    const updateListSteps = (data) => {
+    const updateListSteps = async (data) => {
         let listUpdate = [...data]
 
         const updateRecipe = {
@@ -42,22 +42,10 @@ export default function ListStepsRecipes({ recipe, setEditSteps }) {
             elaboration: listUpdate,
         };
 
-        updateElaborationRecipe(updateRecipe);
+        const recipesReceive = await updateRecipe(updateRecipe, dispatch);
+        setListElaboration(recipesReceive?.elaboration)
         setEditSteps(false)
     }
-
-    const updateElaborationRecipe = async (new_elaboration) => {
-        const resultAction = await dispatch(putRecipe(new_elaboration));
-        if (putRecipe.fulfilled.match(resultAction)) {
-            if (resultAction.payload != undefined) {
-                const recipesReceive = resultAction.payload;
-                console.log("RECIPE UPDATE");
-                console.log(recipesReceive);
-
-                setListElaboration(recipesReceive?.elaboration)
-            }
-        }
-    };
 
     return (
         <Box width="100%">

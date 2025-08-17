@@ -1,9 +1,7 @@
 import { Add, DragIndicator } from '@mui/icons-material';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { useLocation } from 'react-router-dom';
-import { getAllUnits } from 'src/redux/units/actions'
 import { useDispatch, useSelector } from 'react-redux';
-import { getAllIngredients } from 'src/redux/ingredients/actions'
 import IngredientFormFields from './IngredientFormFields'
 import { setListCurrentIngredient, setGroupSpecify, setGroupList } from 'src/redux/assign_ingredients/actions'
 import { IconTrash } from '@tabler/icons';
@@ -16,6 +14,8 @@ import { Box, Stack, Typography, IconButton, TextField, Chip, Paper } from '@mui
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 import { useSnackbar } from 'src/components/snackbar/SnackbarProvider';
+import { getUnits } from 'src/services/unitService'
+import { getListIngredients } from 'src/services/ingredientService'
 
 export default function AssignIngredientList({ title }) {
 
@@ -47,8 +47,7 @@ export default function AssignIngredientList({ title }) {
     }, [listIngredientsNewRecipesAPI]);
 
     useEffect(() => {
-        getListIngredients();
-        getListUnits();
+        getInformation();
         if (Object.values(listIngredientsNewRecipesAPI).length == 0) {
             handleAdd();
         }
@@ -59,13 +58,11 @@ export default function AssignIngredientList({ title }) {
         setIdIngredientDuplicated(idIngredientErrorAPI)
     }, [errorListIngredientAPI, idIngredientErrorAPI]);
 
-    const getListUnits = async () => {
-        const resultAction = await dispatch(getAllUnits());
+    const getInformation = async () => {
+        const resultActionUnit = await getUnits(dispatch);
+        const resultActionIngredient = await getListIngredients(dispatch);
     };
 
-    const getListIngredients = async () => {
-        const resultAction = await dispatch(getAllIngredients());
-    };
 
     const handleAdd = () => {
         let listIngredientsNewRecipes = [...Object.values(listIngredientsNewRecipesAPI)]
@@ -112,7 +109,7 @@ export default function AssignIngredientList({ title }) {
             showSnackbar('The group trying to eliminate this is in some of the ingredients', 'error');
             return;
         }
-        
+
         let resultUpdate = groupListAPI.filter((chip) => chip !== chipToDelete);
         dispatch(setGroupList(resultUpdate));
     };

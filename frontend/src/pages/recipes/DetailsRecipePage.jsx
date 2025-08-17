@@ -55,7 +55,6 @@ export default function RecipeView() {
         setCountries(listCountries);
     };
 
-
     const getRecipeReceive = () => {
         let listRecipesReceive = Object.values(listRecipes);
         let recipeSelected = listRecipesReceive.filter(element => element.id == id)[0]

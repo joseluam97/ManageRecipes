@@ -2,7 +2,6 @@ import { Autocomplete, Box, IconButton, TextField } from '@mui/material';
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { getAllIngredients, postIngredient } from 'src/redux/ingredients/actions'
 import { IconPlus } from '@tabler/icons';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
@@ -10,6 +9,7 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { setListCurrentIngredient, setErrorListIngredient, setIdIngredientError } from 'src/redux/assign_ingredients/actions'
+import { postNewIngredient, getListIngredients } from 'src/services/ingredientService'
 
 export default function IngredientFormFields(
     { ingredient_recipe, index }
@@ -108,40 +108,21 @@ export default function IngredientFormFields(
     const createNewIngredients = async () => {
         if (nameIngredientCreate != "") {
             // Create new ingredients
-            postNewIngredient();
+            let result_new_ingredient = await postNewIngredient(nameIngredientCreate, dispatch);
+
+            // Update list ingredientes
+            let listIngredientsReceive = await getListIngredients(dispatch);
+
+            //Select the ingredients create
+            const postNewElement = listIngredientsReceive.findIndex(element => element.name === nameIngredientCreate);
+
+            // Notify AssignIngredientList
+            handleChangeIngredient(index, listIngredientsReceive[postNewElement])
+
+            // Disable buton
+            setActivateOptionCreateIngredient(false);
         }
     };
-
-    const postNewIngredient = async () => {
-        const resultAction = await dispatch(postIngredient(nameIngredientCreate));
-        if (postIngredient.fulfilled.match(resultAction)) {
-            if (resultAction.payload != undefined) {
-                const newIngredientsReceive = Object.values(resultAction.payload);
-
-                // Update list ingredientes
-                getListIngredients()
-            }
-        }
-    };
-
-    const getListIngredients = async () => {
-        const resultAction = await dispatch(getAllIngredients());
-        if (getAllIngredients.fulfilled.match(resultAction)) {
-            if (resultAction.payload != undefined) {
-                const listIngredientsReceive = Object.values(resultAction.payload);
-
-                //Select the ingredients create
-                const postNewElement = listIngredientsReceive.findIndex(element => element.name === nameIngredientCreate);
-
-                // Notify AssignIngredientList
-                handleChangeIngredient(index, listIngredientsReceive[postNewElement])
-
-                // Disable buton
-                setActivateOptionCreateIngredient(false);
-            }
-        }
-    };
-
 
     const filterIngredientsList = (options, state) => {
 

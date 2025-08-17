@@ -22,13 +22,12 @@ import ElaborationPanel from '../../features/elaboration/ElaborationPanel';
 import MultiSelectAutocomplete from '../../components/selectors/MultiSelectAutocomplete'
 
 import { getListCountries } from 'src/utils/countries'
-import { postNewRecipe } from 'src/redux/recipe/actions'
-import { postIngredientRecipe } from 'src/redux/ingredients/actions'
-import { setListCurrentIngredient } from 'src/redux/assign_ingredients/actions'
+import { setListCurrentIngredient, setModeWindowIngredient } from 'src/redux/assign_ingredients/actions'
 import { useRecipeData } from '../../contexts/RecipeDataContext';
-import { setModeWindowIngredient } from 'src/redux/assign_ingredients/actions'
 
-import { postGroup } from 'src/redux/groups/actions'
+import { createNewRecipe } from 'src/services/recipeService'
+import { postNewGroup } from 'src/services/groupService'
+import { createIngredientRecipe } from 'src/services/ingredientRecipeService'
 
 export default function RecipeFormPage() {
 
@@ -108,7 +107,7 @@ export default function RecipeFormPage() {
         setForm({ ...form, [field]: e.target.value });
     };
 
-    const handleSave = () => {
+    const handleSave = async () => {
 
         if (!validateForm()) return;
 
@@ -129,26 +128,18 @@ export default function RecipeFormPage() {
 
         console.log('Formulario completado:', form);
 
-        createNewRecipe(newRecipe);
-    };
+        let recipesReceive = await createNewRecipe(newRecipe, dispatch);
 
-    const createNewRecipe = async (newRecipe) => {
-        const resultAction = await dispatch(postNewRecipe(newRecipe));
-        if (postNewRecipe.fulfilled.match(resultAction)) {
-            if (resultAction.payload != undefined) {
-                const recipesReceive = resultAction.payload;
-                console.log("RECIPE CREATED");
-                console.log(recipesReceive);
+        console.log("RECIPE CREATED");
+        console.log(recipesReceive);
 
-                createGroupsIngredient(recipesReceive.id);
+        createGroupsIngredient(recipesReceive.id);
 
-                // Reset ingredients about current recipe
-                dispatch(setListCurrentIngredient([]));
+        // Reset ingredients about current recipe
+        dispatch(setListCurrentIngredient([]));
 
-                //Navigate to home
-                navigate(`/recipes`);
-            }
-        }
+        //Navigate to home
+        navigate(`/recipes`);
     };
 
     const createGroupsIngredient = async (idRecipe) => {
@@ -162,14 +153,9 @@ export default function RecipeFormPage() {
 
         let list_group_created = []
 
-        for (let indexGroup in listGroupCreate) {
-            const resultPostGroup = await dispatch(postGroup(listGroupCreate[indexGroup]));
-            if (postGroup.fulfilled.match(resultPostGroup)) {
-                if (resultPostGroup.payload != undefined) {
-                    const newGroupReceive = resultPostGroup.payload;
-                    list_group_created.push(newGroupReceive)
-                }
-            }
+        for (const name_group of listGroupCreate) {
+            const newGroupReceive = await postNewGroup(name_group, dispatch);
+            list_group_created.push(newGroupReceive);
         }
         createNewAssociationIngredientsAndRecipe(idRecipe, list_group_created)
     }
@@ -177,10 +163,10 @@ export default function RecipeFormPage() {
     const createNewAssociationIngredientsAndRecipe = async (idRecipe, list_group_created) => {
         const listIngredientsNewRecipes = Object.values(listIngredientsNewRecipesAPI);
         for (let index in listIngredientsNewRecipes) {
-            let newRecipe = {}
+            let newIngredientRecipe = {}
             if (listIngredientsNewRecipes[index].group != "") {
                 let group_ingrediente = list_group_created.filter(element => element.name == listIngredientsNewRecipes[index].group)
-                newRecipe = {
+                newIngredientRecipe = {
                     ingredient: listIngredientsNewRecipes[index].ingredient.id,
                     cuantity: listIngredientsNewRecipes[index].quantity,
                     unit: listIngredientsNewRecipes[index].unit.id,
@@ -189,7 +175,7 @@ export default function RecipeFormPage() {
                 };
             }
             else {
-                newRecipe = {
+                newIngredientRecipe = {
                     ingredient: listIngredientsNewRecipes[index].ingredient.id,
                     cuantity: listIngredientsNewRecipes[index].quantity,
                     unit: listIngredientsNewRecipes[index].unit.id,
@@ -197,14 +183,9 @@ export default function RecipeFormPage() {
                 };
             }
 
-            const resultActionCreatedIngredient = await dispatch(postIngredientRecipe(newRecipe));
-            if (postIngredientRecipe.fulfilled.match(resultActionCreatedIngredient)) {
-                if (resultActionCreatedIngredient.payload != undefined) {
-                    const newIngredientReceive = resultActionCreatedIngredient.payload;
-                    console.log("RECIPE CREATED");
-                    console.log(newIngredientReceive);
-                }
-            }
+            const newIngredientReceive = await createIngredientRecipe(newIngredientRecipe, dispatch);
+            console.log("INGREDIENT RECIPE CREATED");
+            console.log(newIngredientReceive);
         }
     };
 

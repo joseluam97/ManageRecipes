@@ -7,10 +7,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setListCurrentIngredient } from 'src/redux/assign_ingredients/actions'
 import { TextField } from '@mui/material';
 import { submitTextToRead } from 'src/utils/format-text'
-import { postIngredient } from 'src/redux/ingredients/actions'
-import { postUnit } from 'src/redux/units/actions'
 import { useRecipeData } from 'src/contexts/RecipeDataContext'
 import { setGroupList } from 'src/redux/assign_ingredients/actions'
+import { postNewIngredient } from 'src/services/ingredientService'
+import { postNewUnit } from 'src/services/unitService'
 
 export default function AssignIngredientsPanel({ onClose, setIdIngredients }) {
 
@@ -87,31 +87,7 @@ export default function AssignIngredientsPanel({ onClose, setIdIngredients }) {
     return true;
   }
 
-  const postNewIngredient = async (name_ingredient) => {
-    const resultAction = await dispatch(postIngredient(name_ingredient));
-    if (postIngredient.fulfilled.match(resultAction)) {
-      if (resultAction.payload != undefined) {
-        refreshData();
-        const newIngredientsReceive = Object.values(resultAction.payload);
-
-        return newIngredientsReceive
-      }
-    }
-  };
-
-  const postNewUnit = async (name_unit) => {
-    const resultAction = await dispatch(postUnit(name_unit));
-    if (postUnit.fulfilled.match(resultAction)) {
-      if (resultAction.payload != undefined) {
-        refreshData();
-        const newUnitReceive = Object.values(resultAction.payload);
-
-        return newUnitReceive
-      }
-    }
-  };
-
-  const readText = () => {
+  const readText = async () => {
     let text_complete = submitTextToRead(textIngredient)
 
     const listCurrentIngredients = Object.values(listAllIngredientsAPI);
@@ -130,7 +106,8 @@ export default function AssignIngredientsPanel({ onClose, setIdIngredients }) {
 
         if (result_ingredient_search.length == 0) {
           // Create new ingredient
-          ingredient_recipe = postNewIngredient(text_complete[element]["description"])
+          ingredient_recipe = await postNewIngredient(text_complete[element]["description"], dispatch)
+          refreshData();
           new_ingredients_created = new_ingredients_created + 1;
         }
         else {
@@ -146,7 +123,8 @@ export default function AssignIngredientsPanel({ onClose, setIdIngredients }) {
 
         if (result_unit_search.length == 0) {
           // Create new ingredient
-          unit_recipe = postNewUnit(text_complete[element]["unitOfMeasure"])
+          unit_recipe = await postNewUnit(text_complete[element]["unitOfMeasure"], dispatch)
+          refreshData();
           new_units_created = new_units_created + 1;
         }
         else {

@@ -16,9 +16,8 @@ import { Edit } from '@mui/icons-material';
 import { setListCurrentIngredient } from 'src/redux/assign_ingredients/actions'
 import { setModeWindowIngredient } from 'src/redux/assign_ingredients/actions'
 import AssignIngredientsPanel from 'src/features/ingredients/assign-ingredients/AssignIngredientsPanel';
-import { postGroup, deleteGroup } from 'src/redux/groups/actions'
-import { postIngredientRecipe, putIngredientRecipe, deleteIngredientRecipe } from 'src/redux/ingredients/actions'
-import { getIngredientsByRecipe } from 'src/redux/ingredients/actions'
+import { createIngredientRecipe, updateIngredientRecipe, removeIngredientRecipe, getListIngredientsByRecipe } from 'src/services/ingredientRecipeService'
+import { postNewGroup, removeGroup } from 'src/services/groupService'
 
 export default function ListIngredientsRecipes({ id_recipe, setEditIngredients }) {
 
@@ -34,38 +33,36 @@ export default function ListIngredientsRecipes({ id_recipe, setEditIngredients }
     const [initialListIngredients, setInitialListIngredients] = useState([]);
 
     useEffect(() => {
-        getListIngredientsByRecipe();
+        getInfoRecipe();
     }, [location.pathname]);
 
-    const getListIngredientsByRecipe = async () => {
-        const resultAction = await dispatch(getIngredientsByRecipe(Number(id_recipe)));
-        if (getIngredientsByRecipe.fulfilled.match(resultAction) && resultAction.payload != undefined) {
-            const listIngredientsByRecipe = Object.values(resultAction.payload);
+    const getInfoRecipe = async () => {
+        const listIngredientsByRecipe = await getListIngredientsByRecipe(Number(id_recipe), dispatch);
 
-            let pruebaIngredientes = [...listIngredientsByRecipe]
+        let pruebaIngredientes = [...listIngredientsByRecipe]
 
-            const agrupado = pruebaIngredientes.reduce((acc, item) => {
-                const grupo = item?.group?.name || '';
-                if (!acc[grupo]) {
-                    acc[grupo] = [];
-                }
-                acc[grupo].push(item);
-                return acc;
-            }, {});
+        const agrupado = pruebaIngredientes.reduce((acc, item) => {
+            const grupo = item?.group?.name || '';
+            if (!acc[grupo]) {
+                acc[grupo] = [];
+            }
+            acc[grupo].push(item);
+            return acc;
+        }, {});
 
-            const grupos = Object.entries(agrupado).map(([grupo, items]) => ({
-                grupo,
-                ingredientes: items
-            }));
-            const list_groups = Object.values(grupos);
+        const grupos = Object.entries(agrupado).map(([grupo, items]) => ({
+            grupo,
+            ingredientes: items
+        }));
+        const list_groups = Object.values(grupos);
 
-            const list_group_sort = [
-                ...list_groups.filter(item => item.grupo === ""),
-                ...list_groups.filter(item => item.grupo !== "")
-            ];
+        const list_group_sort = [
+            ...list_groups.filter(item => item.grupo === ""),
+            ...list_groups.filter(item => item.grupo !== "")
+        ];
 
-            setListIngredientsRecipes(Object.values(list_group_sort))
-        }
+        setListIngredientsRecipes(Object.values(list_group_sort))
+
     };
     useEffect(() => {
 
@@ -95,7 +92,7 @@ export default function ListIngredientsRecipes({ id_recipe, setEditIngredients }
 
         // Create new groups
         for (const name of listNewGroup) {
-            const newGroupReceive = await postNewGroup(name);
+            const newGroupReceive = await postNewGroup(name, dispatch);
             if (newGroupReceive) {
                 list_all_groups.push(newGroupReceive);
             }
@@ -123,7 +120,7 @@ export default function ListIngredientsRecipes({ id_recipe, setEditIngredients }
             console.log("-details_ingredient-")
             console.log(details_ingredient)
 
-            const result_ingredient_new = await createIngredientRecipe(details_ingredient);
+            const result_ingredient_new = await createIngredientRecipe(details_ingredient, dispatch);
             console.log(result_ingredient_new)
         }
 
@@ -142,12 +139,12 @@ export default function ListIngredientsRecipes({ id_recipe, setEditIngredients }
                 group: ingredient_update_after.group != "" && group_selected != undefined ? group_selected.id : null,
             }
 
-            const result_ingredient_update = await updateIngredientRecipe(details_ingredient);
+            const result_ingredient_update = await updateIngredientRecipe(details_ingredient, dispatch);
             console.log(result_ingredient_update)
         }
 
         for (const ingredient_delete of cambios.eliminados) {
-            const result_ingredient_update = await removeIngredientRecipe(ingredient_delete.id);
+            const result_ingredient_update = await removeIngredientRecipe(ingredient_delete.id, dispatch);
             console.log(result_ingredient_update)
         }
 
@@ -159,64 +156,15 @@ export default function ListIngredientsRecipes({ id_recipe, setEditIngredients }
         for (const groupDelete of listGroupDeleted) {
             let group_selected = list_all_groups.filter(element => element.name == groupDelete)[0]
             if (group_selected != undefined) {
-                removeGroup(group_selected.id)
+                removeGroup(group_selected.id, dispatch)
             }
         }
 
         // Update list ingredients
-        getListIngredientsByRecipe();
+        getInfoRecipe();
 
     }
 
-    const createIngredientRecipe = async (details_ingredient) => {
-        const resultPostIngredient = await dispatch(postIngredientRecipe(details_ingredient));
-        if (postIngredientRecipe.fulfilled.match(resultPostIngredient)) {
-            if (resultPostIngredient.payload != undefined) {
-                const ingredient_new = resultPostIngredient.payload;
-                return ingredient_new
-            }
-        }
-    }
-
-    const updateIngredientRecipe = async (details_ingredient) => {
-        const resultPutIngredient = await dispatch(putIngredientRecipe(details_ingredient));
-        if (putIngredientRecipe.fulfilled.match(resultPutIngredient)) {
-            if (resultPutIngredient.payload != undefined) {
-                const ingredient_update = resultPutIngredient.payload;
-                return ingredient_update
-            }
-        }
-    }
-
-    const removeIngredientRecipe = async (id_ingredient) => {
-        const resultDeleteIngredient = await dispatch(deleteIngredientRecipe(id_ingredient));
-        if (deleteIngredientRecipe.fulfilled.match(resultDeleteIngredient)) {
-            if (resultDeleteIngredient.payload != undefined) {
-                const ingredient_delete = resultDeleteIngredient.payload;
-                return ingredient_delete
-            }
-        }
-    }
-
-    const postNewGroup = async (nameNewGroup) => {
-        const resultPostGroup = await dispatch(postGroup(nameNewGroup));
-        if (postGroup.fulfilled.match(resultPostGroup)) {
-            if (resultPostGroup.payload != undefined) {
-                const newGroupReceive = resultPostGroup.payload;
-                return newGroupReceive
-            }
-        }
-    }
-
-    const removeGroup = async (idGroup) => {
-        const resultDeleteGroup = await dispatch(deleteGroup(idGroup));
-        if (deleteGroup.fulfilled.match(resultDeleteGroup)) {
-            if (resultDeleteGroup.payload != undefined) {
-                const idGroupReceive = resultDeleteGroup.payload;
-                return idGroupReceive
-            }
-        }
-    }
 
     const getGroupChanges = (arrayInitial, arrayEnd) => {
         const getGroups = (arr) => new Set(arr.map(el => el.group.trim()).filter(g => g !== ''));
