@@ -1,402 +1,0 @@
-[2025-07-11 14:58:31,335: INFO/MainProcess] Task procesar_receta_task[b578458d-e522-4c1a-b44e-3f18b2e4bef8] received
-[2025-07-11 14:58:31,341: WARNING/ForkPoolWorker-6] --- Logging error ---
-[2025-07-11 14:58:31,344: WARNING/ForkPoolWorker-6] Traceback (most recent call last):
-[2025-07-11 14:58:31,345: WARNING/ForkPoolWorker-6]   File "/usr/local/lib/python3.11/site-packages/celery/app/trace.py", line 451, in trace_task
-    R = retval = fun(*args, **kwargs)
-                 ^^^^^^^^^^^^^^^^^^^^
-[2025-07-11 14:58:31,345: WARNING/ForkPoolWorker-6]   File "/usr/local/lib/python3.11/site-packages/celery/app/trace.py", line 734, in __protected_call__
-    return self.run(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^
-[2025-07-11 14:58:31,345: WARNING/ForkPoolWorker-6]   File "/usr/src/app/tasks.py", line 26, in procesar_receta_task
-    return procesar_receta(url, task=self, transcripcion_task=transcribir_audio_task)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-[2025-07-11 14:58:31,346: WARNING/ForkPoolWorker-6] TypeError: procesar_receta() got an unexpected keyword argument 'transcripcion_task'
-[2025-07-11 14:58:31,346: WARNING/ForkPoolWorker-6] 
-During handling of the above exception, another exception occurred:
-[2025-07-11 14:58:31,346: WARNING/ForkPoolWorker-6] Traceback (most recent call last):
-[2025-07-11 14:58:31,347: WARNING/ForkPoolWorker-6]   File "/usr/local/lib/python3.11/logging/__init__.py", line 1110, in emit
-    msg = self.format(record)
-          ^^^^^^^^^^^^^^^^^^^
-[2025-07-11 14:58:31,347: WARNING/ForkPoolWorker-6]   File "/usr/local/lib/python3.11/logging/__init__.py", line 953, in format
-    return fmt.format(record)
-           ^^^^^^^^^^^^^^^^^^
-[2025-07-11 14:58:31,347: WARNING/ForkPoolWorker-6]   File "/usr/local/lib/python3.11/site-packages/celery/utils/log.py", line 146, in format
-    msg = super().format(record)
-          ^^^^^^^^^^^^^^^^^^^^^^
-[2025-07-11 14:58:31,347: WARNING/ForkPoolWorker-6]   File "/usr/local/lib/python3.11/logging/__init__.py", line 695, in format
-    record.exc_text = self.formatException(record.exc_info)
-                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-[2025-07-11 14:58:31,348: WARNING/ForkPoolWorker-6]   File "/usr/local/lib/python3.11/site-packages/celery/utils/log.py", line 142, in formatException
-    r = super().formatException(ei)
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-[2025-07-11 14:58:31,348: WARNING/ForkPoolWorker-6]   File "/usr/local/lib/python3.11/logging/__init__.py", line 645, in formatException
-    traceback.print_exception(ei[0], ei[1], tb, None, sio)
-[2025-07-11 14:58:31,348: WARNING/ForkPoolWorker-6]   File "/usr/local/lib/python3.11/traceback.py", line 124, in print_exception
-    te = TracebackException(type(value), value, tb, limit=limit, compact=True)
-         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-[2025-07-11 14:58:31,348: WARNING/ForkPoolWorker-6]   File "/usr/local/lib/python3.11/traceback.py", line 690, in __init__
-    self.stack = StackSummary._extract_from_extended_frame_gen(
-                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-[2025-07-11 14:58:31,349: WARNING/ForkPoolWorker-6]   File "/usr/local/lib/python3.11/traceback.py", line 416, in _extract_from_extended_frame_gen
-    for f, (lineno, end_lineno, colno, end_colno) in frame_gen:
-[2025-07-11 14:58:31,349: WARNING/ForkPoolWorker-6]   File "/usr/local/lib/python3.11/traceback.py", line 353, in _walk_tb_with_full_positions
-    positions = _get_code_position(tb.tb_frame.f_code, tb.tb_lasti)
-                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-[2025-07-11 14:58:31,349: WARNING/ForkPoolWorker-6]   File "/usr/local/lib/python3.11/traceback.py", line 366, in _get_code_position
-    positions_gen = code.co_positions()
-                    ^^^^^^^^^^^^^^^^^
-[2025-07-11 14:58:31,350: WARNING/ForkPoolWorker-6] AttributeError: '_Code' object has no attribute 'co_positions'
-[2025-07-11 14:58:31,350: WARNING/ForkPoolWorker-6] Call stack:
-[2025-07-11 14:58:31,357: WARNING/ForkPoolWorker-6]   File "/usr/local/bin/celery", line 8, in <module>
-    sys.exit(main())
-[2025-07-11 14:58:31,357: WARNING/ForkPoolWorker-6]   File "/usr/local/lib/python3.11/site-packages/celery/__main__.py", line 15, in main
-    sys.exit(_main())
-[2025-07-11 14:58:31,357: WARNING/ForkPoolWorker-6]   File "/usr/local/lib/python3.11/site-packages/celery/bin/celery.py", line 217, in main
-    return celery(auto_envvar_prefix="CELERY")
-[2025-07-11 14:58:31,357: WARNING/ForkPoolWorker-6]   File "/usr/local/lib/python3.11/site-packages/click/core.py", line 1442, in __call__
-    return self.main(*args, **kwargs)
-[2025-07-11 14:58:31,358: WARNING/ForkPoolWorker-6]   File "/usr/local/lib/python3.11/site-packages/click/core.py", line 1363, in main
-    rv = self.invoke(ctx)
-[2025-07-11 14:58:31,358: WARNING/ForkPoolWorker-6]   File "/usr/local/lib/python3.11/site-packages/click/core.py", line 1830, in invoke
-    return _process_result(sub_ctx.command.invoke(sub_ctx))
-[2025-07-11 14:58:31,358: WARNING/ForkPoolWorker-6]   File "/usr/local/lib/python3.11/site-packages/click/core.py", line 1226, in invoke
-    return ctx.invoke(self.callback, **ctx.params)
-[2025-07-11 14:58:31,359: WARNING/ForkPoolWorker-6]   File "/usr/local/lib/python3.11/site-packages/click/core.py", line 794, in invoke
-    return callback(*args, **kwargs)
-[2025-07-11 14:58:31,359: WARNING/ForkPoolWorker-6]   File "/usr/local/lib/python3.11/site-packages/click/decorators.py", line 34, in new_func
-    return f(get_current_context(), *args, **kwargs)
-[2025-07-11 14:58:31,359: WARNING/ForkPoolWorker-6]   File "/usr/local/lib/python3.11/site-packages/celery/bin/base.py", line 134, in caller
-    return f(ctx, *args, **kwargs)
-[2025-07-11 14:58:31,359: WARNING/ForkPoolWorker-6]   File "/usr/local/lib/python3.11/site-packages/celery/bin/worker.py", line 351, in worker
-    worker.start()
-[2025-07-11 14:58:31,360: WARNING/ForkPoolWorker-6]   File "/usr/local/lib/python3.11/site-packages/celery/worker/worker.py", line 203, in start
-    self.blueprint.start(self)
-[2025-07-11 14:58:31,360: WARNING/ForkPoolWorker-6]   File "/usr/local/lib/python3.11/site-packages/celery/bootsteps.py", line 116, in start
-    step.start(parent)
-[2025-07-11 14:58:31,360: WARNING/ForkPoolWorker-6]   File "/usr/local/lib/python3.11/site-packages/celery/bootsteps.py", line 365, in start
-    return self.obj.start()
-[2025-07-11 14:58:31,360: WARNING/ForkPoolWorker-6]   File "/usr/local/lib/python3.11/site-packages/celery/concurrency/base.py", line 129, in start
-    self.on_start()
-[2025-07-11 14:58:31,361: WARNING/ForkPoolWorker-6]   File "/usr/local/lib/python3.11/site-packages/celery/concurrency/prefork.py", line 109, in on_start
-    P = self._pool = Pool(processes=self.limit,
-[2025-07-11 14:58:31,361: WARNING/ForkPoolWorker-6]   File "/usr/local/lib/python3.11/site-packages/celery/concurrency/asynpool.py", line 463, in __init__
-    super().__init__(processes, *args, **kwargs)
-[2025-07-11 14:58:31,361: WARNING/ForkPoolWorker-6]   File "/usr/local/lib/python3.11/site-packages/billiard/pool.py", line 1046, in __init__
-    self._create_worker_process(i)
-[2025-07-11 14:58:31,361: WARNING/ForkPoolWorker-6]   File "/usr/local/lib/python3.11/site-packages/celery/concurrency/asynpool.py", line 480, in _create_worker_process
-    return super()._create_worker_process(i)
-[2025-07-11 14:58:31,362: WARNING/ForkPoolWorker-6]   File "/usr/local/lib/python3.11/site-packages/billiard/pool.py", line 1158, in _create_worker_process
-    w.start()
-[2025-07-11 14:58:31,362: WARNING/ForkPoolWorker-6]   File "/usr/local/lib/python3.11/site-packages/billiard/process.py", line 124, in start
-    self._popen = self._Popen(self)
-[2025-07-11 14:58:31,362: WARNING/ForkPoolWorker-6]   File "/usr/local/lib/python3.11/site-packages/billiard/context.py", line 333, in _Popen
-    return Popen(process_obj)
-[2025-07-11 14:58:31,363: WARNING/ForkPoolWorker-6]   File "/usr/local/lib/python3.11/site-packages/billiard/popen_fork.py", line 24, in __init__
-    self._launch(process_obj)
-[2025-07-11 14:58:31,363: WARNING/ForkPoolWorker-6]   File "/usr/local/lib/python3.11/site-packages/billiard/popen_fork.py", line 79, in _launch
-    code = process_obj._bootstrap()
-[2025-07-11 14:58:31,363: WARNING/ForkPoolWorker-6]   File "/usr/local/lib/python3.11/site-packages/billiard/process.py", line 327, in _bootstrap
-    self.run()
-[2025-07-11 14:58:31,363: WARNING/ForkPoolWorker-6]   File "/usr/local/lib/python3.11/site-packages/billiard/process.py", line 114, in run
-    self._target(*self._args, **self._kwargs)
-[2025-07-11 14:58:31,364: WARNING/ForkPoolWorker-6]   File "/usr/local/lib/python3.11/site-packages/billiard/pool.py", line 292, in __call__
-    sys.exit(self.workloop(pid=pid))
-[2025-07-11 14:58:31,364: WARNING/ForkPoolWorker-6]   File "/usr/local/lib/python3.11/site-packages/billiard/pool.py", line 362, in workloop
-    result = (True, prepare_result(fun(*args, **kwargs)))
-[2025-07-11 14:58:31,364: WARNING/ForkPoolWorker-6]   File "/usr/local/lib/python3.11/site-packages/celery/app/trace.py", line 649, in fast_trace_task
-    R, I, T, Rstr = tasks[task].__trace__(
-[2025-07-11 14:58:31,365: WARNING/ForkPoolWorker-6]   File "/usr/local/lib/python3.11/site-packages/celery/app/trace.py", line 468, in trace_task
-    I, R, state, retval = on_error(task_request, exc, uuid)
-[2025-07-11 14:58:31,365: WARNING/ForkPoolWorker-6]   File "/usr/local/lib/python3.11/site-packages/celery/app/trace.py", line 379, in on_error
-    R = I.handle_error_state(
-[2025-07-11 14:58:31,365: WARNING/ForkPoolWorker-6]   File "/usr/local/lib/python3.11/site-packages/celery/app/trace.py", line 178, in handle_error_state
-    return {
-[2025-07-11 14:58:31,365: WARNING/ForkPoolWorker-6]   File "/usr/local/lib/python3.11/site-packages/celery/app/trace.py", line 237, in handle_failure
-    self._log_error(task, req, einfo)
-[2025-07-11 14:58:31,366: WARNING/ForkPoolWorker-6]   File "/usr/local/lib/python3.11/site-packages/celery/app/trace.py", line 265, in _log_error
-    logger.log(policy.severity, policy.format.strip(), context,
-[2025-07-11 14:58:31,366: WARNING/ForkPoolWorker-6] Message: 'Task %(name)s[%(id)s] %(description)s: %(exc)s'
-Arguments: {'hostname': 'celery@67aadec14816', 'id': 'b578458d-e522-4c1a-b44e-3f18b2e4bef8', 'name': 'procesar_receta_task', 'exc': 'TypeError("procesar_receta() got an unexpected keyword argument \'transcripcion_task\'")', 'traceback': 'Traceback (most recent call last):\n  File "/usr/local/lib/python3.11/site-packages/celery/app/trace.py", line 451, in trace_task\n    R = retval = fun(*args, **kwargs)\n                 ^^^^^^^^^^^^^^^^^^^^\n  File "/usr/local/lib/python3.11/site-packages/celery/app/trace.py", line 734, in __protected_call__\n    return self.run(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "/usr/src/app/tasks.py", line 26, in procesar_receta_task\n    return procesar_receta(url, task=self, transcripcion_task=transcribir_audio_task)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: procesar_receta() got an unexpected keyword argument \'transcripcion_task\'\n', 'args': "['https://www.tiktok.com/@comiendobienn/video/7518837827455552790']", 'kwargs': '{}', 'description': 'raised unexpected', 'internal': False}
-[2025-07-11 15:01:17,271: INFO/MainProcess] Connected to redis://redis:6379/0
-[2025-07-11 15:01:17,273: INFO/MainProcess] mingle: searching for neighbors
-[2025-07-11 15:01:18,280: INFO/MainProcess] mingle: all alone
-[2025-07-11 15:01:18,289: INFO/MainProcess] celery@67aadec14816 ready.
-[2025-07-11 15:01:25,779: INFO/MainProcess] Task procesar_receta_task[f7d5cf9c-75c4-40a1-8dd4-9a112a1d4b10] received
-[2025-07-11 15:01:25,782: WARNING/ForkPoolWorker-6] [5%] 📥 Iniciando descarga del vídeo...
-[2025-07-11 15:01:27,317: WARNING/ForkPoolWorker-6] [download]   0.0% of    2.17MiB at  177.09KiB/s ETA 00:12
-[2025-07-11 15:01:27,317: WARNING/ForkPoolWorker-6] [download]   0.1% of    2.17MiB at  466.79KiB/s ETA 00:04
-[2025-07-11 15:01:27,318: WARNING/ForkPoolWorker-6] [download]   0.3% of    2.17MiB at  990.72KiB/s ETA 00:02
-[2025-07-11 15:01:27,319: WARNING/ForkPoolWorker-6] [download]   0.7% of    2.17MiB at    1.87MiB/s ETA 00:01
-[2025-07-11 15:01:27,320: WARNING/ForkPoolWorker-6] [download]   1.4% of    2.17MiB at    3.51MiB/s ETA 00:00
-[2025-07-11 15:01:27,331: WARNING/ForkPoolWorker-6] [download]   2.8% of    2.17MiB at    3.03MiB/s ETA 00:00
-[2025-07-11 15:01:27,353: WARNING/ForkPoolWorker-6] [download]   5.7% of    2.17MiB at    2.96MiB/s ETA 00:00
-[2025-07-11 15:01:27,372: WARNING/ForkPoolWorker-6] [download]  11.5% of    2.17MiB at    4.07MiB/s ETA 00:00
-[2025-07-11 15:01:27,399: WARNING/ForkPoolWorker-6] [download]  23.0% of    2.17MiB at    5.69MiB/s ETA 00:00
-[2025-07-11 15:01:27,457: WARNING/ForkPoolWorker-6] [download]  46.0% of    2.17MiB at    6.85MiB/s ETA 00:00
-[2025-07-11 15:01:27,565: WARNING/ForkPoolWorker-6] [download]  92.0% of    2.17MiB at    7.88MiB/s ETA 00:00
-[2025-07-11 15:01:27,580: WARNING/ForkPoolWorker-6] [download] 100.0% of    2.17MiB at    8.08MiB/s ETA 00:00
-[2025-07-11 15:01:27,584: WARNING/ForkPoolWorker-6] [download] 100% of    2.17MiB in 00:00:00 at 5.10MiB/s   
-[2025-07-11 15:01:27,584: WARNING/ForkPoolWorker-6]                                                       
-[2025-07-11 15:01:27,588: WARNING/ForkPoolWorker-6] [25%] 🎧 Extrayendo audio...
-[2025-07-11 15:01:28,390: WARNING/ForkPoolWorker-6] [download]   0.0% of    2.17MiB at  464.59KiB/s ETA 00:04
-[2025-07-11 15:01:28,442: WARNING/ForkPoolWorker-6] [download]   0.1% of    2.17MiB at   55.34KiB/s ETA 00:40
-[2025-07-11 15:01:28,443: WARNING/ForkPoolWorker-6] [download]   0.3% of    2.17MiB at  126.94KiB/s ETA 00:17
-[2025-07-11 15:01:28,444: WARNING/ForkPoolWorker-6] [download]   0.7% of    2.17MiB at  267.90KiB/s ETA 00:08
-[2025-07-11 15:01:28,445: WARNING/ForkPoolWorker-6] [download]   1.4% of    2.17MiB at  546.68KiB/s ETA 00:04
-[2025-07-11 15:01:28,445: WARNING/ForkPoolWorker-6] [download]   2.8% of    2.17MiB at    1.07MiB/s ETA 00:01
-[2025-07-11 15:01:28,446: WARNING/ForkPoolWorker-6] [download]   5.7% of    2.17MiB at    2.12MiB/s ETA 00:00
-[2025-07-11 15:01:28,448: WARNING/ForkPoolWorker-6] [download]  11.5% of    2.17MiB at    4.14MiB/s ETA 00:00
-[2025-07-11 15:01:28,484: WARNING/ForkPoolWorker-6] [download]  23.0% of    2.17MiB at    5.17MiB/s ETA 00:00
-[2025-07-11 15:01:28,534: WARNING/ForkPoolWorker-6] [download]  46.0% of    2.17MiB at    6.85MiB/s ETA 00:00
-[2025-07-11 15:01:28,644: WARNING/ForkPoolWorker-6] [download]  92.0% of    2.17MiB at    7.80MiB/s ETA 00:00
-[2025-07-11 15:01:28,659: WARNING/ForkPoolWorker-6] [download] 100.0% of    2.17MiB at    8.02MiB/s ETA 00:00
-[2025-07-11 15:01:28,663: WARNING/ForkPoolWorker-6] [download] 100% of    2.17MiB in 00:00:00 at 6.39MiB/s   
-[2025-07-11 15:01:28,663: WARNING/ForkPoolWorker-6]                                                       
-[2025-07-11 15:01:28,667: WARNING/ForkPoolWorker-6] [45%] 🧠 Transcribiendo con Whisper local...
-[2025-07-11 15:01:28,667: WARNING/ForkPoolWorker-6] 🧠 Transcribiendo con Whisper local...
-[2025-07-11 15:01:28,715: WARNING/ForkPoolWorker-6] 🧠 Usando dispositivo: cpu
-[2025-07-11 15:01:29,155: WARNING/ForkPoolWorker-6] /usr/local/lib/python3.11/site-packages/whisper/transcribe.py:132: UserWarning: FP16 is not supported on CPU; using FP32 instead
-  warnings.warn("FP16 is not supported on CPU; using FP32 instead")
-
-[2025-07-11 15:01:31,666: WARNING/ForkPoolWorker-6] [70%] 💡 Extrayendo receta con Mistral...
-[2025-07-11 15:01:31,669: WARNING/ForkPoolWorker-6] Generando respuesta:   0%|                              | 0/512 [00:00<?, ?it/s]
-[2025-07-11 15:01:54,796: WARNING/ForkPoolWorker-6] Generando respuesta:   0%|                    | 1/512 [00:23<3:16:57, 23.13s/it]
-[2025-07-11 15:01:54,908: WARNING/ForkPoolWorker-6] Generando respuesta:   0%|                    | 2/512 [00:23<1:21:30,  9.59s/it]
-[2025-07-11 15:01:55,008: WARNING/ForkPoolWorker-6] Generando respuesta:   1%|1                     | 3/512 [00:23<44:35,  5.26s/it]
-[2025-07-11 15:01:55,109: WARNING/ForkPoolWorker-6] Generando respuesta:   1%|1                     | 4/512 [00:23<27:16,  3.22s/it]
-[2025-07-11 15:01:55,286: WARNING/ForkPoolWorker-6] Generando respuesta:   1%|2                     | 5/512 [00:23<17:56,  2.12s/it]
-[2025-07-11 15:01:55,486: WARNING/ForkPoolWorker-6] Generando respuesta:   1%|3                     | 7/512 [00:23<09:13,  1.10s/it]
-[2025-07-11 15:01:55,682: WARNING/ForkPoolWorker-6] Generando respuesta:   2%|3                     | 9/512 [00:24<05:40,  1.48it/s]
-[2025-07-11 15:01:55,803: WARNING/ForkPoolWorker-6] Generando respuesta:   2%|4                    | 10/512 [00:24<04:35,  1.82it/s]
-[2025-07-11 15:01:55,911: WARNING/ForkPoolWorker-6] Generando respuesta:   2%|4                    | 11/512 [00:24<03:40,  2.28it/s]
-[2025-07-11 15:01:56,107: WARNING/ForkPoolWorker-6] Generando respuesta:   3%|5                    | 13/512 [00:24<02:28,  3.36it/s]
-[2025-07-11 15:01:56,208: WARNING/ForkPoolWorker-6] Generando respuesta:   3%|5                    | 14/512 [00:24<02:05,  3.96it/s]
-[2025-07-11 15:01:56,310: WARNING/ForkPoolWorker-6] Generando respuesta:   3%|6                    | 15/512 [00:24<01:47,  4.63it/s]
-[2025-07-11 15:01:56,507: WARNING/ForkPoolWorker-6] Generando respuesta:   3%|6                    | 17/512 [00:24<01:22,  5.98it/s]
-[2025-07-11 15:01:56,617: WARNING/ForkPoolWorker-6] Generando respuesta:   4%|7                    | 18/512 [00:24<01:16,  6.48it/s]
-[2025-07-11 15:01:56,735: WARNING/ForkPoolWorker-6] Generando respuesta:   4%|7                    | 19/512 [00:25<01:11,  6.88it/s]
-[2025-07-11 15:01:56,836: WARNING/ForkPoolWorker-6] Generando respuesta:   4%|8                    | 20/512 [00:25<01:05,  7.47it/s]
-[2025-07-11 15:01:56,938: WARNING/ForkPoolWorker-6] Generando respuesta:   4%|8                    | 21/512 [00:25<01:01,  7.98it/s]
-[2025-07-11 15:01:57,138: WARNING/ForkPoolWorker-6] Generando respuesta:   4%|9                    | 23/512 [00:25<00:55,  8.75it/s]
-[2025-07-11 15:01:57,335: WARNING/ForkPoolWorker-6] Generando respuesta:   5%|#                    | 25/512 [00:25<00:52,  9.24it/s]
-[2025-07-11 15:01:57,441: WARNING/ForkPoolWorker-6] Generando respuesta:   5%|#                    | 26/512 [00:25<00:52,  9.28it/s]
-[2025-07-11 15:01:57,640: WARNING/ForkPoolWorker-6] Generando respuesta:   5%|#1                   | 28/512 [00:25<00:50,  9.56it/s]
-[2025-07-11 15:01:57,798: WARNING/ForkPoolWorker-6] Generando respuesta:   6%|#1                   | 29/512 [00:26<00:55,  8.63it/s]
-[2025-07-11 15:01:57,995: WARNING/ForkPoolWorker-6] Generando respuesta:   6%|#2                   | 31/512 [00:26<00:52,  9.14it/s]
-[2025-07-11 15:01:58,118: WARNING/ForkPoolWorker-6] Generando respuesta:   6%|#3                   | 32/512 [00:26<00:53,  8.91it/s]
-[2025-07-11 15:01:58,219: WARNING/ForkPoolWorker-6] Generando respuesta:   6%|#3                   | 33/512 [00:26<00:52,  9.12it/s]
-[2025-07-11 15:01:58,337: WARNING/ForkPoolWorker-6] Generando respuesta:   7%|#3                   | 34/512 [00:26<00:53,  8.95it/s]
-[2025-07-11 15:01:58,534: WARNING/ForkPoolWorker-6] Generando respuesta:   7%|#4                   | 36/512 [00:26<00:50,  9.42it/s]
-[2025-07-11 15:01:58,732: WARNING/ForkPoolWorker-6] Generando respuesta:   7%|#5                   | 38/512 [00:27<00:49,  9.66it/s]
-[2025-07-11 15:01:58,836: WARNING/ForkPoolWorker-6] Generando respuesta:   8%|#5                   | 39/512 [00:27<00:49,  9.65it/s]
-[2025-07-11 15:01:58,938: WARNING/ForkPoolWorker-6] Generando respuesta:   8%|#6                   | 40/512 [00:27<00:48,  9.68it/s]
-[2025-07-11 15:01:59,043: WARNING/ForkPoolWorker-6] Generando respuesta:   8%|#6                   | 41/512 [00:27<00:48,  9.65it/s]
-[2025-07-11 15:01:59,173: WARNING/ForkPoolWorker-6] Generando respuesta:   8%|#7                   | 42/512 [00:27<00:51,  9.04it/s]
-[2025-07-11 15:01:59,371: WARNING/ForkPoolWorker-6] Generando respuesta:   9%|#8                   | 44/512 [00:27<00:49,  9.46it/s]
-[2025-07-11 15:01:59,567: WARNING/ForkPoolWorker-6] Generando respuesta:   9%|#8                   | 46/512 [00:27<00:47,  9.74it/s]
-[2025-07-11 15:01:59,764: WARNING/ForkPoolWorker-6] Generando respuesta:   9%|#9                   | 48/512 [00:28<00:46,  9.88it/s]
-[2025-07-11 15:01:59,968: WARNING/ForkPoolWorker-6] Generando respuesta:  10%|##                   | 50/512 [00:28<00:46,  9.84it/s]
-[2025-07-11 15:02:00,073: WARNING/ForkPoolWorker-6] Generando respuesta:  10%|##                   | 51/512 [00:28<00:47,  9.79it/s]
-[2025-07-11 15:02:00,176: WARNING/ForkPoolWorker-6] Generando respuesta:  10%|##1                  | 52/512 [00:28<00:47,  9.77it/s]
-[2025-07-11 15:02:00,283: WARNING/ForkPoolWorker-6] Generando respuesta:  10%|##1                  | 53/512 [00:28<00:47,  9.66it/s]
-[2025-07-11 15:02:00,485: WARNING/ForkPoolWorker-6] Generando respuesta:  11%|##2                  | 55/512 [00:28<00:46,  9.75it/s]
-[2025-07-11 15:02:00,680: WARNING/ForkPoolWorker-6] Generando respuesta:  11%|##3                  | 57/512 [00:29<00:45,  9.94it/s]
-[2025-07-11 15:02:00,785: WARNING/ForkPoolWorker-6] Generando respuesta:  11%|##3                  | 58/512 [00:29<00:46,  9.85it/s]
-[2025-07-11 15:02:00,966: WARNING/ForkPoolWorker-6] Generando respuesta:  12%|##4                  | 60/512 [00:29<00:44, 10.26it/s]
-[2025-07-11 15:02:01,161: WARNING/ForkPoolWorker-6] Generando respuesta:  12%|##5                  | 62/512 [00:29<00:43, 10.27it/s]
-[2025-07-11 15:02:01,362: WARNING/ForkPoolWorker-6] Generando respuesta:  12%|##6                  | 64/512 [00:29<00:44, 10.16it/s]
-[2025-07-11 15:02:01,577: WARNING/ForkPoolWorker-6] Generando respuesta:  13%|##7                  | 66/512 [00:29<00:45,  9.87it/s]
-[2025-07-11 15:02:01,693: WARNING/ForkPoolWorker-6] Generando respuesta:  13%|##7                  | 67/512 [00:30<00:46,  9.60it/s]
-[2025-07-11 15:02:01,891: WARNING/ForkPoolWorker-6] Generando respuesta:  13%|##8                  | 69/512 [00:30<00:45,  9.77it/s]
-[2025-07-11 15:02:02,081: WARNING/ForkPoolWorker-6] Generando respuesta:  14%|##9                  | 71/512 [00:30<00:44, 10.01it/s]
-[2025-07-11 15:02:02,182: WARNING/ForkPoolWorker-6] Generando respuesta:  14%|##9                  | 72/512 [00:30<00:44,  9.99it/s]
-[2025-07-11 15:02:02,380: WARNING/ForkPoolWorker-6] Generando respuesta:  14%|###                  | 74/512 [00:30<00:43, 10.03it/s]
-[2025-07-11 15:02:02,480: WARNING/ForkPoolWorker-6] Generando respuesta:  15%|###                  | 75/512 [00:30<00:43, 10.02it/s]
-[2025-07-11 15:02:02,683: WARNING/ForkPoolWorker-6] Generando respuesta:  15%|###1                 | 77/512 [00:31<00:43,  9.96it/s]
-[2025-07-11 15:02:02,796: WARNING/ForkPoolWorker-6] Generando respuesta:  15%|###1                 | 78/512 [00:31<00:44,  9.72it/s]
-[2025-07-11 15:02:02,896: WARNING/ForkPoolWorker-6] Generando respuesta:  15%|###2                 | 79/512 [00:31<00:44,  9.77it/s]
-[2025-07-11 15:02:03,000: WARNING/ForkPoolWorker-6] Generando respuesta:  16%|###2                 | 80/512 [00:31<00:44,  9.73it/s]
-[2025-07-11 15:02:03,187: WARNING/ForkPoolWorker-6] Generando respuesta:  16%|###3                 | 82/512 [00:31<00:42, 10.11it/s]
-[2025-07-11 15:02:03,289: WARNING/ForkPoolWorker-6] Generando respuesta:  16%|###4                 | 83/512 [00:31<00:42, 10.04it/s]
-[2025-07-11 15:02:03,477: WARNING/ForkPoolWorker-6] Generando respuesta:  17%|###4                 | 85/512 [00:31<00:41, 10.26it/s]
-[2025-07-11 15:02:03,666: WARNING/ForkPoolWorker-6] Generando respuesta:  17%|###5                 | 87/512 [00:31<00:40, 10.38it/s]
-[2025-07-11 15:02:03,870: WARNING/ForkPoolWorker-6] Generando respuesta:  17%|###6                 | 89/512 [00:32<00:41, 10.18it/s]
-[2025-07-11 15:02:04,072: WARNING/ForkPoolWorker-6] Generando respuesta:  18%|###7                 | 91/512 [00:32<00:41, 10.08it/s]
-[2025-07-11 15:02:04,263: WARNING/ForkPoolWorker-6] Generando respuesta:  18%|###8                 | 93/512 [00:32<00:41, 10.20it/s]
-[2025-07-11 15:02:04,457: WARNING/ForkPoolWorker-6] Generando respuesta:  19%|###8                 | 95/512 [00:32<00:40, 10.24it/s]
-[2025-07-11 15:02:04,663: WARNING/ForkPoolWorker-6] Generando respuesta:  19%|###9                 | 97/512 [00:32<00:41, 10.06it/s]
-[2025-07-11 15:02:04,855: WARNING/ForkPoolWorker-6] Generando respuesta:  19%|####                 | 99/512 [00:33<00:40, 10.17it/s]
-[2025-07-11 15:02:05,049: WARNING/ForkPoolWorker-6] Generando respuesta:  20%|###9                | 101/512 [00:33<00:40, 10.22it/s]
-[2025-07-11 15:02:05,246: WARNING/ForkPoolWorker-6] Generando respuesta:  20%|####                | 103/512 [00:33<00:40, 10.20it/s]
-[2025-07-11 15:02:05,444: WARNING/ForkPoolWorker-6] Generando respuesta:  21%|####1               | 105/512 [00:33<00:40, 10.16it/s]
-[2025-07-11 15:02:05,641: WARNING/ForkPoolWorker-6] Generando respuesta:  21%|####1               | 107/512 [00:33<00:39, 10.17it/s]
-[2025-07-11 15:02:05,836: WARNING/ForkPoolWorker-6] Generando respuesta:  21%|####2               | 109/512 [00:34<00:39, 10.19it/s]
-[2025-07-11 15:02:06,037: WARNING/ForkPoolWorker-6] Generando respuesta:  22%|####3               | 111/512 [00:34<00:39, 10.12it/s]
-[2025-07-11 15:02:06,239: WARNING/ForkPoolWorker-6] Generando respuesta:  22%|####4               | 113/512 [00:34<00:39, 10.05it/s]
-[2025-07-11 15:02:06,462: WARNING/ForkPoolWorker-6] Generando respuesta:  22%|####4               | 115/512 [00:34<00:40,  9.69it/s]
-[2025-07-11 15:02:06,580: WARNING/ForkPoolWorker-6] Generando respuesta:  23%|####5               | 116/512 [00:34<00:41,  9.46it/s]
-[2025-07-11 15:02:06,780: WARNING/ForkPoolWorker-6] Generando respuesta:  23%|####6               | 118/512 [00:35<00:40,  9.63it/s]
-[2025-07-11 15:02:06,885: WARNING/ForkPoolWorker-6] Generando respuesta:  23%|####6               | 119/512 [00:35<00:40,  9.61it/s]
-[2025-07-11 15:02:07,080: WARNING/ForkPoolWorker-6] Generando respuesta:  24%|####7               | 121/512 [00:35<00:39,  9.83it/s]
-[2025-07-11 15:02:07,277: WARNING/ForkPoolWorker-6] Generando respuesta:  24%|####8               | 123/512 [00:35<00:39,  9.93it/s]
-[2025-07-11 15:02:07,488: WARNING/ForkPoolWorker-6] Generando respuesta:  24%|####8               | 125/512 [00:35<00:39,  9.78it/s]
-[2025-07-11 15:02:07,687: WARNING/ForkPoolWorker-6] Generando respuesta:  25%|####9               | 127/512 [00:36<00:39,  9.86it/s]
-[2025-07-11 15:02:07,789: WARNING/ForkPoolWorker-6] Generando respuesta:  25%|#####               | 128/512 [00:36<00:38,  9.85it/s]
-[2025-07-11 15:02:07,984: WARNING/ForkPoolWorker-6] Generando respuesta:  25%|#####               | 130/512 [00:36<00:38,  9.99it/s]
-[2025-07-11 15:02:08,087: WARNING/ForkPoolWorker-6] Generando respuesta:  26%|#####1              | 131/512 [00:36<00:38,  9.94it/s]
-[2025-07-11 15:02:08,307: WARNING/ForkPoolWorker-6] Generando respuesta:  26%|#####1              | 133/512 [00:36<00:39,  9.61it/s]
-[2025-07-11 15:02:08,427: WARNING/ForkPoolWorker-6] Generando respuesta:  26%|#####2              | 134/512 [00:36<00:40,  9.33it/s]
-[2025-07-11 15:02:08,537: WARNING/ForkPoolWorker-6] Generando respuesta:  26%|#####2              | 135/512 [00:36<00:40,  9.27it/s]
-[2025-07-11 15:02:08,637: WARNING/ForkPoolWorker-6] Generando respuesta:  27%|#####3              | 136/512 [00:36<00:39,  9.44it/s]
-[2025-07-11 15:02:08,774: WARNING/ForkPoolWorker-6] Generando respuesta:  27%|#####3              | 137/512 [00:37<00:42,  8.76it/s]
-[2025-07-11 15:02:08,882: WARNING/ForkPoolWorker-6] Generando respuesta:  27%|#####3              | 138/512 [00:37<00:42,  8.89it/s]
-[2025-07-11 15:02:08,986: WARNING/ForkPoolWorker-6] Generando respuesta:  27%|#####4              | 139/512 [00:37<00:41,  9.08it/s]
-[2025-07-11 15:02:09,090: WARNING/ForkPoolWorker-6] Generando respuesta:  27%|#####4              | 140/512 [00:37<00:40,  9.22it/s]
-[2025-07-11 15:02:09,289: WARNING/ForkPoolWorker-6] Generando respuesta:  28%|#####5              | 142/512 [00:37<00:38,  9.58it/s]
-[2025-07-11 15:02:09,486: WARNING/ForkPoolWorker-6] Generando respuesta:  28%|#####6              | 144/512 [00:37<00:37,  9.81it/s]
-[2025-07-11 15:02:09,679: WARNING/ForkPoolWorker-6] Generando respuesta:  29%|#####7              | 146/512 [00:38<00:36, 10.00it/s]
-[2025-07-11 15:02:09,780: WARNING/ForkPoolWorker-6] Generando respuesta:  29%|#####7              | 147/512 [00:38<00:36,  9.97it/s]
-[2025-07-11 15:02:09,980: WARNING/ForkPoolWorker-6] Generando respuesta:  29%|#####8              | 149/512 [00:38<00:36,  9.98it/s]
-[2025-07-11 15:02:10,189: WARNING/ForkPoolWorker-6] Generando respuesta:  29%|#####8              | 151/512 [00:38<00:36,  9.85it/s]
-[2025-07-11 15:02:10,388: WARNING/ForkPoolWorker-6] Generando respuesta:  30%|#####9              | 153/512 [00:38<00:36,  9.91it/s]
-[2025-07-11 15:02:10,575: WARNING/ForkPoolWorker-6] Generando respuesta:  30%|######              | 155/512 [00:38<00:35, 10.14it/s]
-[2025-07-11 15:02:10,773: WARNING/ForkPoolWorker-6] Generando respuesta:  31%|######1             | 157/512 [00:39<00:35, 10.13it/s]
-[2025-07-11 15:02:10,972: WARNING/ForkPoolWorker-6] Generando respuesta:  31%|######2             | 159/512 [00:39<00:34, 10.11it/s]
-[2025-07-11 15:02:11,176: WARNING/ForkPoolWorker-6] Generando respuesta:  31%|######2             | 161/512 [00:39<00:35, 10.01it/s]
-[2025-07-11 15:02:11,383: WARNING/ForkPoolWorker-6] Generando respuesta:  32%|######3             | 163/512 [00:39<00:35,  9.91it/s]
-[2025-07-11 15:02:11,483: WARNING/ForkPoolWorker-6] Generando respuesta:  32%|######4             | 164/512 [00:39<00:35,  9.92it/s]
-[2025-07-11 15:02:11,588: WARNING/ForkPoolWorker-6] Generando respuesta:  32%|######4             | 165/512 [00:39<00:35,  9.84it/s]
-[2025-07-11 15:02:11,690: WARNING/ForkPoolWorker-6] Generando respuesta:  32%|######4             | 166/512 [00:40<00:35,  9.82it/s]
-[2025-07-11 15:02:11,794: WARNING/ForkPoolWorker-6] Generando respuesta:  33%|######5             | 167/512 [00:40<00:35,  9.77it/s]
-[2025-07-11 15:02:11,989: WARNING/ForkPoolWorker-6] Generando respuesta:  33%|######6             | 169/512 [00:40<00:34,  9.96it/s]
-[2025-07-11 15:02:12,098: WARNING/ForkPoolWorker-6] Generando respuesta:  33%|######6             | 170/512 [00:40<00:34,  9.79it/s]
-[2025-07-11 15:02:12,221: WARNING/ForkPoolWorker-6] Generando respuesta:  33%|######6             | 171/512 [00:40<00:36,  9.32it/s]
-[2025-07-11 15:02:12,425: WARNING/ForkPoolWorker-6] Generando respuesta:  34%|######7             | 173/512 [00:40<00:35,  9.50it/s]
-[2025-07-11 15:02:12,618: WARNING/ForkPoolWorker-6] Generando respuesta:  34%|######8             | 175/512 [00:40<00:34,  9.81it/s]
-[2025-07-11 15:02:12,724: WARNING/ForkPoolWorker-6] Generando respuesta:  34%|######8             | 176/512 [00:41<00:34,  9.72it/s]
-[2025-07-11 15:02:12,831: WARNING/ForkPoolWorker-6] Generando respuesta:  35%|######9             | 177/512 [00:41<00:34,  9.65it/s]
-[2025-07-11 15:02:13,032: WARNING/ForkPoolWorker-6] Generando respuesta:  35%|######9             | 179/512 [00:41<00:34,  9.76it/s]
-[2025-07-11 15:02:13,260: WARNING/ForkPoolWorker-6] Generando respuesta:  35%|#######             | 181/512 [00:41<00:35,  9.37it/s]
-[2025-07-11 15:02:13,456: WARNING/ForkPoolWorker-6] Generando respuesta:  36%|#######1            | 183/512 [00:41<00:34,  9.64it/s]
-[2025-07-11 15:02:13,569: WARNING/ForkPoolWorker-6] Generando respuesta:  36%|#######1            | 184/512 [00:41<00:34,  9.48it/s]
-[2025-07-11 15:02:13,669: WARNING/ForkPoolWorker-6] Generando respuesta:  36%|#######2            | 185/512 [00:41<00:34,  9.59it/s]
-[2025-07-11 15:02:13,779: WARNING/ForkPoolWorker-6] Generando respuesta:  36%|#######2            | 186/512 [00:42<00:34,  9.46it/s]
-[2025-07-11 15:02:13,999: WARNING/ForkPoolWorker-6] Generando respuesta:  37%|#######3            | 188/512 [00:42<00:34,  9.30it/s]
-[2025-07-11 15:02:14,103: WARNING/ForkPoolWorker-6] Generando respuesta:  37%|#######3            | 189/512 [00:42<00:34,  9.38it/s]
-[2025-07-11 15:02:14,300: WARNING/ForkPoolWorker-6] Generando respuesta:  37%|#######4            | 191/512 [00:42<00:33,  9.67it/s]
-[2025-07-11 15:02:14,400: WARNING/ForkPoolWorker-6] Generando respuesta:  38%|#######5            | 192/512 [00:42<00:32,  9.73it/s]
-[2025-07-11 15:02:14,592: WARNING/ForkPoolWorker-6] Generando respuesta:  38%|#######5            | 194/512 [00:42<00:31,  9.99it/s]
-[2025-07-11 15:02:14,708: WARNING/ForkPoolWorker-6] Generando respuesta:  38%|#######6            | 195/512 [00:43<00:32,  9.66it/s]
-[2025-07-11 15:02:14,812: WARNING/ForkPoolWorker-6] Generando respuesta:  38%|#######6            | 196/512 [00:43<00:32,  9.65it/s]
-[2025-07-11 15:02:15,007: WARNING/ForkPoolWorker-6] Generando respuesta:  39%|#######7            | 198/512 [00:43<00:31,  9.88it/s]
-[2025-07-11 15:02:15,111: WARNING/ForkPoolWorker-6] Generando respuesta:  39%|#######7            | 199/512 [00:43<00:31,  9.82it/s]
-[2025-07-11 15:02:15,214: WARNING/ForkPoolWorker-6] Generando respuesta:  39%|#######8            | 200/512 [00:43<00:31,  9.81it/s]
-[2025-07-11 15:02:15,412: WARNING/ForkPoolWorker-6] Generando respuesta:  39%|#######8            | 202/512 [00:43<00:31,  9.91it/s]
-[2025-07-11 15:02:15,517: WARNING/ForkPoolWorker-6] Generando respuesta:  40%|#######9            | 203/512 [00:43<00:31,  9.83it/s]
-[2025-07-11 15:02:15,617: WARNING/ForkPoolWorker-6] Generando respuesta:  40%|#######9            | 204/512 [00:43<00:31,  9.87it/s]
-[2025-07-11 15:02:15,726: WARNING/ForkPoolWorker-6] Generando respuesta:  40%|########            | 205/512 [00:44<00:31,  9.67it/s]
-[2025-07-11 15:02:15,834: WARNING/ForkPoolWorker-6] Generando respuesta:  40%|########            | 206/512 [00:44<00:32,  9.56it/s]
-[2025-07-11 15:02:15,960: WARNING/ForkPoolWorker-6] Generando respuesta:  40%|########            | 207/512 [00:44<00:33,  9.05it/s]
-[2025-07-11 15:02:16,063: WARNING/ForkPoolWorker-6] Generando respuesta:  41%|########1           | 208/512 [00:44<00:32,  9.22it/s]
-[2025-07-11 15:02:16,258: WARNING/ForkPoolWorker-6] Generando respuesta:  41%|########2           | 210/512 [00:44<00:31,  9.66it/s]
-[2025-07-11 15:02:16,392: WARNING/ForkPoolWorker-6] Generando respuesta:  41%|########2           | 211/512 [00:44<00:33,  9.01it/s]
-[2025-07-11 15:02:16,616: WARNING/ForkPoolWorker-6] Generando respuesta:  42%|########3           | 213/512 [00:44<00:33,  8.99it/s]
-[2025-07-11 15:02:16,816: WARNING/ForkPoolWorker-6] Generando respuesta:  42%|########3           | 215/512 [00:45<00:31,  9.33it/s]
-[2025-07-11 15:02:17,010: WARNING/ForkPoolWorker-6] Generando respuesta:  42%|########4           | 217/512 [00:45<00:30,  9.64it/s]
-[2025-07-11 15:02:17,114: WARNING/ForkPoolWorker-6] Generando respuesta:  43%|########5           | 218/512 [00:45<00:30,  9.64it/s]
-[2025-07-11 15:02:17,221: WARNING/ForkPoolWorker-6] Generando respuesta:  43%|########5           | 219/512 [00:45<00:30,  9.57it/s]
-[2025-07-11 15:02:17,424: WARNING/ForkPoolWorker-6] Generando respuesta:  43%|########6           | 221/512 [00:45<00:30,  9.68it/s]
-[2025-07-11 15:02:17,525: WARNING/ForkPoolWorker-6] Generando respuesta:  43%|########6           | 222/512 [00:45<00:29,  9.74it/s]
-[2025-07-11 15:02:17,727: WARNING/ForkPoolWorker-6] Generando respuesta:  44%|########7           | 224/512 [00:46<00:29,  9.80it/s]
-[2025-07-11 15:02:17,835: WARNING/ForkPoolWorker-6] Generando respuesta:  44%|########7           | 225/512 [00:46<00:29,  9.67it/s]
-[2025-07-11 15:02:17,935: WARNING/ForkPoolWorker-6] Generando respuesta:  44%|########8           | 226/512 [00:46<00:29,  9.74it/s]
-[2025-07-11 15:02:18,036: WARNING/ForkPoolWorker-6] Generando respuesta:  44%|########8           | 227/512 [00:46<00:29,  9.78it/s]
-[2025-07-11 15:02:18,157: WARNING/ForkPoolWorker-6] Generando respuesta:  45%|########9           | 228/512 [00:46<00:30,  9.33it/s]
-[2025-07-11 15:02:18,265: WARNING/ForkPoolWorker-6] Generando respuesta:  45%|########9           | 229/512 [00:46<00:30,  9.31it/s]
-[2025-07-11 15:02:18,370: WARNING/ForkPoolWorker-6] Generando respuesta:  45%|########9           | 230/512 [00:46<00:30,  9.37it/s]
-[2025-07-11 15:02:18,472: WARNING/ForkPoolWorker-6] Generando respuesta:  45%|#########           | 231/512 [00:46<00:29,  9.49it/s]
-[2025-07-11 15:02:18,584: WARNING/ForkPoolWorker-6] Generando respuesta:  45%|#########           | 232/512 [00:46<00:30,  9.33it/s]
-[2025-07-11 15:02:18,808: WARNING/ForkPoolWorker-6] Generando respuesta:  46%|#########1          | 234/512 [00:47<00:30,  9.14it/s]
-[2025-07-11 15:02:19,001: WARNING/ForkPoolWorker-6] Generando respuesta:  46%|#########2          | 236/512 [00:47<00:28,  9.59it/s]
-[2025-07-11 15:02:19,199: WARNING/ForkPoolWorker-6] Generando respuesta:  46%|#########2          | 238/512 [00:47<00:28,  9.76it/s]
-[2025-07-11 15:02:19,417: WARNING/ForkPoolWorker-6] Generando respuesta:  47%|#########3          | 240/512 [00:47<00:28,  9.55it/s]
-[2025-07-11 15:02:19,520: WARNING/ForkPoolWorker-6] Generando respuesta:  47%|#########4          | 241/512 [00:47<00:28,  9.59it/s]
-[2025-07-11 15:02:19,621: WARNING/ForkPoolWorker-6] Generando respuesta:  47%|#########4          | 242/512 [00:47<00:27,  9.65it/s]
-[2025-07-11 15:02:19,826: WARNING/ForkPoolWorker-6] Generando respuesta:  48%|#########5          | 244/512 [00:48<00:27,  9.69it/s]
-[2025-07-11 15:02:19,938: WARNING/ForkPoolWorker-6] Generando respuesta:  48%|#########5          | 245/512 [00:48<00:28,  9.52it/s]
-[2025-07-11 15:02:20,134: WARNING/ForkPoolWorker-6] Generando respuesta:  48%|#########6          | 247/512 [00:48<00:27,  9.77it/s]
-[2025-07-11 15:02:20,350: WARNING/ForkPoolWorker-6] Generando respuesta:  49%|#########7          | 249/512 [00:48<00:27,  9.58it/s]
-[2025-07-11 15:02:20,453: WARNING/ForkPoolWorker-6] Generando respuesta:  49%|#########7          | 250/512 [00:48<00:27,  9.61it/s]
-[2025-07-11 15:02:20,646: WARNING/ForkPoolWorker-6] Generando respuesta:  49%|#########8          | 252/512 [00:48<00:26,  9.87it/s]
-[2025-07-11 15:02:20,755: WARNING/ForkPoolWorker-6] Generando respuesta:  49%|#########8          | 253/512 [00:49<00:26,  9.71it/s]
-[2025-07-11 15:02:20,865: WARNING/ForkPoolWorker-6] Generando respuesta:  50%|#########9          | 254/512 [00:49<00:26,  9.57it/s]
-[2025-07-11 15:02:20,974: WARNING/ForkPoolWorker-6] Generando respuesta:  50%|#########9          | 255/512 [00:49<00:27,  9.47it/s]
-[2025-07-11 15:02:21,092: WARNING/ForkPoolWorker-6] Generando respuesta:  50%|##########          | 256/512 [00:49<00:27,  9.19it/s]
-[2025-07-11 15:02:21,292: WARNING/ForkPoolWorker-6] Generando respuesta:  50%|##########          | 258/512 [00:49<00:26,  9.51it/s]
-[2025-07-11 15:02:21,486: WARNING/ForkPoolWorker-6] Generando respuesta:  51%|##########1         | 260/512 [00:49<00:25,  9.80it/s]
-[2025-07-11 15:02:21,709: WARNING/ForkPoolWorker-6] Generando respuesta:  51%|##########2         | 262/512 [00:50<00:26,  9.49it/s]
-[2025-07-11 15:02:21,816: WARNING/ForkPoolWorker-6] Generando respuesta:  51%|##########2         | 263/512 [00:50<00:26,  9.46it/s]
-[2025-07-11 15:02:21,932: WARNING/ForkPoolWorker-6] Generando respuesta:  52%|##########3         | 264/512 [00:50<00:26,  9.27it/s]
-[2025-07-11 15:02:22,032: WARNING/ForkPoolWorker-6] Generando respuesta:  52%|##########3         | 265/512 [00:50<00:26,  9.43it/s]
-[2025-07-11 15:02:22,135: WARNING/ForkPoolWorker-6] Generando respuesta:  52%|##########3         | 266/512 [00:50<00:25,  9.51it/s]
-[2025-07-11 15:02:22,327: WARNING/ForkPoolWorker-6] Generando respuesta:  52%|##########4         | 268/512 [00:50<00:24,  9.86it/s]
-[2025-07-11 15:02:22,530: WARNING/ForkPoolWorker-6] Generando respuesta:  53%|##########5         | 270/512 [00:50<00:24,  9.86it/s]
-[2025-07-11 15:02:22,631: WARNING/ForkPoolWorker-6] Generando respuesta:  53%|##########5         | 271/512 [00:50<00:24,  9.88it/s]
-[2025-07-11 15:02:22,751: WARNING/ForkPoolWorker-6] Generando respuesta:  53%|##########6         | 272/512 [00:51<00:25,  9.46it/s]
-[2025-07-11 15:02:22,860: WARNING/ForkPoolWorker-6] Generando respuesta:  53%|##########6         | 273/512 [00:51<00:25,  9.39it/s]
-[2025-07-11 15:02:22,962: WARNING/ForkPoolWorker-6] Generando respuesta:  54%|##########7         | 274/512 [00:51<00:25,  9.50it/s]
-[2025-07-11 15:02:23,157: WARNING/ForkPoolWorker-6] Generando respuesta:  54%|##########7         | 276/512 [00:51<00:24,  9.82it/s]
-[2025-07-11 15:02:23,268: WARNING/ForkPoolWorker-6] Generando respuesta:  54%|##########8         | 277/512 [00:51<00:24,  9.62it/s]
-[2025-07-11 15:02:23,465: WARNING/ForkPoolWorker-6] Generando respuesta:  54%|##########8         | 279/512 [00:51<00:23,  9.81it/s]
-[2025-07-11 15:02:23,668: WARNING/ForkPoolWorker-6] Generando respuesta:  55%|##########9         | 281/512 [00:51<00:23,  9.83it/s]
-[2025-07-11 15:02:23,777: WARNING/ForkPoolWorker-6] Generando respuesta:  55%|###########         | 282/512 [00:52<00:23,  9.69it/s]
-[2025-07-11 15:02:23,879: WARNING/ForkPoolWorker-6] Generando respuesta:  55%|###########         | 283/512 [00:52<00:23,  9.71it/s]
-[2025-07-11 15:02:24,088: WARNING/ForkPoolWorker-6] Generando respuesta:  56%|###########1        | 285/512 [00:52<00:23,  9.66it/s]
-[2025-07-11 15:02:24,213: WARNING/ForkPoolWorker-6] Generando respuesta:  56%|###########1        | 286/512 [00:52<00:24,  9.23it/s]
-[2025-07-11 15:02:24,319: WARNING/ForkPoolWorker-6] Generando respuesta:  56%|###########2        | 287/512 [00:52<00:24,  9.29it/s]
-[2025-07-11 15:02:24,520: WARNING/ForkPoolWorker-6] Generando respuesta:  56%|###########2        | 289/512 [00:52<00:23,  9.54it/s]
-[2025-07-11 15:02:24,622: WARNING/ForkPoolWorker-6] Generando respuesta:  57%|###########3        | 290/512 [00:52<00:23,  9.59it/s]
-[2025-07-11 15:02:24,723: WARNING/ForkPoolWorker-6] Generando respuesta:  57%|###########3        | 291/512 [00:53<00:22,  9.68it/s]
-[2025-07-11 15:02:24,836: WARNING/ForkPoolWorker-6] Generando respuesta:  57%|###########4        | 292/512 [00:53<00:23,  9.45it/s]
-[2025-07-11 15:02:25,039: WARNING/ForkPoolWorker-6] Generando respuesta:  57%|###########4        | 294/512 [00:53<00:22,  9.61it/s]
-[2025-07-11 15:02:25,240: WARNING/ForkPoolWorker-6] Generando respuesta:  58%|###########5        | 296/512 [00:53<00:22,  9.74it/s]
-[2025-07-11 15:02:25,444: WARNING/ForkPoolWorker-6] Generando respuesta:  58%|###########6        | 298/512 [00:53<00:21,  9.75it/s]
-[2025-07-11 15:02:25,546: WARNING/ForkPoolWorker-6] Generando respuesta:  58%|###########6        | 299/512 [00:53<00:21,  9.78it/s]
-[2025-07-11 15:02:25,744: WARNING/ForkPoolWorker-6] Generando respuesta:  59%|###########7        | 301/512 [00:54<00:21,  9.89it/s]
-[2025-07-11 15:02:25,847: WARNING/ForkPoolWorker-6] Generando respuesta:  59%|###########7        | 302/512 [00:54<00:21,  9.85it/s]
-[2025-07-11 15:02:26,039: WARNING/ForkPoolWorker-6] Generando respuesta:  59%|###########8        | 304/512 [00:54<00:20, 10.04it/s]
-[2025-07-11 15:02:26,242: WARNING/ForkPoolWorker-6] Generando respuesta:  60%|###########9        | 306/512 [00:54<00:20,  9.99it/s]
-[2025-07-11 15:02:26,349: WARNING/ForkPoolWorker-6] Generando respuesta:  60%|###########9        | 307/512 [00:54<00:20,  9.86it/s]
-[2025-07-11 15:02:26,555: WARNING/ForkPoolWorker-6] Generando respuesta:  60%|############        | 309/512 [00:54<00:20,  9.79it/s]
-[2025-07-11 15:02:26,667: WARNING/ForkPoolWorker-6] Generando respuesta:  61%|############1       | 310/512 [00:54<00:21,  9.61it/s]
-[2025-07-11 15:02:26,865: WARNING/ForkPoolWorker-6] Generando respuesta:  61%|############1       | 312/512 [00:55<00:20,  9.79it/s]
-[2025-07-11 15:02:27,058: WARNING/ForkPoolWorker-6] Generando respuesta:  61%|############2       | 314/512 [00:55<00:19,  9.98it/s]
-[2025-07-11 15:02:27,260: WARNING/ForkPoolWorker-6] Generando respuesta:  62%|############3       | 316/512 [00:55<00:19,  9.95it/s]
-[2025-07-11 15:02:27,364: WARNING/ForkPoolWorker-6] Generando respuesta:  62%|############3       | 317/512 [00:55<00:19,  9.88it/s]
-[2025-07-11 15:02:27,562: WARNING/ForkPoolWorker-6] Generando respuesta:  62%|############4       | 319/512 [00:55<00:19,  9.95it/s]
-[2025-07-11 15:02:27,666: WARNING/ForkPoolWorker-6] Generando respuesta:  62%|############5       | 320/512 [00:55<00:19,  9.90it/s]
-[2025-07-11 15:02:27,768: WARNING/ForkPoolWorker-6] Generando respuesta:  63%|############5       | 321/512 [00:56<00:19,  9.87it/s]
-[2025-07-11 15:02:27,871: WARNING/ForkPoolWorker-6] Generando respuesta:  63%|############5       | 322/512 [00:56<00:19,  9.83it/s]
-[2025-07-11 15:02:28,068: WARNING/ForkPoolWorker-6] Generando respuesta:  63%|############6       | 324/512 [00:56<00:18,  9.95it/s]
-[2025-07-11 15:02:28,274: WARNING/ForkPoolWorker-6] Generando respuesta:  64%|############7       | 326/512 [00:56<00:18,  9.86it/s]
-[2025-07-11 15:02:28,378: WARNING/ForkPoolWorker-6] Generando respuesta:  64%|############7       | 327/512 [00:56<00:18,  9.81it/s]
-[2025-07-11 15:02:28,496: WARNING/ForkPoolWorker-6] Generando respuesta:  64%|############8       | 328/512 [00:56<00:19,  9.47it/s]
-[2025-07-11 15:02:28,597: WARNING/ForkPoolWorker-6] Generando respuesta:  64%|############8       | 329/512 [00:56<00:19,  9.58it/s]
-[2025-07-11 15:02:28,698: WARNING/ForkPoolWorker-6] Generando respuesta:  64%|############8       | 330/512 [00:57<00:18,  9.65it/s]
-[2025-07-11 15:02:28,802: WARNING/ForkPoolWorker-6] Generando respuesta:  65%|############9       | 331/512 [00:57<00:18,  9.64it/s]
-[2025-07-11 15:02:29,000: WARNING/ForkPoolWorker-6] Generando respuesta:  65%|#############       | 333/512 [00:57<00:18,  9.85it/s]
-[2025-07-11 15:02:29,100: WARNING/ForkPoolWorker-6] Generando respuesta:  65%|#############       | 334/512 [00:57<00:18,  9.86it/s]
-[2025-07-11 15:02:29,299: WARNING/ForkPoolWorker-6] llama_print_timings:        load time =   23123.69 ms
-[2025-07-11 15:02:29,299: WARNING/ForkPoolWorker-6] llama_print_timings:      sample time =      32.89 ms /   336 runs   (    0.10 ms per token, 10216.18 tokens per second)
-[2025-07-11 15:02:29,299: WARNING/ForkPoolWorker-6] llama_print_timings: prompt eval time =   23122.16 ms /   479 tokens (   48.27 ms per token,    20.72 tokens per second)
-[2025-07-11 15:02:29,300: WARNING/ForkPoolWorker-6] llama_print_timings:        eval time =   33722.50 ms /   335 runs   (  100.66 ms per token,     9.93 tokens per second)
-[2025-07-11 15:02:29,300: WARNING/ForkPoolWorker-6] llama_print_timings:       total time =   57631.10 ms /   814 tokens
-[2025-07-11 15:02:29,300: WARNING/ForkPoolWorker-6] Generando respuesta:  66%|#############1      | 336/512 [00:57<00:17,  9.92it/s]
-[2025-07-11 15:02:29,301: WARNING/ForkPoolWorker-6] Generando respuesta:  66%|#############1      | 336/512 [00:57<00:30,  5.83it/s]
-[2025-07-11 15:02:29,301: WARNING/ForkPoolWorker-6] [90%] 💾 Generando archivo local...
-[2025-07-11 15:02:29,301: WARNING/ForkPoolWorker-6] 📁 Generando archivo de texto...
-[2025-07-11 15:02:29,301: WARNING/ForkPoolWorker-6] 📁 Nombre de archivo:
-[2025-07-11 15:02:29,302: WARNING/ForkPoolWorker-6]  
-[2025-07-11 15:02:29,302: WARNING/ForkPoolWorker-6] Tiradito de Dorada
-[2025-07-11 15:02:29,305: WARNING/ForkPoolWorker-6] [100%] ✅ Proceso completado
-[2025-07-11 15:02:29,306: INFO/ForkPoolWorker-6] Task procesar_receta_task[f7d5cf9c-75c4-40a1-8dd4-9a112a1d4b10] succeeded in 63.52845142499996s: '{"titulo": "Tiradito de Dorada", "ingredientes": [{"nombre": "Dorada", "cantidad": "1", "unidad": "pc"}, {"nombre": "Lima", "cantidad": "1", "unidad": "pc"}, {"nombre": "Melocotones en almíbar", "cantidad": "3", "unidad": "pc"}, {"nombre": "Aguacate", "cantidad": "1", "unidad": "pc"}, {"nombre": "Cebolleta", "cantidad": "1", "unidad": "pc"}, {"nombre": "Pimentón de espelette", "cantidad": "1", "unidad": "pc"}, {"nombre": "Sal", "cantidad": "1", "unidad": "pc"}, {"nombre": "Aceite de oliva", "cantidad": "1", "unidad": "ml"}], "pasos": ["Limpiar el pescado", "Paramos los nomos, añadimos al y vez a posar en vera durante 30 minutos.", "Mezclamos melocotones en almíbar, sumo de lima, sal, pimienta y emulchionamos con aceite de oliva.", "Retiramos la salal pescado pasando por agua, secamos y cortamos."], "tips": []}'

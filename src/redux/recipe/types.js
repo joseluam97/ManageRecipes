@@ -1,0 +1,8 @@
+export const GET_ALL_RECIPES = 'GET_ALL_RECIPES'
+export const GET_RECIPE_BY_ID = 'GET_RECIPE_BY_ID'
+export const SET_STEPS_NEW_RECIPES = 'SET_STEPS_NEW_RECIPES'
+export const INIT_VALUE = 'INIT_VALUE'
+export const POST_RECIPE = 'POST_RECIPE'
+export const PUT_RECIPE = 'PUT_RECIPE'
+export const DELETE_RECIPE = 'DELETE_RECIPE'
+
