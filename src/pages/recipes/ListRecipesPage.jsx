@@ -16,10 +16,12 @@ import { useLocation } from 'react-router-dom';
 import { useRecipeData } from '../../contexts/RecipeDataContext'
 import { launchProcess, getStateProcess } from 'src/redux/ai_service/actions'
 import { getRecipes } from 'src/services/recipeService'
+import { useIsUserLoggedIn } from 'src/services/userService'
 
 const Recipes = () => {
 
   const { listRecipes, refreshData } = useRecipeData();
+  const isLoggedIn = useIsUserLoggedIn();
 
   const location = useLocation();
   const theme = useTheme();
@@ -75,17 +77,6 @@ const Recipes = () => {
     navigate(`/recipe/${recipe.id}`);
   };
 
-  const getRecipeByIA = async () => {
-    console.log("-getRecipeByIA-");
-    const url_search = "https://www.tiktok.com/@comiendobienn/video/7518837827455552790";
-    const resultAction = await dispatch(launchProcess(url_search));
-
-    if (launchProcess.fulfilled.match(resultAction)) {
-      const id_new_task = resultAction.payload;
-      setTaskId(id_new_task); // Guarda el ID
-    }
-  };
-
   useEffect(() => {
     if (!taskId) return;
 
@@ -112,19 +103,20 @@ const Recipes = () => {
   return (
     <Container>
       <Stack direction="row" flexShrink={0} sx={{ my: 4, width: '100%' }} justifyContent="flex-end">
-        <IconButton
-          size="large"
-          aria-controls="msgs-menu"
-          aria-haspopup="true"
-          onClick={() => newRecipe()}
-          sx={{
-            ...(typeof anchorEl2 === 'object' && {
-              color: 'primary.main',
-            }),
-          }}
-        >
-          <Add />
-        </IconButton>
+        {isLoggedIn ?
+          (<IconButton
+            size="large"
+            aria-controls="msgs-menu"
+            aria-haspopup="true"
+            onClick={() => newRecipe()}
+            sx={{
+              ...(typeof anchorEl2 === 'object' && {
+                color: 'primary.main',
+              }),
+            }}
+          >
+            <Add />
+          </IconButton>) : (<></>)}
       </Stack>
       <Grid container spacing={3}>
         {paginatedRecipes.map((recipe) => (

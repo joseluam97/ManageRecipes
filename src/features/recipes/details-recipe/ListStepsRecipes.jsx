@@ -13,8 +13,10 @@ import { setListStepsNewRecipe } from 'src/redux/recipe/actions'
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateRecipe } from 'src/services/recipeService'
+import { useIsUserLoggedIn } from 'src/services/userService'
 
 export default function ListStepsRecipes({ recipe, setEditSteps }) {
+    const isLoggedIn = useIsUserLoggedIn();
 
     const dispatch = useDispatch();
 
@@ -51,9 +53,11 @@ export default function ListStepsRecipes({ recipe, setEditSteps }) {
         <Box width="100%">
             <Stack direction="row" flexShrink={0} sx={{ my: 0, width: '100%' }} justifyContent="flex-start" alignItems="center">
                 <Typography variant="h5" fontWeight="medium" gutterBottom>Elaboration</Typography>
-                <IconButton onClick={editSteps} color="primary">
-                    <Edit />
-                </IconButton>
+                {isLoggedIn ?
+                    (<IconButton onClick={editSteps} color="primary">
+                        <Edit />
+                    </IconButton>) :
+                    (<></>)}
             </Stack>
 
             {showEditSteps && (

@@ -28,8 +28,10 @@ import { useRecipeData } from '../../contexts/RecipeDataContext';
 import { createNewRecipe } from 'src/services/recipeService'
 import { postNewGroup } from 'src/services/groupService'
 import { createIngredientRecipe } from 'src/services/ingredientRecipeService'
+import { useIsUserLoggedIn } from 'src/services/userService'
 
 export default function RecipeFormPage() {
+  const isLoggedIn = useIsUserLoggedIn();
 
     const { listTypes, listOrders, listLevels, listSources, listTags } = useRecipeData();
 
@@ -59,6 +61,13 @@ export default function RecipeFormPage() {
         tags: '',
         image: '',
     });
+
+    useEffect(() => {
+        // Check  if user is logged in
+        if(!isLoggedIn) {
+            navigate('/login');
+        }
+    }, []);
 
     useEffect(() => {
 

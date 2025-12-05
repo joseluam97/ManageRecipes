@@ -9,8 +9,11 @@ import {
     IconButton
 } from '@mui/material';
 import { Edit } from '@mui/icons-material';
+import { useIsUserLoggedIn } from 'src/services/userService'    
 
 export default function DetailsRecipe({ recipe, countries, setEditRecipe }) {
+
+  const isLoggedIn = useIsUserLoggedIn();
 
     const editRecipe = () => {
         setEditRecipe(true)
@@ -21,9 +24,11 @@ export default function DetailsRecipe({ recipe, countries, setEditRecipe }) {
             {recipe ? (
                 <Stack direction="row" flexShrink={0} sx={{ my: 0, width: '100%' }} justifyContent="flex-start" alignItems="center">
                     <Typography variant="h4" fontWeight="bold" gutterBottom>{recipe.name}</Typography>
-                    <IconButton onClick={editRecipe} color="primary">
+                    {isLoggedIn ? 
+                    (<IconButton onClick={editRecipe} color="primary">
                         <Edit />
-                    </IconButton>
+                    </IconButton>) : 
+                    (<></>)}
                 </Stack>
             ) : (
                 <Skeleton width="60%" height={40} />

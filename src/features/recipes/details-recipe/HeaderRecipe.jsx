@@ -13,11 +13,14 @@ import { useNavigate } from 'react-router-dom';
 import { removeRecipe } from 'src/services/recipeService'
 import { removeGroup } from 'src/services/groupService'
 import { removeIngredientRecipe } from 'src/services/ingredientRecipeService'
+import { useIsUserLoggedIn } from 'src/services/userService'
 
 export default function HeaderRecipe({ recipe, setRemoveInProgress }) {
+    const isLoggedIn = useIsUserLoggedIn();
+
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    
+
     const listIngredientsByRecipeAPI = useSelector((state) => state.ingredientsComponent.listIngredientsByRecipe);
 
     const handleDeleteRecipe = async () => {
@@ -39,7 +42,7 @@ export default function HeaderRecipe({ recipe, setRemoveInProgress }) {
         let result = await removeRecipe(recipe?.id, dispatch)
 
         setRemoveInProgress(false);
-            navigate(`/recipes`);
+        navigate(`/recipes`);
     }
 
     const getGroupsByRecipe = () => {
@@ -85,21 +88,23 @@ export default function HeaderRecipe({ recipe, setRemoveInProgress }) {
                 <Skeleton variant="rectangular" width="100%" height={40} sx={{ mt: 2, borderRadius: 1 }} />
             )}
             {recipe ? (
-                <Button
-                    variant="contained"
-                    color="red"
-                    endIcon={<Delete />}
-                    target="_blank"
-                    fullWidth
-                    onClick={handleDeleteRecipe}
-                    sx={{ mt: 2, color: "#FFFFFF" }}
-                >
-                    Delete
-                </Button>
+                isLoggedIn ?
+                    (<Button
+                        variant="contained"
+                        color="red"
+                        endIcon={< Delete />}
+                        target="_blank"
+                        fullWidth
+                        onClick={handleDeleteRecipe}
+                        sx={{ mt: 2, color: "#FFFFFF" }}
+                    >
+                        Delete
+                    </Button>) :
+                    (<></>)
             ) : (
                 <Skeleton variant="rectangular" width="100%" height={40} sx={{ mt: 2, borderRadius: 1 }} />
             )}
-        </Grid>
+        </Grid >
     );
 
 }

@@ -18,8 +18,10 @@ import { setModeWindowIngredient } from 'src/redux/assign_ingredients/actions'
 import AssignIngredientsPanel from 'src/features/ingredients/assign-ingredients/AssignIngredientsPanel';
 import { createIngredientRecipe, updateIngredientRecipe, removeIngredientRecipe, getListIngredientsByRecipe } from 'src/services/ingredientRecipeService'
 import { postNewGroup, removeGroup } from 'src/services/groupService'
+import { useIsUserLoggedIn } from 'src/services/userService'    
 
 export default function ListIngredientsRecipes({ id_recipe, setEditIngredients }) {
+  const isLoggedIn = useIsUserLoggedIn();
 
     const location = useLocation();
     const dispatch = useDispatch();
@@ -285,9 +287,11 @@ export default function ListIngredientsRecipes({ id_recipe, setEditIngredients }
                 <Box width="35%">
                     <Stack direction="row" flexShrink={0} sx={{ my: 0, width: '100%' }} justifyContent="flex-start" alignItems="center">
                         <Typography variant="h5" fontWeight="medium" gutterBottom>Ingredients</Typography>
-                        <IconButton onClick={editIngredients} color="primary">
+                        {isLoggedIn ? 
+                        (<IconButton onClick={editIngredients} color="primary">
                             <Edit />
-                        </IconButton>
+                        </IconButton>) : 
+                    (<></>)}
                     </Stack>
 
                     {listIngredientsRecipe.length > 0 ? (

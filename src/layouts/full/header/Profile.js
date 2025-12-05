@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Avatar,
+  Typography,
   Box,
   Menu,
   Button,
@@ -10,22 +11,36 @@ import {
   ListItemIcon,
   ListItemText
 } from '@mui/material';
-
-import { IconListCheck, IconMail, IconUser } from '@tabler/icons';
+import { useSelector } from 'react-redux';
 
 import ProfileImg from 'src/assets/images/profile/user-1.jpg';
 
 const Profile = () => {
-  const [anchorEl2, setAnchorEl2] = useState(null);
-  const handleClick2 = (event) => {
-    setAnchorEl2(event.currentTarget);
-  };
-  const handleClose2 = () => {
-    setAnchorEl2(null);
-  };
+
+  const [nameUserLogin, setNameUserLogin] = React.useState("");
+
+  const data_user_login = useSelector((state) => state.userComponent.userLogin);
+
+  useEffect(() => {
+    checkIfUserIsLogin();
+  }, []);
+
+  useEffect(() => {
+    checkIfUserIsLogin();
+  }, [data_user_login]);
+
+  const checkIfUserIsLogin = () => {
+    if (data_user_login != undefined && data_user_login != null) {
+      let string_display = data_user_login.email + " (" + data_user_login.role + ")";
+      setNameUserLogin(string_display);
+    }
+    else {
+      setNameUserLogin("Guest User");
+    }
+  }
 
   return (
-    <Box>
+    <Box sx={{ display: 'flex', alignItems: 'center' }}>
       <IconButton
         size="large"
         aria-label="show 11 new notifications"
@@ -37,7 +52,6 @@ const Profile = () => {
             color: 'primary.main',
           }),
         }}
-        onClick={handleClick2}
       >
         <Avatar
           src={ProfileImg}
@@ -48,47 +62,7 @@ const Profile = () => {
           }}
         />
       </IconButton>
-      {/* ------------------------------------------- */}
-      {/* Message Dropdown */}
-      {/* ------------------------------------------- */}
-      <Menu
-        id="msgs-menu"
-        anchorEl={anchorEl2}
-        keepMounted
-        open={Boolean(anchorEl2)}
-        onClose={handleClose2}
-        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-        sx={{
-          '& .MuiMenu-paper': {
-            width: '200px',
-          },
-        }}
-      >
-        <MenuItem>
-          <ListItemIcon>
-            <IconUser width={20} />
-          </ListItemIcon>
-          <ListItemText>My Profile</ListItemText>
-        </MenuItem>
-        <MenuItem>
-          <ListItemIcon>
-            <IconMail width={20} />
-          </ListItemIcon>
-          <ListItemText>My Account</ListItemText>
-        </MenuItem>
-        <MenuItem>
-          <ListItemIcon>
-            <IconListCheck width={20} />
-          </ListItemIcon>
-          <ListItemText>My Tasks</ListItemText>
-        </MenuItem>
-        <Box mt={1} py={1} px={2}>
-          <Button to="/auth/login" variant="outlined" color="primary" component={Link} fullWidth>
-            Logout
-          </Button>
-        </Box>
-      </Menu>
+      <Typography variant="h4" color="#000" fontWeight="bold" gutterBottom>{nameUserLogin}</Typography>
     </Box>
   );
 };

@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
-import { ReactComponent as LogoDark } from 'src/assets/images/logos/dark-logo.svg';
+// 1. Cambiar la importación: usar la importación por defecto para PNG
+import LogoImage from 'src/assets/images/logos/logo_horizontal.png';
 import { styled } from '@mui/material';
 
 const LinkStyled = styled(Link)(() => ({
@@ -12,9 +13,15 @@ const LinkStyled = styled(Link)(() => ({
 const Logo = () => {
   return (
     <LinkStyled to="/">
-      <LogoDark height={70} />
+      {/* 2. Usar un componente <img> y pasar la importación como la prop 'src' */}
+      <img
+        src={LogoImage}
+        alt="Logo de Recetas" // Es buena práctica añadir un texto alternativo
+        height={70}
+        style={{ width: 'auto', display: 'block' }} // Asegura que la imagen se vea correctamente dentro del contenedor
+      />
     </LinkStyled>
-  )
+  );
 };
 
 export default Logo;

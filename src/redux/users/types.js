@@ -1,0 +1,2 @@
+export const INIT_VALUE = 'INIT_VALUE'
+export const GET_USER_VALIDATE = 'GET_USER_VALIDATE'

@@ -5,8 +5,13 @@ import { useSnackbar } from 'src/components/snackbar/SnackbarProvider';
 import IngredientsRecipeDialog from '../../features/ingredients/dialog/IngredientsRecipeDialog';
 import { getListRecipesByIngredient } from 'src/services/recipeService'
 import { getListIngredients, postNewIngredient, updateIngredient, eraseIngredient } from 'src/services/ingredientService'
+import { useIsUserLoggedIn } from 'src/services/userService'
+import { useNavigate } from 'react-router-dom';
 
 const Ingredients = () => {
+  const isLoggedIn = useIsUserLoggedIn();
+    const navigate = useNavigate();
+
     const dispatch = useDispatch();
     const { showSnackbar } = useSnackbar();
 
@@ -15,6 +20,12 @@ const Ingredients = () => {
     const [listTodosIngredientes, setListTodosIngredientes] = useState([]);
 
     useEffect(() => {
+        // Check  if user is logged in
+        if(!isLoggedIn) {
+            navigate('/login');
+        }
+
+        // Get all ingredients
         getAllIngredients();
     }, []);
 
@@ -27,14 +38,14 @@ const Ingredients = () => {
 
     const createNewElement = async (name_ingredient) => {
         await postNewIngredient(name_ingredient, dispatch)
-        getListIngredients();
+        getListIngredients(dispatch);
     }
 
     const editElement = async (id_ingredient, name_ingredient) => {
         await updateIngredient(id_ingredient, name_ingredient, dispatch);
 
         // Update list ingredientes
-        getListIngredients()
+        getListIngredients(dispatch)
     }
 
     const deleteElement = async (id_ingredient) => {
@@ -49,7 +60,7 @@ const Ingredients = () => {
         if (item_delete?.name != undefined) {
             showSnackbar("The ingredient " + item_delete.name + " has been removed", 'success');
             // Update list ingredientes
-            getListIngredients()
+            getListIngredients(dispatch)
         }
         else {
             showSnackbar('An error occurred and the ingredient could not be removed.', 'error');
