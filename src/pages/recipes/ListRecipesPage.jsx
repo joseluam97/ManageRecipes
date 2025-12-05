@@ -17,7 +17,6 @@ import { useRecipeData } from '../../contexts/RecipeDataContext'
 import { launchProcess, getStateProcess } from 'src/redux/ai_service/actions'
 import { getRecipes } from 'src/services/recipeService'
 import { useIsUserLoggedIn } from 'src/services/userService'
-import TelegramButton from 'src/features/telegram/TelegramButton';
 
 const Recipes = () => {
 
@@ -103,7 +102,6 @@ const Recipes = () => {
 
   return (
     <Container>
-      <TelegramButton />
       <Stack direction="row" flexShrink={0} sx={{ my: 4, width: '100%' }} justifyContent="flex-end">
         {isLoggedIn ?
           (<IconButton
