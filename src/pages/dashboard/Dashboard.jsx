@@ -23,7 +23,7 @@ const Dashboard = () => {
   };
 
   return (
-    <PageContainer title="Dashboard" description="this is Dashboard">
+    <PageContainer title="Recetas" description="this is Recetas">
       <Box>
         <Grid container spacing={3}>
           <Grid item xs={12} lg={12}>
