@@ -20,7 +20,6 @@ import { useIsUserLoggedIn } from 'src/services/userService'
 
 const Recipes = () => {
 
-  const { listRecipes, refreshData } = useRecipeData();
   const isLoggedIn = useIsUserLoggedIn();
 
   const location = useLocation();
@@ -37,9 +36,6 @@ const Recipes = () => {
 
   const startIndex = page * pageSize;
   const endIndex = startIndex + pageSize;
-
-  const [taskId, setTaskId] = useState(null);
-  const [estadoTarea, setEstadoTarea] = useState(null);
 
   const newRecipeCreated = useSelector((state) => state.recipesComponent.createdNewRecipe);
 
@@ -76,29 +72,6 @@ const Recipes = () => {
   const handleClick = (recipe) => {
     navigate(`/recipe/${recipe.id}`);
   };
-
-  useEffect(() => {
-    if (!taskId) return;
-
-    console.log("-useEffect polling activado-");
-    const interval = setInterval(async () => {
-      const resultAction = await dispatch(getStateProcess(taskId));
-      if (getStateProcess.fulfilled.match(resultAction)) {
-        const estado = resultAction.payload;
-        console.log("Estado actual:", estado);
-        setEstadoTarea(estado);
-
-        if (estado.estado === "SUCCESS" || estado.estado === "FAILURE") {
-          console.log("RESULTADO");
-          console.log(estado.resultado);
-          clearInterval(interval); // Detén el polling
-        }
-      }
-    }, 3000);
-
-    return () => clearInterval(interval); // Limpieza al desmontar componente
-  }, [taskId]);
-
 
   return (
     <Container>

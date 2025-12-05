@@ -14,12 +14,6 @@ export const getUserValidate = createAsyncThunk(
   GET_USER_VALIDATE,
   async ({email, password}, { rejectWithValue }) => {
 
-    console.log("-GET_USER_VALIDATE-")
-    console.log("-email-")
-    console.log(email)
-    console.log("-password-")
-    console.log(password)
-
     try {
       // Hacer el insert en Supabase
       const { data, error } = await supabase
