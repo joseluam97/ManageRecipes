@@ -1,7 +1,7 @@
 import axios from 'axios/dist/node/axios.cjs';
 
 // Importamos el cliente de Supabase que acabamos de configurar
-import { supabase } from "src/utils/supabase";
+import { supabase } from "../src/utils/supabase";
 
 const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN; 
 const TELEGRAM_API_URL = `https://api.telegram.org/bot${BOT_TOKEN}/getUpdates`;
