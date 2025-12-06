@@ -18,47 +18,31 @@ export default async function handler(req, res) {
     });
 
     const updates = response.data.result;
-    
-    // 1. Preparar los datos para la inserción
-    const dataToInsert = updates
-      .filter(update => update.message)
-      .map(update => ({
-          // Mapeamos el message_id (clave única para la comprobación)
-          message_id: update.message.message_id, 
-          // El campo 'link' y 'extract' no están en el objeto 'update.message' por defecto,
-          // así que los inicializamos a NULL o a valores por defecto, según tu lógica.
-          link: update.message.text || null, // Usamos el texto del mensaje como "link" temporal o si contiene el link real.
-          extract: false, // Asumimos que aún no se ha extraído la receta
-      }));
 
-    if (dataToInsert.length > 0) {
-      // 2. ALMACENAR EN LA BASE DE DATOS con Upsert (Inserción Condicional)
-      
-      const { data, error, count } = await supabase
+    for (const update of updates) {
+      console.log(`Mensaje ID: ${update.message.message_id}, Texto: ${update.message.text}`);
+
+      let link_proccessed = {
+        message_id: update.message.message_id,
+        link: update.message.text || null,
+        extract: false,
+      };
+
+      // Hacer el insert en Supabase
+      const { data, error } = await supabase
         .from('RecipesExtract')
-        .upsert(dataToInsert, { 
-            // Esta línea es la clave: le dice a Supabase que, si encuentra 
-            // un conflicto con la columna 'message_id', simplemente lo ignore.
-            onConflict: 'message_id',
-            ignoreDuplicates: true
-        })
-        .select(); 
+        .insert([link_proccessed])
+        .select()
+        .single();
 
       if (error) {
+        console.log("ERROR:");
+        console.log(error.message);
         throw new Error(`Error de Supabase: ${error.message}`);
       }
       
-      const insertedCount = data ? data.length : 0;
-      
-      // 3. LOG DE VERIFICACIÓN (Para el log de Vercel)
-      console.log('✅ Tarea Cron ejecutada. Mensajes obtenidos.');
-      console.log(`📝 Intentos de inserción: ${dataToInsert.length}. Nuevos mensajes insertados: ${insertedCount}`);
-      dataToInsert.forEach(item => console.log(`[ID: ${item.message_id}] ${item.link ? item.link.substring(0, 50) + '...' : '[Sin Texto]'}`));
+      console.log("Mensaje enviado:", data);
 
-      // 4. (Opcional) Confirmar mensajes a Telegram actualizando el offset
-      // ... (código para actualizar el offset)
-    } else {
-        console.log('✅ Tarea Cron ejecutada. No hay mensajes válidos para procesar.');
     }
 
     res.status(200).json({ status: 'Success', message: 'Cron job finished and data processed.' });

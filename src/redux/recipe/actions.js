@@ -82,9 +82,6 @@ export const postNewRecipe = createAsyncThunk(
   POST_RECIPE,
   async (newRecipe, { rejectWithValue }) => {
 
-    console.log("-newMessage-")
-    console.log(newRecipe)
-
     try {
       // Hacer el insert en Supabase
       const { data, error } = await supabase
