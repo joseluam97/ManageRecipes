@@ -22,6 +22,24 @@ export default async function handler(req, res) {
     for (const update of updates) {
       console.log(`Mensaje ID: ${update.message.message_id}, Texto: ${update.message.text}`);
 
+      // Check if message text exists
+      if (!update.message || !update.message.text) {
+        console.log("El mensaje no contiene texto. Saltando...");
+        continue;
+      }
+
+      // Check if link is created already
+      const { data: existingLink, error: fetchError } = await supabase
+        .from('RecipesExtract')
+        .select('*')
+        .eq('message_id', update.message.message_id)
+        .single();
+
+      if (existingLink) {
+        console.log("El enlace ya ha sido procesado. Saltando...");
+        continue;
+      }
+
       let link_proccessed = {
         message_id: update.message.message_id,
         link: update.message.text || null,
