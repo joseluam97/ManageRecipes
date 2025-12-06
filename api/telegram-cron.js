@@ -1,4 +1,5 @@
-import axios from 'axios';
+import axios from 'axios/dist/node/axios.cjs';
+
 // Importamos el cliente de Supabase que acabamos de configurar
 import { supabase } from "src/utils/supabase";
 
